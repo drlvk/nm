@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<chapter xml:id="scalars-vectors-matrices" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+<title>Scalars, vectors and matrices</title>
+
+
+    <introduction>
+        <p>We will only need three types of Matlab objects: scalars, vectors, and matrices. A scalar is just a single number, like 2.75. Vectors and matrices deserve a more careful look. Being able to use them efficiently is a key to programming in Matlab. Note that <q>Mat</q> in <q>Matlab</q> stands for <q>matrix</q>, not <q>mathematics</q>.</p>
+    </introduction>
+
+
+<section xml:id="section-scalars">
+<title>Assigning scalar values</title>
+
+<p>The command <cd>x = 3/4</cd> assigns the value of 0.75 to variable <c>x</c>. Matlab will also display the result of this assignment (the number 0.75) to you. Most of the time, we do not need it to print the result of every computation. Ending a command with a semicolon <kbd>;</kbd> suppresses the output: try <cd>x = 3/4;</cd></p>
+
+<p>Now that the variable <c>x</c> has a value, we can use it in computations. For example, <cd>y = x^2 + 5*x - 1</cd> will result in <c>y</c> being assigned the value 3.3125. It is important to realize that every variable must be assigned a value before it can be used on the right hand side of an assignment. If we try to execute <c>y = x^2</c> without assigning any value to <c>x</c>, the result will be an error: <c>x</c> is undefined.  </p>
+</section> 
+
+<section xml:id="section-vectors-matrices">
+<title>Creating vectors and matrices</title>    
+
+<p>A <term>vector</term> in Matlab is an ordered list of numbers. It does not always have a geometric meaning. For example, recording the high temperature on every day of August, we get a vector with 31 components; we do not normally visualize it as an arrow of some length and direction. Matlab distinguishes between row vectors and column vectors, which are defined below.</p>
+
+<p>A <term>matrix</term> is a rectangular array of numbers. For example, a 4<times/>6 matrix has 4 rows and 6 columns. A matrix with one row (for example a 1<times/>6 matrix) is a <term>row vector</term>. A matrix with one column (for example a 4<times/>1 matrix) is a <term>column vector</term>. Thus, vectors in Matlab are just a special kind of matrices.</p>
+
+<p>One can create a row vector by listing its components: <cd>x = [8 6 7 5 3 0 9]</cd> or <cd>x = [8, 6, 7, 5, 3, 0, 9]</cd> Either spaces or columns can be used to separate the entries. To create a column vector, one can either separate the entries by semicolons: <cd>x = [8; 6; 7; 5; 3; 0; 9]</cd> or create a row vector and <term>transpose</term> it by putting an apostrophe at the end: <cd>x = [8 6 7 5 3 0 9]'</cd> </p>
+
+<p>To create a matrix one needs both kinds of separators: spaces or colons within each row, and semicolons between the rows. For example, <cd>A = [8 6; 7 5; 3 0]'</cd> creates a 3<times/>2 matrix. Its transpose <c>A'</c> is a 2<times/>3 matrix, same as <cd>[8 6 7; 5 3 0]</cd></p>
+
+<p><term>Regularly-spaced vectors</term> are described by three numbers: first entry, step size, and last entry. For example: <c>3:2:15</c> means the same as <c>[3 5 7 9 11 13 15]</c>: the first entry is 3, after that they increase by 2, until reaching 15. The step size can be omitted when it is equal to 1: that is, <c>-1:4</c> is the same as <c>[-1   0   1   2   3   4]</c>.</p>
+
+</section>
+
+<section xml:id="section-operations-vectors-matrices">
+<title>Operations on vectors and matrices</title>  
+
+<p><em>Addition</em> and <em>subtraction</em> works the same way as it does in Linear Algebra. If two vectors, or two matrices, have the same size, they can be added or subtracted. For example: 
+<cd>
+    x = [3 7 2];
+    y = [8 -2 0];
+    z = x + y;
+</cd>
+results in <c>z</c> being <c>[11 5 2]</c>. But we cannot add 
+</p> 
+
+<p><em>Scalar multiplication</em> also works as expected: with <c>x</c> as above, <c>3*x</c> is the vector <c>[9 21 6]</c>.</p>
+
+<p>One can also multiply two vectors, or two matrices, or a vector and a matrix. To understand how this works in Matlab, keep in mind that a vector is treated as a matrix with one row (or one column). Two matrices can be multiplied only when the inner dimensions agree: that is, two matrices of sizes <m>m\times n</m> and <m>p\times q</m> can be multiplied when <m>n = p</m>. The product has size <m>m\times q</m>. Some examples: <ul> 
+<li><c>[3 7] * [4 2]</c> is <alert>an error</alert>: the first argument has size <m>1\times 2</m>, the second also has size <m>1\times 2</m>, and the inner dimensions do not agree: <m>2\ne 1</m>.</li>
+<li><c>[3 7] * [4; 2]</c> is <c>26</c>. the first argument has size <m>1\times 2</m>, the second has size <m>2\times 1</m>, so the product is defined and has size <m>1\times 1</m> which makes it a scalar. This is how one computes the <term>scalar product</term> of two vectors: it comes from multiplying a row vector by a column vector.</li>
+<li><c>[1 2 3; 4 5 6] * [-4; 0; 3]</c> is <c>[5; 2]</c>. The sizes <m>2\times 3</m> and <m>3\times 1</m> are compatible and the product has size <m>2\times 1</m>. This is how <term>matrix-vector</term> products work in linear algebra too: the vector, placed to the right of a matrix, must be written as a column.</li> 
+<li><c>[5 -2] * [1 2 3; 4 5 6]</c> is <c>[-3 0 3]</c>. The sizes <m>1\times 2</m> and <m>2\times 3</m> are compatible and the product has size <m>1\times 3</m>. So, we can have a vector to the left of a matrix when it is a row vector. </li> 
+<li><c>[0 1; -1 0] * [1 2 3; 4 5 6]</c> is <c>[4   5   6; -1  -2  -3]</c>. This is a <m>matrix product</m>. Two matrices have compatible sizes <m>2\times 2</m> and <m>2\times 3</m>, and the product is of size <m>2\times 3</m>.</li>
+</ul></p>
+
+</section>
+
+<section xml:id="section-indexing-vectors-matrices">
+<title>Accessing the entries of vectors and matrices</title>  
+
+
+
+<p>matrices. This is a common source of errors when working in Matlab. Use size command to debug. It returns two numbers; length returns one, the maximum.</p>  
+
+<p>The main thing to do today is to learn to manipulate matrices by extracting or replacing or rearranging some elements. </p> 
+
+<p>A powerful tool for working with matrices and vectors is the colon : selector. When it replaces an index, it means ``run through all values of that index''. So, <cd>A(1,:)</cd> is the first row, and <cd>A(:,1)</cd> is the first column. </p> 
+
+<p>There is a different but related use of colon: creating a regularly spaced vector a:h:b.</p> 
+
+<p>We can ask for some values of an index, by putting a vector of positive integers in there. So, can get the first two columns, or the last two (use end). </p> 
+
+<p>We can get even-numbered entries of a vector by using x(2:2:end). How about: all except first and last? Rearrange matrix rows bottom-top?</p> 
+
+<p>The entries can also be assigned, like x(2:2:end) = -3. </p> 
+
+<p>Scripts: New Script button, built in editor; different from command window. Saved; executed all at once. Semicolon at the end suppresses output.    </p> 
+
+</section>
+ 
+
+<xi:include href="./exercises/sets.xml" />
+
+
+</chapter>

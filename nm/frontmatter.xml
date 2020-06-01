@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<frontmatter xml:id="frontmatter" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+    <titlepage>
+
+        <author>
+            <personname>Leonid Kovalev</personname>
+            <department>Department of Mathematics</department>
+            <institution>Syracuse University</institution>
+            <email>lvkovale@syr.edu</email>
+        </author>
+
+        <date><today /></date>
+
+    </titlepage>
+
+
+    <acknowledgement xml:id="acknowledgement">
+
+        <p>The following textbooks were helpful in preparation of these notes.<ul>
+            <li><p><url href="https://ebookcentral-proquest-com.libezproxy2.syr.edu/lib/syracuse-ebooks/detail.action?docID=953183">Numerical Methods: Using MATLAB</url> by George Lindfield and John Penny</p></li>
+            <li><p><url href="https://www.mathworks.com/moler/chapters.html">Numerical Computing with MATLAB</url> by Clive Moler</p></li>
+            <li><p><url href="https://epubs-siam-org.libezproxy2.syr.edu/doi/book/10.1137/9780898719987">A First Course in Numerical Methods</url> by Uri M. Ascher and Chen Greif </p></li>
+        </ul></p>
+
+    </acknowledgement>
+
+    <preface xml:id="preface">
+
+        <p>The topics covered in this course can be divided into 5 units.<ol>
+    <li><p>Matlab: Matrix/vector manipulation, matrix/vector creation, elementwise operations, built-in functions, input/output, 2d graphics, scripting, functions.</p></li>
+    <li><p>Solving equations: linear systems, bisection method, fixed point method, Newton and secant methods, multivariable Newton's method, Broyden's method.</p></li>
+    <li><p>Numerical calculus: numerical differentiation, numerical integration: trapezoidal rule, Simpson's rule, orthogonal polynomials (Legendre, Laguerre), Gaussian integration, Gauss-Laguerre integration, multiple integrals, solving ODE with Euler's method and trapezoidal method, ODE systems.</p></li>
+    <li><p>Data fitting: polynomial interpolation, spline interpolation, discrete Fourier transform, linear least squares, model comparison, nonlinear least squares, transforming data. </p></li>
+    <li><p>Optimization: linear programming, single-variable minimization, steepest descent, conjugate gradient method, Nelder-Mead method, constrained optimization, applications.</p></li></ol></p>
+ 
+ <p>Numerical linear algebra is not included above because it is the subject of a separate course (MAT 532).</p> 
+
+  
+
+    </preface>
+  
+</frontmatter>
