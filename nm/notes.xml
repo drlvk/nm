@@ -53,6 +53,7 @@ along with MathBook XML.  If not, see <http://www.gnu.org/licenses/>.
         <part xml:id="part-matlab">
             <title>Using Matlab</title>
             <xi:include href="./matrices_vectors.xml" /> 
+            <xi:include href="./systems_vectorization_plots.xml" />
         </part>
 
         <part xml:id="part-equations">
@@ -70,8 +71,6 @@ along with MathBook XML.  If not, see <http://www.gnu.org/licenses/>.
         <part xml:id="part-optimization">
             <title>Optimization</title>
         </part>
-
-        <xi:include href="./backmatter.xml" />                  <!-- GFDL, Hints, Notation -->
 
     </book>
 
