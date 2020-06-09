@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<chapter xml:id="scalars-vectors-matrices" xmlns:xi="http://www.w3.org/2001/XInclude">
+<chapter xml:id="systems-vectorization-plots" xmlns:xi="http://www.w3.org/2001/XInclude">
 
-<title>Linear systems, vectorization, plots</title>
+<title>Linear systems, array operations, plots</title>
 
 
     <introduction>
@@ -57,16 +57,156 @@ In Matlab this matrix would be created as <c>eye(3)</c>. The name of the command
 To construct such matrices we can use <c>diag(v, k)</c> which places the elements of vector <c>v</c> on the diagonal parallel to the main one but <m>k</m> positions above it. So, <c>diag(v, 1)</c> is just above the main diagonal and <c>diag(v, -1)</c> is just below. The matrix shown above could be formed as 
 <cd> diag([2 2 2 2 2]) - diag([1 1 1 1], 1) - diag([1 1 1 1], -1)</cd>
 This is an example of a <term>tridiagonal matrix</term>: there are only three diagonals with nonzero entries.</p>
+</section>
+
+
+<section xml:id="section-vectorization">
+<title>Array operations</title>
+
+<p>Matlab supports <term>array operations</term> in which the input data is placed into an array (usually a vector or a matrix) and some mathematical operation is carried out on all of the data at once. For example, to get the square roots of the first 25 positive integers we can execute
+<cd>sqrt(1:25)</cd>
+with the result 
+<cd>[1.0000 1.4142 1.7321 2.0000 2.2361 ... 4.8990 5.0000]</cd>
+More generally, if <c>v</c> is a vector of nonnegative numbers, then <c>sqrt(v)</c> has the roots of those numbers. Other functions like <c>sin</c> and <c>exp</c> work the same way. The benefts of array operations are more compact code and faster execution.</p> 
+
+<p>
+Suppose <c>v = [5 2 -3]</c> and we want to get the squares of the elements of <c>v</c>. By analogy with the above, we try <c>v^2</c> but get an <alert>error</alert>. The problem is that squaring <c>v</c> is understood as <c>v*v</c> which in Matlab means multiplication according to the rules of <xref ref="section-operations-vectors-matrices" />. The row vector <c>v</c> is treated as a matrix of size 1<times/>3. And one cannot multiply a 1<times/>3 matrix by another 1<times/>3 matrix: the inner dimensions do not match. But we just want <em>elementwise</em> squaring, not any kind of matrix multiplication. To tell Matlab this, put a period <c>.</c> before the operation character: <c>v.^2</c> gives <c>[25 4 9]</c>. Similarly, <c>.*</c> and <c>./</c> are used for elementwise multiplication and division: <c>[3 4].*[2 -5]</c> is <c>[6 -20]</c> and <c>[3 4]./[2 -5]</c> is <c>[1.5 -0.8]</c>. We never need a period in front of <c>+</c> or <c>-</c> because these operations are always performed elementwise.</p>
+
+<p><em>Summary</em>: without a preceding period, <c>*</c>, <c>/</c> and <c>^</c> refer to what we do with matrices and vectors in linear algebra. Adding a period tells Matlab to forget about linear algebra and handle each term individually. Compare two ways to multiply the matrices 
+<me> A  = \begin{pmatrix} 3 \amp -2 \\ 2 \amp 5\end{pmatrix}</me>
+<me> B  = \begin{pmatrix} -5 \amp 4 \\ 1 \amp 3\end{pmatrix}</me>
+The command 
+<cd>[[3 -2; 2 5] * [-5 4; 1 3]</cd>
+produces 
+<me>\begin{pmatrix} -17 \amp 6 \\ -5 \amp 23 \end{pmatrix}</me>
+which is the matrix product according to linear algebra. The command 
+<cd>[[3 -2; 2 5] .* [-5 4; 1 3]</cd>
+produces 
+<me>\begin{pmatrix} -15 \amp -8 \\ 2\amp 15 \end{pmatrix}</me>
+which is the elementwise product: it would be considered a wrong way to multiply matrices in a linear algebra course. </p>
+</section>
+
+<section xml:id="section-plotting">
+<title>Plotting</title>
+
+<p>The command <c>plot(x, y)</c> receives two vectors: the first has x-coordinates of the points to be shown, the second has y-coordinates. It also connects these points by lines. So, for example, <cd>plot([1 2 5 6], [5 0.4 2 1])</cd> produces the following plot: </p>
+<figure><image source="images/plotting1.png" /> <caption>A plot based on four points</caption></figure>
+<p>Sometimes we do not want to connect the points by a line: treating them as individual data points rather than representative of some function <m>y = f(x)</m>. If so, 
+<cd>plot([1 2 5 6], [5 0.4 2 1], '*')</cd>
+simply puts an asterisk <c>*</c> for each point, without connecting them.</p>
+<figure><image source="images/plotting2.png" /> <caption>Four points (two are hard to see because of the axes)</caption></figure>
+<p> Let us plot the function <m>y = x^3 e^{-2x}</m> on the interval <m>[0, 3]</m>: </p>
+<pre>
+x = 0:0.1:3;
+y = x.^3 .* exp(-2*x);
+plot(x, y)
+</pre>
+<p>In the first line, I chose 0.1 as the step size for the x-interval. It would be a mistake to use <c>x = 0:3</c> because the step size of 1 unit would make a very rough (low-resolution) plot with only four points used. The step size could be 0.01 instead: we may get smoother graph at the expense of more computations. The second line compute the y-values. Consider the following: 
+<ul><li> The period in <c>x.^3</c> is required to have elementwise power operation</li>
+<li>We do not need a period in <c>-2*x</c> because multiplying a vector by a scalar already works elementwise. There is no difference between <c>-2*x</c> and <c>-2.*x</c></li>
+<li>We need <c>.*</c> to multiply two vectors elementwise.</li>
+<li>Whitespace around <c>.*</c> is not necessary but some people find <c>x.^3.*exp(-2*x)</c> harder to read because <c>3.</c> looks like a decimal dot after 3. </li>
+</ul>
+</p>
+<figure><image source="images/plotting4.png" /> <caption>Plot of the function <m>y = x^3 e^{-2x}</m> on the interval <m>[0, 3]</m> </caption></figure>
+
+<p>Specifying the x-values by choosing step size like in <c>x = 0:0.1:3</c> can be tedious, because the same step size would not work as well for the intervals <m>[2, 2.04]</m> or for <m>[0, 50000]</m>. The command <c>linspace</c> can be more convenient: <c>linspace(a, b, n)</c> creates a vector with <c>n</c> uniformly spaced numbers from <c>a</c> to <c>b</c>. Usually, 500 points are quite enough for a smooth plot, so one can reasonably use <c>x = linspace(a, b, 500)</c> for plots no matter how small or large the interval <m>[a, b]</m> is.</p>
+</section>
+
+
+<section xml:id="section-examples">
+
+<title>Examples</title>  
+
 
 <example><title>Tridiagonal matrix of arbitrary size</title>
 <statement> Given a positive integer <m>n</m>, construct a tridiagonal matrix of the above form with size <m>n\times n</m>. </statement>
 <answer>
+<pre>diag(2*ones(1, n)) - diag(ones(1, n-1), 1) - diag(ones(1, n-1), -1)</pre>
+<p>or</p>
 <pre>2*diag(ones(1, n)) - diag(ones(1, n-1), 1) - diag(ones(1, n-1), -1)</pre>
-<p>Note why <c>n-1</c> appears above: the main diagonal has length <c>n</c> but the diagonals next to it have length <c>n-1</c>. </p>
+<p>or</p>
+<pre>2*eye(n) - diag(ones(1, n-1), 1) - diag(ones(1, n-1), -1)</pre>
+<p>It is important to recognize why <c>n-1</c> appears above. The main diagonal has length <c>n</c> but the diagonals next to it are shorter by 1 element, so their length is <c>n-1</c>. </p>
 </answer>
 </example>
 
+<example> <title>Solving a tridiagonal system</title>
+<statement>Solve the system of linear equations 
+<md>
+<mrow> 3x_1 - x_2 \amp = 1 </mrow>
+<mrow> - x_1 + 3x_2 - x_3 \amp = 0 </mrow>
+<mrow> - x_2 + 3x_3 - x_4 \amp = 0 </mrow>
+<mrow>  \cdots </mrow>
+<mrow> - x_{n-2} + 3x_{n-1} - x_{n} \amp = 0 </mrow>
+<mrow> - x_{n-1} + 3x_{n} \amp = 2 </mrow>
+</md>
+Use the first two digits of your SUID as the value of <m>n</m>.
+</statement>
+
+<answer> 
+<pre>
+n = 28;
+A = 3*eye(n) - diag(ones(1, n-1), 1) - diag(ones(1, n-1), -1);
+b = zeros(n, 1);
+b(1) = 1;
+b(end) = 2;
+x = A\b;
+disp(x)
+</pre>
+<p><em>Explanation</em>. The coefficient matrix has 3 on the main diagonal, and -1 above and below it. This matrix is created with the help of <c>diag</c> as explained in 
+<xref ref="section-large-matrices" />. The right-hand size column vector begins with all-zeros: note that <c>zeros(n, 1)</c> is a column of zeros, while <c>zeros(1, n)</c> is a row of zeros. The first and last entries of <c>b</c> are changed as described in the system. </p>
+</answer>
+</example>
+
+<example> <title>Plot of a function</title>
+<statement>Plot the function <m> y = (x - 1)/(x^2 + 1)</m> on the interval <m>[-1, 5]</m>
+</statement>
+<answer>
+<pre>
+x = linspace(-1, 5, 500);	
+y = (x - 1)./(x.^2 + 1);
+plot(x, y)
+</pre>
+<figure><image source="images/plotting4.png" /> <caption>Plot of <m> y = (x - 1)/(x^2 + 1)</m> on <m>[-1, 5]</m> </caption></figure>
+<p>Note the use of semicolons to prevent Matlab from displaying hundreds of numbers that we do not need to see.</p>
+</answer>
+</example>
 </section>
 
+
+
+<exercises xml:id="exercises-systems-vectorization-plots">
+    <title>Homework</title>
+
+    <exercise number="1">
+        <statement>
+<p>Consider the following relations: <m>F_0=1</m>, <m>F_1=1</m>, <m>F_2 = F_0+F_1</m>, <m>F_3=F_1+F_2</m>, and so on until <m>F_{6} = F_4+F_5</m>. (These are the first 7 Fibonacci numbers). 
+<ol label="(a)">
+<li> Write down a linear system that expresses these relations in matrix form <m>Af =b</m>. Here, <m>A</m> will be a 7<times/>7 matrix and <m>b</m> a column vector. </li>
+<li> Write a Matlab script that creates this matrix <m>A</m> and vector <m>b</m>, then solves the linear system to find the Fibonacci numbers.</li>
+</ol>
+</p>
+        </statement>
+    </exercise>
+
+    <exercise number="2">
+        <statement>
+            <p>Write a script to do the following: </p>
+<p> <ol label="(a)">
+<li> Create a 10<times/>10 matrix A with 2 on the main diagonal, and -1 next to it (both above and below). </li>
+<li> Solve the linear system <m>Ay=b</m> where <m>b</m> is the vector 
+<me>
+\begin{pmatrix}
+\sqrt{1} \\ \sqrt{2} \\ \vdots \\ \sqrt{10}
+\end{pmatrix}
+</me>
+Use a regularly-spaced vector, transpose, and <c>sqrt</c> to create <m>b</m>.</li>
+<li>Plot  the solution <m>y</m> against the vector <m>x</m> of 10 equally spaced entries, beginning with 0 and ending with 1. The <c>linspace</c> command will be useful.
+</li></ol></p>
+</statement>
+    </exercise> 
+ 
+</exercises>
 
 </chapter>
