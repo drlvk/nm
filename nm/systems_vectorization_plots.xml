@@ -28,6 +28,27 @@ The Matlab command for solving <m>Ax=b</m> is very short: <cd>x = A\b</cd> The r
 <p> Mathematically, <m>x</m> could be found as <m>x = A^{-1}b</m> where <m>A^{-1}</m> is the inverse matrix. However, this is not a computationally efficient way to solve a linear system. Matlab does not actually compute the inverse matrix when solving a linear system. It chooses one of several algorithms based on the nature of the matrix; usually it is a form of <q>LU factorization</q> which is discussed in MAT 532. But even though the formula <m>x = A^{-1}b</m> 
 is not actually used, it suggests the notation used by Matlab. For two numbers <m>a, b</m> we can write <m>ba^{-1}</m> as <c>b/a</c>, meaning <m>b</m> divided by <m>a</m>. If the order of multiplication was important (as it is for matrices), then perhaps <m>a^{-1}b</m> could be written as <c>a\b</c>, meaning <m>b</m> divided by <m>a</m> <em>from the left</em>. We do not actually <q>divide a vector by a matrix</q> but the notation <c>A\b</c> can remind us of <m>A^{-1}b</m>.</p> 
 
+<example>
+	<title>Solve and verify</title>
+<statement>
+	<p>Write a Matlab which solves the linear system 
+<md>
+	<mrow>5x_1 + 3x_2 \amp = 2 </mrow>
+	<mrow>-2x_1 + x_2  - 6x_3 \amp = 0 </mrow>
+	<mrow>3x_2  +  x_3 \amp = 3 </mrow>
+</md>
+and then plug the solution into the left hand side to check that the solution is correct.</p> 
+</statement>
+<answer>
+<pre>
+A = [5 3 0; -2 1 -6; 0 3 1];
+b = [2; 0; 3];
+x = A\b;
+disp(x)
+disp(A*x)
+</pre>
+</answer>
+</example> 
 </section>
 
 <section xml:id="section-large-matrices">
@@ -56,9 +77,25 @@ In Matlab this matrix would be created as <c>eye(3)</c>. The name of the command
 \end{pmatrix}</me>
 To construct such matrices we can use <c>diag(v, k)</c> which places the elements of vector <c>v</c> on the diagonal parallel to the main one but <m>k</m> positions above it. So, <c>diag(v, 1)</c> is just above the main diagonal and <c>diag(v, -1)</c> is just below. The matrix shown above could be formed as 
 <cd> diag([2 2 2 2 2]) - diag([1 1 1 1], 1) - diag([1 1 1 1], -1)</cd>
-This is an example of a <term>tridiagonal matrix</term>: there are only three diagonals with nonzero entries.</p>
-</section>
+This is an example of a <term>tridiagonal matrix</term>: there are only three diagonals with nonzero entries. More generally, a matrix is called <term>sparse</term> if most of its elements are 0. Large sparse matrices frequently arise in computations. </p>
 
+
+
+<example>
+	<title>Product of sparse matrices</title>
+<statement>
+	<p>Let <m>A</m> be the 9<times/>9 matrix with -1 on the main diagonal and 1 above it. Find and display the products of <m>A</m> with its transpose: <m>A^TA</m> and <m>AA^T</m>. </p> 
+</statement>
+<answer>
+<pre>
+A = diag(ones(1, 8), 1) - eye(9);
+disp(A'*A)
+disp(A*A')
+</pre>
+<p>The two products are very similar but are not quite the same.</p>
+</answer>
+</example> 
+</section> 
 
 <section xml:id="section-vectorization">
 <title>Array operations</title>
@@ -73,18 +110,37 @@ More generally, if <c>v</c> is a vector of nonnegative numbers, then <c>sqrt(v)<
 Suppose <c>v = [5 2 -3]</c> and we want to get the squares of the elements of <c>v</c>. By analogy with the above, we try <c>v^2</c> but get an <alert>error</alert>. The problem is that squaring <c>v</c> is understood as <c>v*v</c> which in Matlab means multiplication according to the rules of <xref ref="section-operations-vectors-matrices" />. The row vector <c>v</c> is treated as a matrix of size 1<times/>3. And one cannot multiply a 1<times/>3 matrix by another 1<times/>3 matrix: the inner dimensions do not match. But we just want <em>elementwise</em> squaring, not any kind of matrix multiplication. To tell Matlab this, put a period <c>.</c> before the operation character: <c>v.^2</c> gives <c>[25 4 9]</c>. Similarly, <c>.*</c> and <c>./</c> are used for elementwise multiplication and division: <c>[3 4].*[2 -5]</c> is <c>[6 -20]</c> and <c>[3 4]./[2 -5]</c> is <c>[1.5 -0.8]</c>. We never need a period in front of <c>+</c> or <c>-</c> because these operations are always performed elementwise.</p>
 
 <p><em>Summary</em>: without a preceding period, <c>*</c>, <c>/</c> and <c>^</c> refer to what we do with matrices and vectors in linear algebra. Adding a period tells Matlab to forget about linear algebra and handle each term individually. Compare two ways to multiply the matrices 
-<me> A  = \begin{pmatrix} 3 \amp -2 \\ 2 \amp 5\end{pmatrix}</me>
-<me> B  = \begin{pmatrix} -5 \amp 4 \\ 1 \amp 3\end{pmatrix}</me>
+<me> A  = \begin{pmatrix} 3 \amp -2 \\ 2 \amp 5\end{pmatrix}, \quad
+B  = \begin{pmatrix} -5 \amp 4 \\ 1 \amp 3\end{pmatrix}</me>
 The command 
-<cd>[[3 -2; 2 5] * [-5 4; 1 3]</cd>
+<cd>[3 -2; 2 5] * [-5 4; 1 3]</cd>
 produces 
 <me>\begin{pmatrix} -17 \amp 6 \\ -5 \amp 23 \end{pmatrix}</me>
 which is the matrix product according to linear algebra. The command 
-<cd>[[3 -2; 2 5] .* [-5 4; 1 3]</cd>
+<cd>[3 -2; 2 5] .* [-5 4; 1 3]</cd>
 produces 
 <me>\begin{pmatrix} -15 \amp -8 \\ 2\amp 15 \end{pmatrix}</me>
 which is the elementwise product: it would be considered a wrong way to multiply matrices in a linear algebra course. </p>
+
+<example>
+	<title>Roots of integers</title>
+<statement>
+	<p>Use array operations to display the numbers <m>n^{1/n}</m> for <m>n=1, \dots, 10</m>. What value of <m>n</m> has the largest such root?</p> 
+</statement>
+<answer>
+<pre>
+v = 1:10;
+disp(v.^(1./v))
+</pre>
+<p>The root is largest for <m>n = 3</m>. </p>
+<p>Note that both periods are necessary. Without the second one, Matlab would try to interpet <c>1/v</c> as a linear system with coefficients <c>v</c> and right hand side <c>1</c>, which is not what we want. With <c>1./v</c> we get the vector <c>[1/1 1/2 1/3 ...]</c>. Similarly, without the first period Matlab would try to interpret <c>v^(...)</c> as a matrix power, which would not make sense either.</p> 
+</answer>
+</example>  
 </section>
+
+
+
+
 
 <section xml:id="section-plotting">
 <title>Plotting</title>
@@ -108,15 +164,34 @@ plot(x, y)
 <li>Whitespace around <c>.*</c> is not necessary but some people find <c>x.^3.*exp(-2*x)</c> harder to read because <c>3.</c> looks like a decimal dot after 3. </li>
 </ul>
 </p>
-<figure><image source="images/plotting4.png" /> <caption>Plot of the function <m>y = x^3 e^{-2x}</m> on the interval <m>[0, 3]</m> </caption></figure>
+<figure><image source="images/plotting3.png" /> <caption>Plot of the function <m>y = x^3 e^{-2x}</m> on the interval <m>[0, 3]</m> </caption></figure>
 
-<p>Specifying the x-values by choosing step size like in <c>x = 0:0.1:3</c> can be tedious, because the same step size would not work as well for the intervals <m>[2, 2.04]</m> or for <m>[0, 50000]</m>. The command <c>linspace</c> can be more convenient: <c>linspace(a, b, n)</c> creates a vector with <c>n</c> uniformly spaced numbers from <c>a</c> to <c>b</c>. Usually, 500 points are quite enough for a smooth plot, so one can reasonably use <c>x = linspace(a, b, 500)</c> for plots no matter how small or large the interval <m>[a, b]</m> is.</p>
+<p>Specifying the x-values by choosing step size like in <c>x = 0:0.1:3</c> can be tedious, because the same step size would not work as well for the intervals <m>[2, 2.04]</m> or for <m>[0, 50000]</m>. The command <c>linspace</c> can be more convenient: <c>linspace(a, b, n)</c> creates a vector with <c>n</c> uniformly spaced numbers from <c>a</c> to <c>b</c>. Usually, 500 points are enough for a smooth plot, so one can reasonably use <c>x = linspace(a, b, 500)</c> for plots no matter how small or large the interval <m>[a, b]</m> is.</p>
+
+
+<example>
+	<title>Parametric plot</title>
+<statement>
+	<p>Draw the curve with parametric equations 
+		<md>
+			<mrow>x \amp = t\cos t</mrow>  <mrow> y \amp = t\sin t</mrow></md>  where <m>0 \le t \le 20</m>.</p> 
+</statement>
+<answer>
+<pre>
+t = linspace(0, 20, 500);
+plot(t.*cos(t), t.*sin(t))
+</pre>
+<p>This curve is called the <term>Archimedian spiral</term>.</p> 
+</answer>
+</example>  
 </section>
 
 
-<section xml:id="section-examples">
+<section xml:id="examples-systems-vectorization-plots">
 
-<title>Examples</title>  
+<title>End-of-class examples</title>  
+
+<p> These are additional examples for reviewing the topic we covered. When reading each example, try to find your own solution before clicking <q>Answer</q>. </p>
 
 
 <example><title>Tridiagonal matrix of arbitrary size</title>

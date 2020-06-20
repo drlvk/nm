@@ -14,7 +14,26 @@
 
 <p>The first thing you see in Matlab is its <term>Command Window</term> where the prompt <c>>></c> invites you to enter any command that will be executed at once. This window is useful for quickly trying out things. You should use it to try out the one-line examples that appear in the text of these notes.</p>
 
-<p>Most of our work, including homework assignments, will involve <term>Script Editor</term>. To open this editor, click <q>New Script</q> button on the left of the <q>Home</q> menu of Matlab. The chain of commands entered in the editor forms a script. The button <q>Run</q> of the <q>Editor</q> menu runs a script; pressing <kbd>F5</kbd> does the same. The output of the script computations is shown in the Command Window.</p> 
+<p>Most of our work, including homework assignments, will involve <term>Script Editor</term>. To open this editor, click <q>New Script</q> button on the left of the <q>Home</q> menu of Matlab. The chain of commands entered in the editor forms a script. The button <q>Run</q> of the <q>Editor</q> menu runs a script; pressing <kbd>F5</kbd> does the same. </p> 
+
+<p>The result of script computations can be shown in the Command Window. There are several ways to make it appear. One of them is <c>disp</c> command: for example,  
+<cd>disp('Hello world')</cd>
+displays "Hello world", and 
+<cd>disp(2/3)</cd>
+displays 0.6667. Notice that Matlab displays just four digits after the decimal dot. This is intentional: showing fewer digits of each number makes is possible to fit more of them on the screen. There are ways to change the number format to display more digits, which we will consider later.  
+</p>  
+
+<example>
+	<title>Golden ratio</title>
+<statement>
+	<p>Write a script that displays an approximate decimal value of the <term>golden ratio</term> <m>\dfrac{\sqrt{5}+1}{2}</m>.</p>
+</statement>
+<answer>
+<pre>
+disp((sqrt(5)+1)/2)		
+</pre>
+</answer>
+</example>
 </section>
 
 <section xml:id="section-scalars">
@@ -23,6 +42,27 @@
 <p>The command <cd>x = 3/4</cd> assigns the value of 0.75 to variable <c>x</c>. Matlab will also display the result of this assignment (the number 0.75) to you. Most of the time, we do not need it to print the result of every computation. Ending a command with a semicolon <kbd>;</kbd> suppresses the output: try <cd>x = 3/4;</cd></p>
 
 <p>Now that the variable <c>x</c> has a value, we can use it in computations. For example, <cd>y = x^2 + 5*x - 1</cd> will result in <c>y</c> being assigned the value 3.3125. It is important to realize that every variable must be assigned a value before it can be used on the right hand side of an assignment. If we try to execute <c>y = x^2</c> without assigning any value to <c>x</c>, the result will be an error: <c>x</c> is undefined.  </p>
+
+<p>It is important to understand the difference between equations and assignments. In mathematics, <m>x = x + 1</m> is an equation which has no solutions. In Matlab, <cd>x = x + 1;</cd> is an assignment command which means <q>take the current value of x, add 1 to it, and assign the result to x</q>. The effect is that the value of x is increase by 1.</p>
+
+<example>
+	<title>Arithmetic and geometric means</title>
+<statement>
+	<p>Write a script that does the following. Assign two unequal positive numbers to x and y (for example, two different digits of your SUID). Compute their arithmetic mean <m>a = \dfrac{x+y}{2}</m> and geometric mean <m>g = \sqrt{xy}</m>. Then display the arithmetic mean of <m>a</m> and <m>g</m>. Finally, display the geometric mean of <m>a</m> and <m>g</m>. </p>
+</statement>
+<answer>
+<pre>
+x = 4; 
+y = 7;
+a = (x+y)/2;
+g = sqrt(x*y);
+disp((a+g)/2)
+disp(sqrt(a*g))
+</pre>
+<p>Remark: Karl Gauss discovered that if the above process of taking arithmetic and geometric means is repeated, both these means <em>quickly</em> converge to the same number. This number is called the <term>arithmetic-geometric mean</term> of x and y. It is linked to certain integrals which cannot be evaluated with calculus methods, and therefore provides an efficient computational approach to such integrals. For more, see <url href="https://en.wikipedia.org/wiki/Arithmetic%E2%80%93geometric_mean">Wikipedia</url>.</p>
+</answer>
+</example> 
+
 </section> 
 
 <section xml:id="section-vectors-matrices">
@@ -39,6 +79,20 @@
 <p><term>Regularly-spaced vectors</term> are described by three numbers: first entry, step size, and last entry. For example: <c>3:2:15</c> means the same as <c>[3 5 7 9 11 13 15]</c>: the first entry is 3, after that they increase by 2, until reaching 15. The step size can be omitted when it is equal to 1: that is, <c>-1:4</c> is the same as <c>[-1   0   1   2   3   4]</c>.</p>
 
 <p><term>Zeros and ones</term> are special kinds of matrices and vectors, filled with the same number: 0 or 1. The commands are called <c>zeros</c> and <c>ones</c>. They require two parameters: the number of rows and the number of columns. For example, <c>zeros(2, 2)</c> creates a 2<times/>2 matrix filled with zeros, and <c>ones(1, 5)</c> is a row vector with 5 entries: <c>[1 1 1 1 1]</c>. These are useful as starting points for building matrices and vectors.</p>
+
+
+<example>
+	<title>Integers in descending order</title>
+<statement>
+	<p>Create a vector with numbers 20, 19, 18, ..., 3, 2, 1 in this order.</p>
+</statement>
+<answer>
+<pre>
+v = 20:-1:1
+</pre>
+<p>The step size here is -1, so the term after 20 is 20 + (-1) = 19, after that we get 19 + (-1) = 18, and so on until reaching 1.</p>
+</answer>
+</example> 
 
 </section>
 
@@ -64,6 +118,23 @@ results in <c>z</c> being <c>[11 5 2]</c>. But we cannot add <c>[8 -2]</c> and <
 <li><c>[0 1; -1 0] * [1 2 3; 4 5 6]</c> is <c>[4   5   6; -1  -2  -3]</c>. This is a <term>matrix product</term>. Two matrices have compatible sizes <m>2\times 2</m> and <m>2\times 3</m>, and the product is of size <m>2\times 3</m>.</li>
 </ul></p>
 
+
+<example>
+	<title>Matrix multiplication is not commutative.</title>
+<statement>
+	<p>Write a script which illustrates that the product of two 2<times/>2 matrices depends on their order.</p>
+</statement>
+<answer>
+<pre>
+A = [1 2; 3 4];
+B = [5 6; 7 8];
+disp(A*B)
+disp(B*A)
+</pre>
+<p>Remark: the particular numbers are not important: if you fill two square matrices with random nonzero numbers, you will probably find their product depends on the order of term.</p>
+</answer>
+</example> 
+
 </section>
 
 <section xml:id="section-indexing-vectors-matrices">
@@ -77,12 +148,30 @@ results in <c>z</c> being <c>[11 5 2]</c>. But we cannot add <c>[8 -2]</c> and <
 <p>We can use a <term>vector of indexes</term> to extract several elements of a vector or a matrix. For example, <c>v(3:end-1)</c> extracts all entries of <c>v</c> starting with the 3rd one and ending with the one before the last. If <c>v</c> was <c>[8 6 4 3 2 1]</c>, the result would be <c>[4 3 2]</c>. For another example, <c>v(2:2:end)</c> extracts all even-numbered elements of v. In the above example this would be <c>[6 3 1]</c>. For a matrix <c>A</c>, we can select both rows and columns at the same time: <c>A(2:3, 2:5)</c> means taking the elements of <c>A</c> that appear in rows 2-3 and in columns 2-5. The result is a submatrix of size 2<times/>4.</p>
 
 <p>The entries can also be assigned, for example <c>v(2:2:end) = -3</c> makes all even-numbered entries of vector <c>v</c> equal to -3. </p> 
+
+
+<example>
+	<title>Extracting submatrices.</title>
+<statement>
+	<p>Display the 2<times/>2 submatrix in the middle of a given 4<times/>4 matrix such as
+<me>A = \begin{pmatrix} 1 \amp 2\amp 3\amp 4 \\ 5\amp 6\amp 7\amp 8 \\ 9\amp 10\amp 11\amp 12 \\ 13\amp 14\amp 15\amp 16 \end{pmatrix}</me>	
+	</p>
+</statement>
+<answer>
+<pre>
+A = [1 2 3 4; 5 6 7 8; 9 10 11 12; 13 14 15 16];
+B = A(2:3, 2:3);
+disp(B)
+</pre>
+</answer>
+</example> 
+
 </section>
 
 
-<section xml:id="section-examples">
+<section xml:id="examples-matrices-vectors">
 
-<title>Examples</title>  
+<title>End-of-class examples </title>  
 
 <p> When reading each example, try to find your own solution before clicking the <q>Answer</q> link. </p>
 
