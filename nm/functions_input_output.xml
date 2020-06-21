@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<chapter xml:id="systems-functions-input-output" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+<title>Built-in functions, input, output</title>
+
+
+    <introduction>
+        <p>We take a look at some of mathematical and statistical functions available in Matlab, and consider the ways for user input and data output.</p>
+    </introduction>
+
+<section xml:id="section-builtin-functions">
+<title>Built-in functions</title>
+
+<p>Mathematical functions in Matlab have recognizable names: <c>sqrt</c>, <c>log</c> (meaning natural logarithm, base e), <c>exp</c>, <c>abs</c> (absolute value), <c>sin</c>, <c>cos</c> and so on. They can be applied to vectors or matrices elementwise: for example <c>exp([1 2 3])</c> returns a vector with components <m>e^1, e^2, e^3</m>.</p> 
+
+<p>There are also <term>aggregate functions</term> which are useful for summarizing data. The most important of these are <c>sum</c> (sum of values), <c>max</c> (maximum) and <c>min</c> (minimum). When applied to a vector, these functions return a single number. So, if <c>v = [3 1 4 1]</c> then <c>sum(v)</c> is 9, <c>max(v)</c> is 4, and <c>min(v)</c> is 1. </p>
+
+
+<example>
+	<title>Sum of cubes</title>
+<statement>
+	<p>Find the sum of cubes of the integers from 1 to 10. </p>
+</statement>
+<answer>
+<pre>
+sum((1:10).^3)
+</pre>
+<p>Note that the parentheses are important here: <c>sum(1:10.^3)</c> would be the sum of all integers from 1 to 1000. </p>
+</answer>
+</example> 
+
+<p>Aggregate functions get more complicated (and powerful) when they are applied to matrices. In this case they <em>do not</em> return a single number. Given a matrix A, for example <c>A = [3 9; 5 2]</c>, we can find its:
+<ul>
+<li><term>Column sums</term> with <c>sum(A, 1)</c>: the result is a row vector <c>[8 11]</c> which contains the sum of each column.</li>
+<li><term>Row sums</term> with <c>sum(A, 2)</c>: the result is a column vector <c>[12; 7]</c> which contains the sum of each row.</li>
+</ul>
+The second argument (1 or 2) means that we sum along the 1st index (row index) or 2nd index (column index). Summing along the row index means A(1, 1) + A(2, 1) + A(3, 1) + ... which produces the sum within each column. Entering <c>sum(A)</c> has the same effect as <c>sum(A, 1)</c>. </p>
+<p><em>Stacking the columns of a matrix</em>. When we want the sum (or another aggregate function) of all entries of matrix A, we can <term>stack</term> the columns of A using a single colon: <c>A(:)</c>. Then an aggregate function can be applied to this column. For example, if <c>A = [1 2; 3 4]</c> then <c>A(:)</c> is the column <c>[1; 3; 2; 4]</c> and <c>sum(A(:))</c> is 10. </p>
+
+
+<example>
+	<title>Maximum and minimum of row sums</title>
+<statement>
+	<p>Given a matrix, such as <c>A = [3 6; -8 4; 10 1]</c> find its <q>maximal absolute row sum</q>, meaning add up the absolute values of the elements within each row, and take the maximum of the results.</p>
+</statement>
+<answer>
+<pre>
+max(sum(abs(A), 2))
+</pre>
+<p> The result is 12, coming from the second row. The maximal absolute row sum is important in applied linear algebra. It is one of several <term>norms</term> that can be defined for a matrix.
+</p>
+</answer>
+
+</example> 
+</section>
+
+<section xml:id="section-random-numbers-histograms">
+<title>Random numbers and histograms</title>
+
+<p> The command <c>rand</c> produces random numbers uniformly distributed in the interval from 0 to 1. Without providing parameters, we get a single number: <c>x = rand()</c> can make x equal to, for example, 0.8248. With parameters <c>rand(m, n)</c> we get a random m<times/>n matrix, meaning a matrix in which each entry is chosen randomly. </p> 
+
+<p>The command <c>histogram(v, k)</c> displays a histograph of the data collected in vector <c>v</c> using <c>k</c> bins. This means that the interval from <c>min(v)</c> to <c>max(v)</c> is divided into <c>k</c> equal subintervals, and the histogram counts how many data points fall in each subinterval. If the number of bins <c>k</c> is not provided, Matlab will try to choose it itself. Usually we want 10-50 bins. For example, 
+<cd>
+v = rand(1, 10000);
+histogram(v, 20)
+</cd>
+produces a histogram from 10000 random numbers. This will not be an interesting histogram since the numbers are uniformly distributed between 0 and 1. </p>
+
+
+<example xml:id="example-sums-random">
+	<title>Distribution of sums of random numbers</title>
+<statement>
+	<p>Suppose we take 10 random numbers, uniformly distributed between 0 and 1, and compute their sum. Repeating this experiment 10000 times, we get 10000 such sums. Plot the histogram of these random sums. </p>
+</statement>
+<answer>
+<pre>
+A = rand(10, 10000);
+S = sum(A, 1);
+histogram(S, 30)
+</pre>
+<p>This histogram resembles a <q>bell curve</q> of normal distribution. The similarly grows stronger if we take sums of more numbers, and plot more random sums. This is the content of <term>Central Limit Theorem</term> in probability.</p>
+</answer>
+</example> 
+</section>
+
+
+<section xml:id="section-user-input">
+<title>User input</title>
+
+<p> When running numerical experiments like those in <xref ref="section-random-numbers-histograms" />, it is inconvenient to edit the script every time we want to change the numbers in it, like the number of rows/columns of a matrix. One can use user input instead, making the script interactive:  
+<cd>
+m = input('Number of rows: ');
+n = input('Number of columns: ');
+</cd>
+The text in <c>input</c> command will be shown to the user as a prompt. When the user enters a number, that number gets assigned to the variable <c>m</c>. Same happens with <c>n</c>. After that the computation proceeds.
+</p>
+
+<example>
+	<title>Sums of random numbers with user input</title>
+<statement>
+	<p>Modify <xref ref="example-sums-random"/> so that instead of fixed numbers 10 and 10000, it takes user input for those numbers.</p>
+</statement>
+<answer>
+<pre>
+m = input('How many numbers in a sum? ');
+n = input('How many sums to compute? ');
+A = rand(m, n);
+S = sum(A, 1);
+histogram(S, 30)
+</pre>
+</answer>
+</example> 
+</section>
+
+<section xml:id="section-formatted-output">
+
+<title>Formatted output</title>
+
+<p>We have been using <c>disp</c> command to display some number or text. But we may want to display a sentence with some numbers included in it. And we may want to show more (or fewer) digits than <c>disp</c> does. For this, the command <c>fprintf</c> is useful:  it produces an <term>interpolated string</term> which combines text and numeric data according to some formatting codes. For example, 
+<cd>fprintf('The number pi is %.15f and its cube is %.3f\n', pi, pi^3)</cd>
+displays <q>The number pi is 3.141592653589793 and its cube is 31.006</q>. Explanation:
+<ul>
+<li>The first argument of <c>fprintf</c> is a string, the other arguments are numbers which will be inserted into the string. Here the numbers are pi and pi cubed.</li>	
+<li>The formatting code <c>%.15f</c> says: insert a number with 15 digits after decimal point. This is the first formatting code, so it uses the first number provided after the string, which is pi.</li>
+<li>The formatting code <c>%.3f</c> says: insert a number with 3 digits after decimal point. Since this is the second formatting code in the string, it will use the second of the numbers after the string, which is pi cubed.</li>
+<li>The string ends with new line character <c>\n</c>, which is a good idea in general. Without it, subsequent output would appear on the same line, and would be hard to read.</li>
+</ul>
+</p>
+
+<p> Note that 15-16 decimal digits is about the limit of precision in Matlab computations. If we try <c>fprintf('The number pi is %.20f\n', pi)</c> the output is 
+<q>The number pi is 3.14159265358979310000</q> which looks suspicious, and for a good reason: the zeros at the end are not correct digits of pi. 
+</p>
+
+<p>For very large or very small numbers we need exponential notation. For example, if you ask Matlab to compute <c>pi^100</c> it will display the answer as <c>5.1878e+49</c>. This means <m>5.1878 \cdot 10^{49}</m>. The number after the letter e is the power of 10 by which we should multiply the number before <q>e</q>. The letter <q>e</q> stands for <q>exponential</q> not for the mathematical constant e. To use exponential notation in formatted strings, replace letter <c>f</c> in formatting codes by <c>e</c>. To remember these, note that <c>f</c> means Fixed decimal point, and <c>e</c> means Exponential notation.
+<cd>fprintf('The 100th power of pi is %.6e\n', pi^100)</cd>
+displays the result as <q>The 100th power of pi is 5.187848e+49</q>.
+</p> 
+</section>
+
+<section xml:id="examples-functions-input-output">
+
+<title>End-of-class examples</title>  
+
+<p> These are additional examples for reviewing the topic we have covered. When reading each example, try to find your own solution before clicking <q>Answer</q>. </p>
+
+<example><title>Random matrix with entries between two given numbers</title>
+<statement><p> Given numbers <m>a, b</m>  with <m>a \lt b</m>, construct a random 5<times/>5 matrix in which the entries are uniformly distributed between <m>a</m> and <m>b</m>.</p> </statement>
+<answer>
+<pre>A = (b-a)*rand(5, 5) + a;</pre>
+<p><em>Explanation</em>: we take random numbers between 0 and 1, and then apply a linear function which sends 0 to a, and 1 to b. This function is <m> y = (b-a)x + a</m>.</p>
+</answer>
+</example>
+
+<example> <title>Mean and median</title>
+<statement><p> The functions <c>mean</c> and <c>median</c> are aggregate functions which work similarly to <c>sum</c>. For example, <c>mean([1 9 8 3])</c> is 5.25 which is <m>(1+9+8+3)/4</m>. And <c>median([1 9 8 3])</c> is  5.5 because when these numbers are sorted as 1, 3, 8, 9 there are two in the middle, and their average is <m>(3+8)/2 = 5.5</m>. (When the number of data values is odd, the median is the number in the middle.)</p>
+<p>Plot a histogram of the mean of 10 random numbers, with 10000 such means computed.</p>		</statement>
+
+<answer> 
+<pre>
+A = rand(10, 10000); 
+m = mean(A, 1);
+histogram(m, 30)
+</pre>
+<p><em>Explanation</em>. Having created a random matrix A, we take the mean of each column with <c>mean(A, 1)</c>. If we used <c>median(A, 1)</c> the result would be a similar histogram. </p>
+</answer>
+</example>
+
+<example> <title>Difference between mean and median</title>
+<statement>For 10 randomly chosen numbers (with <c>rand</c>) we can compute both mean and median. How different can these be? That is, how large can the difference |mean-median| be? Try to approach this experimentally by computing this difference 10000 times and taking the maximum.
+</statement>
+<answer>
+<pre>
+A = rand(10, 10000); 
+m = mean(A, 1);
+md = median(A, 1);
+disp(max(abs(m-md)))
+</pre>
+<p>The result of computation depends on your luck. There is no guarantee that the maximum found after 10000 random tries is close to the actual maximum. </p>
+</answer>
+</example>
+</section>
+
+
+
+<exercises xml:id="exercises-functions-input-output">
+    <title>Homework</title>
+
+    <exercise number="1">
+        <statement>
+<p>Write a script that does the following: 
+<ol label="(a)">
+	<li>Asks the user to enter a number <c>n</c> that will be used for the size of a square matrix.</li>
+	<li>Creates a random n<times/>n matrix A with entries distributed between -1 and 1.</li>
+	<li>Computes the matrix <m>B = A^2</m>.</li>
+	<li>Shows a histogram of all entries of B, with 30 buckets.</li>
+</ol>
+</p>
+</statement>
+</exercise>
+
+    <exercise number="2">
+        <statement>
+<p>Write a script that does the following: 
+<ol label="(a)">
+<li> Asks the user for the number of rows and the number of columns, and creates a random matrix A of this size (with entries uniformly distributed between 0 and 1). </li>
+<li>Multiplies A by a random column vector x with entries uniformly distributed between 0 and 1.</li>
+<li>Shows the histogram of <m>Ax</m>, with 30 buckets. </li>
+<li> Displays formatted output: <q>The smallest entry of Ax is ... and the largest entry of Ax is ...</q>, with 9 digits after decimal dot in each of them.</li> 
+</ol>
+</p>
+</statement>
+</exercise>
+ 
+</exercises>
+
+</chapter>
