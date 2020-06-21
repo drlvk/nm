@@ -54,6 +54,7 @@ along with MathBook XML.  If not, see <http://www.gnu.org/licenses/>.
             <title>Using Matlab</title>
             <xi:include href="./matrices_vectors.xml" /> 
             <xi:include href="./systems_vectorization_plots.xml" />
+            <xi:include href="./functions_input_output.xml" />
         </part>
 
         <part xml:id="part-equations">
