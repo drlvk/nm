@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<chapter xml:id="systems-control-flow" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+<title>Control flow: loops and conditional statements</title>
+
+
+    <introduction>
+        <p>Loops and conditional statements in Matlab are similar to those in other imperative programming languages. But in Matlab, array operations (<xref ref="section-vectorization"/>) can often replace loops, and provide faster and shorter code. However, loops are sometimes unavoidable when the each computation depends on the result of the previous computation.</p>
+    </introduction>
+
+<section xml:id="section-for-loop">
+<title><c>for</c> loop</title>
+
+<p>Syntax of <c>for</c> loop: 
+<cd>
+for (variable) = (some vector, usually regularly spaced a:h:b) 
+    (some computation)
+end
+</cd>
+This means that <q>some computation</q> will be repeated for each entry of the vector specified in the line with <c>for</c>. Do not forget to <c>end</c> the loop: Matlab needs it to know which part of the code should be repeated in the loop. Indenting the body of the loop is 
+optional but it improves readability.  
+</p>
+
+<example xml:id="example-sum-cubes-for-loop">
+	<title>Sum of cubes</title>
+<statement>
+	<p>Find the sum of cubes of the integers from 1 to 10 using a <c>for</c> loop. </p>
+</statement>
+<answer>
+<pre>
+s = 0;
+for k = 1:10
+    s = s + k^3;
+end
+</pre>
+<p>Explanation: before entering the loop, we initialize the variable <c>s</c> with 0, meaning that the value of the sum is 0 before we start adding things to it. Each time the command <c>s = s + k^3</c> is executed, the cube of <c>k</c> is added to <c>s</c>. This repeats for each value in the vector <c>1:10</c>. When the loop ends, the variable <c>s</c> will contain the sum of cubes.</p>
+<p>This example is for illustration only: in practice the array operation <c>sum((1:10).^3)</c> would be a better choice because it is shorter and possibly more efficient than the loop.</p>
+<p>One could use a more descriptive variable name instead of <c>s</c>, for example <c>total</c>. But do not use <c>sum</c> because this is the name of a built-in Matlab function. Same goes 
+for <c>max</c> and <c>min</c>: since they are names of built-in functions, they should not be used as variable names. Also, although mathematicians often use <m>i</m> as index variable, it is too easy to confuse with digit <m>1</m> and so is best avoided. </p> 
+</answer>
+</example> 
+
+<p>A loop is necessary for <term>iterative</term> computations, when every step of computation uses the result of the previous one. <xref ref="example-sum-cubes-for-loop"/> is not like this, since the cubes of 1, 2, 3,... can be computed independently of each other: we do not need the cube of 5 in order to compute the cube of 6. In contrast, the computation of arithmetic-geometric mean in <xref ref="example-agm"/> is iterative: we compute the arithmetic and geometric means, and then use them as an input for next computation. </p>
+
+<example xml:id="example-agm-for-loop">
+	<title>Arithmetic-geometric mean using a <c>for</c> loop</title>
+<statement>
+	<p>Find the arithmetic-geometric mean (AGM) of 11 and 31 using a <c>for</c> loop. </p>
+</statement>
+<answer>
+<pre>
+x = 11;
+y = 31;
+for k = 1:10
+    a = (x+y)/2;
+    g = sqrt(x*y);
+    x = a;
+    y = g;
+end
+disp(x)
+</pre>
+<p>It does not matter whether we display <c>x</c> or <c>y</c> at the end because they become nearly equal after 10 iterations. The output is the number 19.7127, which we can check for correctness using, for example, Wolfram Alpha: <url href="https://www.wolframalpha.com/input/?i=agm%2811%2C31%29">agm(11,31)</url>.</p> 
+<p>The logic of the script: compute arithmetic and geometric means of x and y, then use them as our new values of x and y. One may be tempted to shorten the loop as follows</p>
+<pre>
+for k = 1:10
+    x = (x+y)/2;
+    y = sqrt(x*y);
+end
+</pre>
+<p>But this loop produces a wrong answer: 23.9912. The reason this script is wrong is that it changes x before the computation of geometric mean.  The definition of AGM requires both arithmetic and geometric means to be computed from the same pair x, y. Only after both means are computed, we can replace x and y with new values.</p> 
+</answer>
+
+</example> 
+</section>
+
+
+<section xml:id="section-while-loop">
+<title><c>while</c> loop</title>
+
+<p> In <xref ref="example-agm-for-loop"/> we used 10 iterations of arithmetic and geometric means computation. This was an arbitrary number. For some input values it may be enough or too many, for others not enough. A better approach is to stop the computation when the required precision is achieved. If we want the result to be accurate within <m>10^{-9}</m>, which is <c>1e-9</c> in Matlab notation, then we can stop as soon as the difference between the two means has absolute value less than that number (called the <term>tolerance</term>). This is what <c>while</c> loop can be used for. </p>
+<p>Syntax of <c>while</c> loop: 
+<cd>
+while (some condition) 
+    (some computation)
+end
+</cd>
+The loop will repeat while condition after <c>while</c> is true. It ends when this condition becomes false. So, if we want to stop when <c>abs(x-y) &lt; 1e-9</c>, the loop should be written as <c>while abs(x-y) >= 1e-9</c>.</p>
+
+<example xml:id="example-agm-while-loop">
+	<title>Arithmetic-geometric mean using a <c>while</c> loop</title>
+<statement>
+	<p>Find the arithmetic-geometric mean (AGM) of two numbers given by a user, with <c>1e-9</c> accuracy.</p>
+</statement>
+<answer>
+<pre>
+x = input('x = ');
+y = input('y = ');
+while abs(x-y) >= 1e-9
+    a = (x+y)/2;
+    g = sqrt(x*y);
+    x = a;
+    y = g;
+end
+fprintf('AGM(x, y) = %.9f\n', x)
+</pre>
+</answer></example>
+
+
+<p>There are two common issues with using <c>while</c> loops. One is that it can go on forever, if the algorithm fails to reach its goal (the difference never becomes smaller than the tolerance). It is better to admit that the algorithm failed than to be stuck in an infinite loop: we will deal with this in <xref ref="section-if-statement"/>. For now, note that if your program gets stuck in an infinite loop, you can terminate it by clicking within the Command Window and pressing <kbd>Ctrl</kbd>+<kbd>C</kbd>. </p>
+
+
+<p> Another issue is that the condition we want to test may not be defined at the beginning of the loop. This occurs when our condition for stopping is that the value of a variable essentially stopped changing. For example, one way to compute the <term>golden ratio</term> numerically is to start with any <m>x > 0</m> and keep replacing <m>x</m> with <m>\sqrt{x+1}</m>. If we write this as:</p>
+<pre>
+x = 1;
+while abs(newx - x) >= 1e-9
+    newx = sqrt(x+1);
+    x = newx;
+end
+fprintf('Golden ratio = %.9f\n', x)
+</pre>
+<p>the result will be an error: <q>Undefined function or variable <sq>newx</sq></q> because we attempt to compute an expression with <c>newx</c> before it is defined. Here is one way to correct this.</p> 
+<pre>
+x = 1;
+dx = 1; 
+while abs(dx) >= 1e-9
+    newx = sqrt(x+1);
+    dx = newx - x;
+    x = newx;
+end
+fprintf('Golden ratio = %.9f\n', x)
+</pre>	
+<p>Here we introduce a variable <c>dx</c> that represents the difference between old and new values of <c>x</c>. This variable can be initially assigned some arbitrary value that is greater than the tolerance, for example 1 or 100. This ensures that the condition <c>abs(dx) >= 1e-9</c> holds at the beginning of the loop. After that the loop changes the value of <c>dx</c> and the process repeats until it becomes small enough. </p>
+</section>
+
+<section xml:id="section-if-statement">
+<title><c>if</c> statement</title>
+
+<p> A <c>if</c> statement controls the flow of the program by executing one part of it if a certain condition is true (and possibly, executing another if the condition is false). The syntax is </p>
+<pre>
+if (condition)
+    (what to do if the condition is true)
+else
+    (what to do if the condition is false)
+end
+</pre> 
+<p>The part with <c>else</c> is optional if you don't want to do anything special when the condition is false. The <c>end</c> is required, as with loops. Here is a simple script that tells the user if the number they entered is positive or negative.</p>
+<pre>
+x = input('x = ');
+if x &lt; 0
+    disp('negative')
+else
+    disp('positive')
+end
+</pre> 
+<p>This code has a bug: if the user enters 0, the output is <sq>positive</sq>. To correct this, we need to put another <c>if</c> in the <c>else</c> clause. This is done with <c>elseif</c>:</p>
+<pre>
+x = input('x = ');
+if x &lt; 0
+    disp('negative')
+elseif x > 0
+    disp('positive')
+else 
+    disp('zero')
+end
+</pre> 
+<p>
+Generally, conditions in <c>while</c> and <c>if</c> are of the form x (relation) y where the relation can be 
+<ul>
+<li><c>&lt;</c> less than</li>
+<li><c>&gt;</c> greater than</li>
+<li><c>&lt;=</c> less than or equal</li>
+<li><c>&gt;=</c> greater than or equal</li>
+<li><c>==</c> equal</li>
+<li><c>~=</c> not equal</li>
+</ul>
+<em>Warning</em>: <c>if (x=y)</c> is incorrect, because a single = sign means <em>assignment</em> (make x equal to y), not equality (is x equal to y?). Also, we rarely need to test equality because it can fail because of tiny errors in computer arithmetics with non-integer numbers.</p> 
+
+<example xml:id="example-equality-floats">
+	<title>Testing the equality of two numbers</title>
+<statement>
+	<p>Write an <c>if</c> statement that tests whether <m>0.1+0.2</m> is equal to <m>0.3</m>.</p>
+</statement>
+<answer>
+<pre>
+if 0.1 + 0.2 == 0.3
+    disp('equal')
+else
+    disp('not equal')
+end  
+</pre>
+<p>Running this code you will see a surprising result: <q>not equal</q>. We will consider this later. The point to be taken here is that testing for equality is practical only when both sides of <c>==</c> are integers. </p>
+</answer>
+</example>
+</section>
+
+
+<section xml:id="section-break-statement">
+<title>Breaking out of a loop</title>
+
+<p>In <xref ref="section-while-loop"/> we noted an issue with <c>while</c> loop: it can go on forever, or for such a long time that we simply have to give up on the computation and maybe try something else. The command <c>break</c> exits the loop (it can be either <c>for</c> or <c>while</c> loop). This command is always contained in an <c>if</c> statement because the idea is to break out of the loop when some condition is reached. Here is an example of such situation. Starting with <c>x=1</c>, the code repeatedly replaces x with <m>\frac{1}{2}(x + a/x)</m> where the number <c>a</c> is provided by the user.</p> 
+<pre>
+a = input('a = ');
+tries = 1000;
+x = 1;
+for k = 1:tries
+    newx = (x + a/x)/2;
+    if abs(newx - x) &lt; 1e-9
+        break
+    end
+    x = newx;
+end
+
+if k &lt; tries
+    fprintf('Converged to x = %.9f\n', newx)
+else
+    disp('Failed to converge')
+end	
+</pre>
+<p> The loop has a limit of 1000 tries. It ends sooner if the required condition <q>new x is close to old one</q> is reached. After the loop there is another conditional statement which reports the result depending on whether the loop terminated early (success) or ran out of tries (failure). Try running this script with different inputs such as 2, -3, 4, -5, 6. What do you observe?</p>  
+</section>
+
+<section xml:id="examples-control-flow">
+
+<title>End-of-class examples</title>  
+
+<p> These are additional examples for reviewing the topic we have covered. When reading each example, try to find your own solution before clicking <q>Answer</q>. </p>
+
+<example xml:id="example-harmonic-series">
+	<title>Partial sums of the harmonic series</title>
+<statement><p> The harmonic series <m>1 + \frac{1}{2} + \frac{1}{3} + \frac{1}{4} + \cdots</m> diverges, meaning that its partial sums grow without a bound. So, if we add enough terms of this series, we will get a number greater than 10. Use a <c>while</c> loop to determine how many terms are required to get a partial sum that is greater than 10. 
+</p> </statement>
+<answer>
+<pre>
+s = 0;
+n = 1;
+while s &lt;= 10
+    s = s + 1/n;
+    n = n + 1;
+end
+fprintf('The partial sum has %d terms\n', n-1)
+</pre>
+<p><em>Explanation</em>: The variable <c>s</c> represents partial sums. We add <c>1/n</c> to it, and then increase the value of <c>n</c>. When <c>s > 10</c> the process stops. The output uses formatting code <c>%d</c> for integers, since the answer is an integer. Why does the output have <c>n-1</c> and not <c>n</c>? Because of the way that the loop is written, the value of n is increased <em>after</em> each addition. So at the end of it, <c>n</c> is the number that is 1 more than the number of terms we added.</p>
+</answer>
+</example>
+ 
+
+<example> <title>The Collatz conjecture</title>
+<statement><p> The Collatz conjecture, also known as the <term>Syracuse problem</term>, is a famous unsolved problem in mathematics. Its subject is the following process. 
+<ol>
+<li> Start with a positive integer k. </li>
+<li> If k is even, divide it by 2. Otherwise multiply it by 3 and add 1.</li>
+<li> Repeat Step 2.</li>
+</ol> 
+The conjecture is that this process always reaches the number 1 (after 1 it enters infinite loop 1, 4, 2, 1, 4, 2, ...) Write a script that verify this conjecture for initial values of k from 1 to 500, and for each of them record the number of steps that it takes to reach 1. Then plot the number of steps. Note: the condition that k is even can be tested as <c>if mod(k, 2) == 0</c> where <c>mod(k, 2)</c> computes the remained of dividing k by 2.</p> </statement>
+<answer>
+<pre>
+N = 500;
+steps = zeros(1, N);
+for n = 1:N
+    count = 0;
+    k = n;
+    while k > 1
+        if mod(k, 2) == 0
+            k = k/2;
+        else 
+            k = 3*k+1;
+        end
+        count = count + 1;
+    end 
+    steps(n) = count;
+end
+plot(1:N, steps, '.')
+</pre>
+<p><em>Explanation</em>. The array <c>steps</c> is created as a bunch of zeros, to be replaced with actual counts of steps. The initial value of Collatz process is called <c>n</c> and it runs through the numbers from 1 to 500. So the variable <c>k</c> is initially assigned the value <c>n</c> and then modified according to the rules stated above. Every time it is modified, the <c>count</c> of steps is increased by 1. The plot at the end shows each data point as an individual dot, not connecting them by lines. </p>
+</answer>
+</example>
+</section>
+
+
+
+<exercises xml:id="exercises-control-flow">
+    <title>Homework</title>
+
+    <exercise number="1">
+        <statement>
+<p>Explain the output of the script in <xref ref="section-break-statement"/> mathematically. What does it converge to, and why does it sometimes fail to converge?  (This problem does not involve Matlab.)
+</p>
+</statement>
+</exercise>
+
+    <exercise number="2">
+        <statement>
+<p>If in <xref ref="example-harmonic-series"/> we swap two lines <c>s = s + 1/n;</c> and
+<c>n = n + 1;</c> the answer becomes very different. Explain why this happens. 
+</p>
+</statement>
+</exercise>
+
+
+    <exercise number="3">
+        <statement>
+<p>Write a script that computes the <term>arithmetic-harmonic mean</term> which means 
+is similar to <xref ref="example-agm-while-loop"/> except that instead of geometric mean <c>g = sqrt(x*y);</c> we use the harmonic mean <c>h = 2*x*y/(x+y)</c>.  As a testing case, check that the arithmetic-harmonic mean of 5 and 20 is 10. </p>
+<p> Since there is no square root in this computation, we can use negative numbers too: the arithmetic-harmonic mean of -5 and -20 is -10. But if you start with two numbers of opposite signs, the loop never ends, so you will need to press <kbd>Ctrl</kbd>+<kbd>C</kbd> to end it. As a second part of this task, write another form of the loop, using the method from <xref ref="section-break-statement"/> to put a limit on the number of tries, for example 1000. </p>
+</statement>
+</exercise>
+ 
+</exercises>
+
+</chapter>

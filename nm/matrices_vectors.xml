@@ -45,7 +45,7 @@ disp((sqrt(5)+1)/2)
 
 <p>It is important to understand the difference between equations and assignments. In mathematics, <m>x = x + 1</m> is an equation which has no solutions. In Matlab, <cd>x = x + 1;</cd> is an assignment command which means <q>take the current value of x, add 1 to it, and assign the result to x</q>. The effect is that the value of x is increase by 1.</p>
 
-<example>
+<example xml:id="example-agm">
 	<title>Arithmetic and geometric means</title>
 <statement>
 	<p>Write a script that does the following. Assign two unequal positive numbers to x and y (for example, two different digits of your SUID). Compute their arithmetic mean <m>a = \dfrac{x+y}{2}</m> and geometric mean <m>g = \sqrt{xy}</m>. Then display the arithmetic mean of <m>a</m> and <m>g</m>. Finally, display the geometric mean of <m>a</m> and <m>g</m>. </p>

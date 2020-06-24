@@ -136,6 +136,8 @@ displays <q>The number pi is 3.141592653589793 and its cube is 31.006</q>. Expla
 <cd>fprintf('The 100th power of pi is %.6e\n', pi^100)</cd>
 displays the result as <q>The 100th power of pi is 5.187848e+49</q>.
 </p> 
+
+<p>There is also a formatting code <c>%d</c> to be used for integers, when you do not want a decimal dot at all.</p> 
 </section>
 
 <section xml:id="examples-functions-input-output">
