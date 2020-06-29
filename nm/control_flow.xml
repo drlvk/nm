@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<chapter xml:id="systems-control-flow" xmlns:xi="http://www.w3.org/2001/XInclude">
+<chapter xml:id="chapter-control-flow" xmlns:xi="http://www.w3.org/2001/XInclude">
 
 <title>Control flow: loops and conditional statements</title>
 
@@ -273,6 +273,8 @@ end
 plot(1:N, steps, '.')
 </pre>
 <p><em>Explanation</em>. The array <c>steps</c> is created as a bunch of zeros, to be replaced with actual counts of steps. The initial value of Collatz process is called <c>n</c> and it runs through the numbers from 1 to 500. So the variable <c>k</c> is initially assigned the value <c>n</c> and then modified according to the rules stated above. Every time it is modified, the <c>count</c> of steps is increased by 1. The plot at the end shows each data point as an individual dot, not connecting them by lines. </p>
+<p>This example demonstrates the use of both kinds of loops. Note that the variable involved in <c>while</c> loop condition, <c>while k > 1</c>, should be modified within the loop, otherwise it will never end. In contrast, the variable involved in <c>for</c> loop condition <c>for n = 1:N</c> should <em>not</em> be modified since it is automatically incremented with each run of the loop. 
+</p>
 </answer>
 </example>
 </section>
