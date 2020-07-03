@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<chapter xml:id="chapter-linear-systems" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+<title>Systems of linear equations</title>
+
+
+    <introduction>
+        <p>We study how Matlab treats various types of linear systems, including systems with multiple solutions and systems with no solutions. We are not going to study the algorithms used by Matlab to solve linear systems; this is done in MAT 532. Our goal is to interpret the results. </p>
+    </introduction>
+
+<section xml:id="section-classification-linear-systems">
+<title>Classification of linear systems</title>
+
+<p>A system of <m>m</m> linear equations with <m>n</m> unknowns can be written as <m>Ax=b</m> where <m>A</m> is a <m>m\times n</m> matrix, <m>x</m> is an unknown column vector with <m>n</m> coordinates, and <m>b</m> is a known column vector with <m>m</m> coordinates.  Linear systems are classified by consistency and shape.</p> 
+
+<p>A linear system is called <term>consistent</term> if it has at least one solution. Otherwise it is <term>inconsistent</term>. So, in terms of solutions there are three possibilities:
+<ol>
+<li>consistent with a unique solution</li> 
+<li>consistent with infinitely many solutions</li>
+<li>inconsistent</li>
+</ol> 
+These possibilities are easy to visualize in terms of 2<times/>2 systems: 
+<md>
+<mrow>a_{11}x_1 + a_{12}x_2 \amp = b_1</mrow>
+<mrow>a_{21}x_1 + a_{22}x_2 \amp = b_2</mrow>
+</md>
+Each of these equations determines a line in the plane. In Case 1 the two lines intersect; in Case 2 they are the same line; in Case 3 they are parallel.</p> 
+
+<p>In terms of shape, a linear system is <term>square</term> if it has as many equations as unknowns, <m> m = n</m>. It is called <term>underdetermined</term> there are fewer equations than variables: <m> m \lt n</m>, matrix has more columns than rows. A system is <term>overdetermined</term> if it has more  equations than variables: <m> m \gt n</m>, matrix has more rows than columns.</p>  
+
+<p>The three shapes do not exactly correspond to the three classes based on consistency. But if you pick a matrix at random (like using <c>rand</c>), you will find that overdetermined systems are usually inconsistent, underdetermined systems are usually consistent with infinite solutions, and square systems are usually  consistent with a unique solution.</p> 
+
+<p>The consistency can be analyzed in terms of the <term>rank</term> of a matrix. By definition, a matrix has rank <m>r</m> if it has <m>r</m> linearly independent columns, and all other columns are their linear combinations. One can replace <q>columns</q> by <q>rows</q> in the previous sentence. One can compute the rank with <c>rank</c> in Matlab. Also, the Matlab formula <c>[A b]</c> forms the <term>augmented matrix</term> of the system  <m>Ax=b</m>, which has an extra column with the entries of <m>b</m>. </p>
+
+<theorem>
+    <title>Consistency and rank</title>
+  <statement>
+    <p><ul>
+      <li>The system  <m>Ax=b</m> is consistent if and only if <c>rank([A b])</c> is equal to <c>rank(A)</c>.</li>
+      <li>A consistent system has a unique solution if and only if <c>rank(A)</c> is equal to the number of columns of <m>A</m>.</li>
+  </ul></p>
+  </statement>
+</theorem>
+ 
+
+<example>
+    <title>Determine the consistency of a system</title>
+<statement>
+    <p>Use an if-elseif-else statement with <c>rank</c> to determine the consistency and the number of solutions of the system with matrix <me>A = \begin{pmatrix} 1 \amp 2\amp  3 \\ 4 \amp 5 \amp 6\\ 7\amp  8 \amp 9 \end{pmatrix} </me> and with <me>b = \begin{pmatrix} 10 \\ 11 \\ 12\end{pmatrix} </me>
+    </p>
+</statement>
+<answer>
+<pre>
+m = 3;
+n = 3;
+A = [1 2 3; 4 5 6; 7 8 9];
+b = [10 11 12]';
+if rank(A) &lt; rank([A b])
+    disp('Inconsistent')
+elseif rank(A) == n
+    disp('Consistent with a unique solution')
+else 
+    disp('Consistent with infinitely many solutions')
+end
+</pre> 
+</answer>
+</example> 
+</section>
+
+
+<section xml:id="section-systems-without-free-variables">
+<title>Systems without free variables</title>
+
+<p>What do we get when solving a system with <c>A\b</c> in Matlab? Let us first consider the case when <c>rank(A)</c> is <c>n</c>, so every column of A is a basic column, which means there are no free variables. When such a system is consistent, it has a unique solution and <c>A\b</c> finds this unique solution. When the system is inconsistent, we get the <term>least-squares solution</term>: the vector <m>x</m> for which the norm of the <term>residual vector</term> <m>Ax-b</m> is as small as possible. Recall that the norm of a vector <m>v = (v_1, \dots, v_m)</m> is <me>\|v\| = \sqrt{v_1^2+\cdots +v_m^2}</me>
+In Matlab this norm can be computed in several ways: 
+<ul>
+<li><c>sqrt(sum(v.^2))</c></li>
+<li><c>sqrt(v'*v)</c> when <c>v</c> is a column vector</li>  
+<li><c>sqrt(v*v')</c> when <c>v</c> is a row vector</li>
+<li><c>norm(v)</c></li>
+</ul> 
+The last way is easiest. </p>
+
+
+<example>
+    <title>The least-squares solution and the norm of residual vector</title>
+<statement>
+    <p>Find the least-squares solution <m>x</m> and the norm of residual vector $<m>Ax-b</m> for the system with the matrix
+    <me>A = \begin{pmatrix} 1 \amp 2 \\ 4 \amp 3  \\ 5\amp  6 \end{pmatrix} </me> and with <me>b = \begin{pmatrix} 7 \\ 8 \\ 9\end{pmatrix} </me>
+    </p>
+</statement>
+<answer>
+<pre>
+A = [1 2; 4 3; 5 6];
+b = [7 8 9]';
+x = A\b;
+disp(x)
+disp(norm(Ax-b))
+</pre> 
+</answer>
+</example> 
+
+<p>A practical use of least squares solutions is linear regression. Suppose we are given some data points <m>(x_k, y_k)</m> and want to find the line <m>y = cx+d</m> that fits these points the best. The idea is to imagine we could have perfect fit: 
+<md>
+    <mrow>c x_1 + d \amp = y_1 </mrow>
+    <mrow>c x_2 + d \amp = y_2 </mrow>
+    <mrow>\cdots \amp = \cdots </mrow>
+    <mrow>c x_m + d \amp = y_m </mrow>
+</md> 
+This system can be written as <m>Az=b</m> where 
+<me>
+A = \begin{pmatrix} x_1 \amp 1 \\ x_2 \amp 1 \\ \vdots \amps \vdots \\ x_m \amp 1 \end{pmatrix},
+\quad 
+b = \begin{pmatrix} y_1 \\ y_2 \\ \vdots \\ y_m \end{pmatrix}, 
+\quad z = \begin{pmatrix} c \\ d \end{pmatrix} </me> 
+This is an overdetermined system when we have more than 2 data points. Unless all <m>x</m>-values are the same (which should not happen), the rank of A is 2 and so the system has no free variables. This means that <c>A\b</c> will find its least squares solution: a vector with components <m>(c, d)</m> for which the sum of squares of the residuals <m>cx_k+d - y_k</m> is as small as possible. This is the line of best least-squares fit, and this process is known as linear regression in statistics.</p>
+
+
+<example xml:id="example-line-best-fit">
+    <title>Line of best fit</title>
+<statement>
+    <p>Find the line of best fit (in the sense of least squares) to the six points with x-values (-1, 0, 2, 3, 4, 7) and y-values (9, 8, 5, 5, 3, -2).  Plot both the line and the points.
+    </p>
+</statement>
+<answer>
+<pre>
+x = [-1, 0, 2, 3, 4, 7]'; 
+y = [9, 8, 5, 5, 3, 1]';
+A = [x, x.^0];
+z = A\y;
+xx = linspace(min(x), max(x), 500)';
+yy = [xx, xx.^0]*z;
+hold on
+plot(xx, yy)
+plot(x, y, 'r*')
+hold off
+</pre> 
+<p>Explanation: think of <m>cx+d</m> as <m>cx + dx^0</m> because this naturally leads to the matrix of this linear system: its columns are <c>x</c> and <c>x.^0</c>. The plot of given data points created by <c>plot(x, y, 'k*')</c> consists of red asterisks, not joined by a line. But to plot the line of best fit (or a curve of best fit, in general) we use more points on the x-axis. These points are in the vector <c>xx</c>: they are evenly distributed over the same interval where the given data points lie. The way in which y-coordinates of this line are computed may look strange. The matrix product <c>[xx, xx.^0]*z</c> is logically the same as <c>z(1)*xx + z(2)</c>: multiply x-values by the coefficient <m>c</m> and add the constant term <m>d</m>. Writing it in matrix form allows for easier generalization later. 
+</p>
+</answer>
+</example> 
+</section>
+
+
+<section xml:id="section-systems-with-free-variables">
+<title>Systems with free variables</title>
+
+<p>When the rank of matrix <m>A</m> is less than the number of variables, the system has free variables. In a Linear Algebra course, we would move the free variables to the right, and solve the rest of the system. But Matlab sets free variables to <m>0</m> and then solves the system as described in <xref ref="section-systems-without-free-variables"/>. </p>
+
+<example xml:id="example-system-free-variable">
+    <title>System with a free variable</title>
+<statement>
+<p>Use Matlab to solve the  system 
+<me>\begin{pmatrix}1\amp 2 \amp 3 \\ 4 \amp 5 \amp 6\end{pmatrix}x= \begin{pmatrix} 10 \\ 11 \end{pmatrix}</me></p>
+</statement>
+<solution>
+<pre>
+A = [1 2 3; 4 5 6];
+b = [10; 11];
+disp(A\b)
+</pre>
+<p>The displayed solution is <c>[-4.5; 0; 4.8333]</c>. </p>
+</solution></example>
+
+<p>In geometric terms, the system in <xref ref="example-system-free-variable"/> describes the intersection of two planes in 3-dimensional space. This intersection is a line. The solution that Matlab picks is the point where this line cross one of coordinate planes.</p> 
+
+<p>There is another logical choice of solution in a problem like this: one could pick the point on the line that is closest to the origin <m>(0, 0, 0)</m>, that is the solution of smallest norm  . This solution can be computed with <c>pinv(A)*b</c>, which results in 
+<c>[-4.5556; 0.1111; 4.7778]</c>. This approach takes longer because it involves computing the <term>pseudoinverse</term> of <m>A</m> which is a subject of MAT 532. </p> 
+</section>
+
+<section xml:id="section-singular-round-off">
+<title>The effect of round-off-errors</title>
+ 
+<example xml:id="example-square-rank-deficient"><title>Square rank-deficient system</title> 
+<statement>
+<p>Compare the system 
+<me>\begin{pmatrix}1\amp 2 \amp 3 \\ 4 \amp 5 \amp 6 \\ 7 \amp 8 \amp 9 \end{pmatrix}x= \begin{pmatrix} 10 \\ 11 \\ 12 \end{pmatrix}</me>
+to <xref ref="example-system-free-variable"/>. Does it have the same solution?</p></statement>
+<solution>
+<p>This new system as one more equation, but it is redundant: if you multiply the second line by 2 and subtract the first line, the result is the 3rd line. So, this system is <em>mathematically</em> equivalent to the previous one. Yet, the Matlab solution is different.</p>
+<pre>
+A = [1 2 3; 4 5 6; 7 8 9];
+b = [10; 11; 12];
+disp(A\b)
+</pre>
+<p>The result is <c>[-25.3333;  41.6667;  -16.0000]</c>, quite different from what we got in  <xref ref="example-system-free-variable"/>. Matlab did not even recognize this as a system with a free variable.</p> 
+</solution></example> 
+
+<p>What explains the result of <xref ref="example-square-rank-deficient"/>?
+When solving it, we get a warning message: <q>Matrix is close to singular or badly scaled. Results may be inaccurate.</q> This means the result of this computation are likely to be influenced by inevitable <term>round-off errors</term> in computer arithmetics.</p> 
+
+<p>The round-off errors are usually very small: for example, 
+<cd>0.1 + 0.2 - 0.3</cd>
+produces <c>5.5511e-17</c> instead of the expected <c>0</c>. The underlying reason is that, for example, the number <m>0.1</m> is internally represented not as <m>1/10</m> but as a fraction <m>p/q</m> where <m>q</m> must be a power of 2 (because the computer arithmetic is binary in nature. Both <m>p</m> and <m>q</m> are chosen very large which makes the approximation <m>p/q \approx  1/10</m> very good for most purposes. But it cannot be perfect, because if <m>p/q = 1/10</m>, then <m>10p = q</m> which is a contradiction: the left hand side is divisible by 5, so the right hand side cannot be a power of 2.</p> 
+
+<example>
+    <title>Approximating numbers by fractions with a power of 2</title>
+<statement>
+<p>For each of the numbers 0.1, 0.2, 0.3, find a fraction with denominator 32 which is the best approximation to it. Use these approximations, instead of the actual numbers, in the formula <m>0.1 + 0.2 - 0.3</m>. What is the result?</p>
+</statement>
+<solution>
+<p>To find approximations, multiply each of the numbers by 32 and round the result to the nearest integer. Thus, <m>0.1\approx 3/32</m>, <m>0.2\approx 6/32</m>, and <m>0.3 \approx 10/32</m> (because <m>0.3\cdot 32 = 9.6</m> rounds to 10). Hence
+<me>
+ 0.1 + 0.2 - 0.3 \approx \frac{3}{32} + \frac{6}{32} - \frac{10}{32} = -\frac{1}{32}
+</me>
+The result is not zero due to round-off errors. This is exactly what happens in Matlab computations, except that they involve a much larger power of 2.</p>
+</solution></example> 
+
+<p>The tiny round-off errors have a major impact on the solution of linear systems when, as a result of some row operations, some entry should theoretically be zero but in practice it is not (like <m>0.1 + 0.2 - 0.3</m> above). So, the process of elimination that was supposed to eliminate a redundant equation, making it <m>0=0</m>, instead turns it into some <q>numerical garbage</q>. Matlab tries to detect such situations and warn the user about them, indicating that the solution it finds may be useless.</p>
+</section>
+
+<section xml:id="examples-linear-systems">
+
+<title>End-of-class examples</title>  
+
+<p> These are additional examples for reviewing the topic we have covered. When reading each example, try to find your own solution before clicking <q>Answer</q>. </p>
+
+<example><title>Parabola of best fit</title>
+<statement><p>Using the data of <xref ref="example-line-best-fit"/>, find and plot the parabola <m>y = cx^2+dx+e</m> that fits the data best in the sense of least squares. </p> </statement>
+<answer>
+
+
+<pre>
+x = [-1, 0, 2, 3, 4, 7]'; 
+y = [9, 8, 5, 5, 3, 1]';
+A = [x.^2, x, x.^0];
+z = A\y;
+xx = linspace(min(x), max(x), 500)';
+yy = [xx.^2, xx, xx.^0]*z;
+hold on
+plot(xx, yy)
+plot(x, y, 'r*')
+hold off
+</pre>
+<p><em>Explanation</em>: the only modification that we need is to add a column with the squares of x-values. In general, this process allows us to fit a function of the form 
+<m>c_1 f_1(x) + c_2 f_2(x) + \cdots + c_n f_n(x) </m> where <m>f_1, f_2, \dots, f_n</m> are given functions and <m>c_1, c_2, \dots, c_n</m> are coefficients (parameters) to be determined.</p>
+<p> Note that the parabola we get is not very different from a line. The line was already a good fit, and we did not gain much from using a more complicated curve. Later we will consider the issue of <em>model selection</em>: how to decide which model is more appropriate (for example, linear or quadratic). </p>
+</answer>
+</example>
+
+<example> <title>Slight perturbation of a singular system</title>
+<statement><p>Modify <xref ref="example-square-rank-deficient"/> by replacing 1 with 1.000001. How does the solution change? Repeat, this time replacing 9 by 9.000001. How did the solution change now?</p></statement>
+<solution>
+<p>
+<pre> 
+A = [1.000001 2 3; 4 5 6; 7 8 9];
+b = [10; 11; 12];
+</pre>
+leads to <c>A\b</c> being <c>[0.0000; -9.0000; 9.3333]</c>. In contrast, with 
+<pre> 
+A = [1 2 3; 4 5 6; 7 8 9.000001];
+</pre>
+we get the solution <c>[-9.3333; 9.6667; 0.0000]</c> which is quite different. Note that Matlab shows no warnings in either case. These systems do not have a free variable: the rank of A is 3. Yet, the solution is very sensitive to small changes of the system, because the matrix is close to being singular (or degenerate). </p></solution>
+</example>
+</section>
+
+
+
+<exercises xml:id="exercises-linear-systems">
+    <title>Homework</title>
+
+    <exercise number="1">
+        <statement>
+<p>For each of the following systems, decide if it is: (i) overdetermined, under-determined, or square; (ii) has a unique solution, has infinitely many solutions, or is inconsistent. Briefly explain how you reached these conclusions. To save time, you may use Matlab's <c>rank</c> command to compute the ranks of matrices. 
+<me>
+\begin{cases}
+3x_1 -x_3 \amp =  0  \\
+x_1 -2 x_2 \amp =  3  \\
+2x_2 + 5x_3 \amp = -1
+\end{cases}
+</me>
+<me>
+\begin{cases}
+3x_1 +4x_2 -x_3 \amp =  4  \\
+x_1 -2 x_2 + 3x_3\amp =  4  \\
+\end{cases}
+</me>
+<me>
+\begin{cases}
+3x_1 +4x_2 -x_3 + x_4 \amp =  2  \\
+x_1 -2 x_2 + 3x_3 - x_4 \amp =  -3  \\
+7x_1 +6 x_2  + x_3 + x_4 \amp =  1  \\
+\end{cases}
+</me>
+</p>
+</statement>
+</exercise>
+
+    <exercise number="2">
+        <statement>
+<p>Write a function <c>linearfit</c> that takes arguments <c>x</c> and <c>y</c> (vectors of the same size) and returns two numbers <c>c</c> and <c>d</c>, coefficients of the best-fitting line <m>y=cx+d</m>. Then apply it to the population of your hometown during years 1980, 1985, ..., 2010, 2015. (The data should be easy to find online; if not, use a larger nearby town). The code could look like this.</p> 
+<pre>
+function hw6()
+  x =  1980:5:2015;  % years  
+  y =                % population of your hometown in these years 
+  plot(x, y, 'r*')   % plot as red asterisks
+  hold on            % keep this plot; we'll put another one on top of it
+  [c, d] = linearfit(x, y);            % find the coefficient of linear fit
+  xx = linspace(min(x), max(x), 500);  % to be used for plotting the line
+  plot(t, c*xx + d)                    % plot the line
+  hold off                             % stop holding on to the plot 
+end
+
+function [k, c] = linearfit(x,y)
+  ... set up and solve an overdetermined system, 
+  ... then assign c and d based on its solution
+end
+</pre>
+<p>The character <c>%</c> is used for inserting comments in Matlab code: everything after it to the end of the line is ignored.</p>
+</statement>
+</exercise>
+ 
+</exercises>
+
+</chapter>
