@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<chapter xml:id="chapter-roots-bisection" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+<title>Root finding: bisection</title>
+
+
+    <introduction>
+        <p>A fundamental numerical problem is to solve an equation (in general, not linear). What does it mean to find a numeric solution of <m>f(x)=0</m>? We consider the simplest of several methods of root-finding: the bisection method. </p>
+    </introduction>
+
+<section xml:id="section-motivation-numeric-solution">
+<title>Motivation for solving equations numerically</title>
+
+<p>We often want to solve an equation of the form <m>f(x)=0</m>, given a real-valued function <m>f</m> of one real variable <m>x</m>. Some such equations admit a <term>symbolic</term> solution, obtained by some algebraic manipulations. For example, the equation <m>2e^x - 3 = 0</m> has the solution <m>x=\log(3/2)</m>. But if we put together two or more unrelated functions, for example <m>2e^x + x^3 - 1 = 0</m>, algebra does not help.</p>
+
+<p>For this reason, Matlab has a built-in root-finding function <c>fzero</c>. Its first argument is the function which should be equated to zero, the second argument is our initial guess at where the solution may be (put 0 if you have no idea). For example, 
+<cd>fzero(@(x) 2*exp(x) + x^3 - 1, 0)</cd> 
+finds the solution <c>-0.5439</c>. But even though we have <c>fzero</c>, we still have to understand the methods used for finding roots, because 
+<ol label="(a)">
+<li> <c>fzero</c> only gives one solution, there may be others;</li>
+<li> the output of <c>fzero</c>  may be wrong.</li>
+</ol> 
+An example of wrong answer: 
+<cd>fzero(@(x) exp(-x^2), 0)</cd>
+returns <c>x=-28.9631</c>. In reality, <m>e^{-x^2} = 0</m> has no solutions, and there is nothing special about the number produced by <c>fzero</c>: this is just where its algorithm decided to stop, thinking <q>close enough</q>. </p> 
+</section>
+
+<section xml:id="section-meaning-numeric-solution">
+<title>The meaning of a numeric solution</title>
+
+<p>In what sense do we expect the equation <m>f(x)=0</m> to hold? Because of the round-off errors (<xref ref="section-singular-round-off"/>), we wlll not necessarily get 0 when plugging in some number x. For example, if <c>f = @(x) x^2-2;</c> then we would expect <c>f(sqrt(2))</c> to be 0, but actually <c>f(sqrt(2))</c> produces <c>4.4409e-16</c>, a small but nonzero number. We could ask for <c>abs(f(x))</c> to be small, for example <c>abs(f(x)) &lt; eps</c> where the Matlab command <c>eps</c> returns <c>2^{-52}</c>, the amount of round-off error one can expect for numbers of size about 1. But there are two issues with this approach:
+<ol>
+<li>The error in computing <c>f(x)</c> may be much larger than <c>eps</c>, as round-off errors may accumulate.</li>
+<li>Very small value of <c>f(x)</c> do not mean that <c>x</c> is near a root of function <c>f</c>: for example, the function <c>f = @(x) exp(-x^2);</c> has 
+<c>abs(f(7)) &lt; eps</c>, but the equation <m>f(x)=0</m> has  no solutions at all. </li>
+</ol> </p>
+
+<p>A more robust approach is to look not for a single number but for an <em>interval</em> <m>[a, b]</m> that is known to contain a root of function <m>f</m>. If the interval is small enough, it does not really matter where in the interval the solution is. How small is small enough? There is no universal answer. For many practical purposes, <m>b-a \lt 10^{-6}</m> is good enough. Or we may want <m>b-a \lt 10^{-12}</m> to get a more accurate answer. This makes sense when the root itself is not extremely large or extremely small. But when the root is of size <m>10^{20}</m> we cannot possibly hope to get an interval of length <m>10^{-6}</m> around it, or even of length 1. Indeed, the comparison <c>10^20 + 1 == 10^(20)</c> evaluates as True in Matlab, meaning that it cannot tell these numbers apart because of the limitation of computer arithmetic. </p> 
+
+<p> For the reason mentioned in the previous paragraph, the Matlab command <c>eps(x)</c> gives the smallest possible size of an interval including <c>x</c> that can be expressed in its arithmetic. For example, <c>eps(10^20)</c> returns 16384, indicating we cannot expect an interval around <m>10^{20}</m> to be smaller than 16384. When looking for a root, a reasonable approach is to consider an interval <m>[a, b]</m> <q>small enough</q> when <c>b - a &lt; 100*eps(a)</c> where the factor 100 allows for accumulation of round-off errors during the computation.</p> 
+ </section>
+
+
+<section xml:id="section-bisection-method">
+<title>Bisection method</title>
+
+<p>The bisection method is based on the <term>Intermediate Value Theorem</term>. Suppose that the function <m>f</m> is continuous on the interval <m>[a, b]</m>
+and <m>f(a)f(b) \lt 0</m>, meaning that <m>f</m> takes on values of opposite sign at the endpoints. The Intermediate Value Theorem says that there exists some root of <m>f</m> between <m>a</m> and <m>b</m>: that is, there exists <m>x</m> in <m>(a, b)</m> such that <m>f(x)=0</m>. </p>
+
+<figure xml:id="bisection1-png"><image source="images/bisection1.png" /> <caption>To go from positive to negative, a function function must turn to 0</caption></figure>
+
+<p>An interval  <m>[a, b]</m> such that <m>f(a)f(b) \lt 0</m> is called a <term>bracketing interval</term>. As <xref ref="bisection1-png"/> shows, there could be multiple roots inside of the bracketing interva. The bisection method will find <em>one</em> of them. </p> 
+
+<p><term>Bisection method</term>: Divide the interval in two halves by the midpoint <m>c = (a+b)/2</m>. Since <m>f(a)</m> and <m>f(b)</m> have opposite signs, one of the following holds: 
+<ul>
+<li> If <m>f(c)</m> has the same sign as <m>f(a)</m>, then we replace <m>a</m> with <m>c</m>, making <m>[c, b]</m> our new bracketing interval.</li>
+<li> If <m>f(c)</m> has the same sign as <m>f(b)</m>, then we replace <m>b</m> with <m>c</m>, making <m>[a, c]</m> our new bracketing interval.</li>
+<li> If <m>f(c) = 0</m>, we already found a root so the process stops.</li>
+</ul>
+The above process repeats until the bracketing interval is small enough, as discussed in <xref ref="section-meaning-numeric-solution"/>.</p>
+
+<figure xml:id="bisection2-png"><image source="images/bisection2.png" /> <caption>Bisection method illustrated by marking the bracketing intervals </caption></figure>
+
+<example xml:id="example-bisection">
+<title> Finding a root by bisection</title>
+<statement><p>Find a root of equation <m>e^{-x/2} + \sin(3x) = 1/2</m> on the interval <m>[-1, 1.5]</m> using bisection. (This is the function shown on <xref ref='bisection2-png' />). The Matlab function <c>sign</c> can be used to compare the signs of values.
+</p> </statement>
+<solution>
+<pre>
+f = @(x) exp(-x/2) + sin(3*x) - 1/2;
+a = -1;
+b = 1.5;
+if f(a)*f(b) >= 0    
+    error('Not a bracketing interval'); 
+end
+
+while abs(b-a) >= 100*eps(a)
+    c = (a+b)/2;  
+    if sign(f(c)) == sign(f(a)) 
+        a = c;        
+    elseif sign(f(c)) == sign(f(b)) 
+        b = c;
+    else
+        break
+    end         
+end
+
+fprintf('Found a root x = %.12g\n', (a+b)/2);   
+</pre>
+<p>If the function has the same sign at both given endpoints, the bisection method cannot run, so the command <c>error</c> is used to display a message and exit the program. This is a useful command to use when the computation has to be interrupted. The <c>while</c> loop runs until either the interval becomes small enough (length less than <c>100*eps(a)</c>) or we accidentally reach <m>f(c)=0</m> so the loop stops. </p>
+</solution>
+</example>
+
+<p>The bisection method is not very fast, but is very reliable. If the initial bracketing interval had length <m>L</m>, after <m>n</m> iterations we get an interval of length <m>2^{-n}L</m>. So, it takes about 50 iterations to reduce the bracketing interval from length <m>100</m> to length <m>10^{-13}</m>. The speed of convergence of a numerical method is often visualized by plotting the logarithm of the error as a function of the number of steps. For the bisection method, the error after <m>n</m> steps is <m>2^{-n}|a-b|</m> so the logarithm is <m>\log|a-b| - n \log 2</m>. This is a <em>linear</em> function of <m>n</m>, and therefore it is said that the bisection method has <term>linear speed of convergence</term>.</p>  
+
+<figure xml:id="bisection3-png"><image source="images/bisection3.png" /> <caption>Logarithm of error as a function of the number of steps</caption></figure>
+
+</section>
+
+<section xml:id="section-bisection-issues">
+    <title>Limitations of the bisection method</title>
+<p>The main limitation of the bisection method are: 
+<ul>
+    <li>It does not apply to systems of more than one equation</li>
+    <li>It  requires the knowledge of a bracketing interval</li>
+    <li>It requires a continuous function</li>
+    <li>Its speed of convergence is slow (linear)</li>
+</ul>
+To illustrate the second limitation, consider the equation <m>x^2 - 2x + 0.9999 = 0</m>. It has two roots, both of which are very close to 1. Outside of a small neighborhood of 1, the function is positive. So, in order to construct a bracketing interval one needs to place one of its endpoints very close to 1. This means one needs to have a good idea of where the roots are in order to start with the method. </p> 
+
+<p>Calculus methods involving the derivative <m>f'</m> can help us understand in what direction the function changes, improving our chance of finding a bracketing interval.</p>  
+
+<example>
+   <title> Find the number of roots and a bracketing interval for each of them</title>
+<statement><p>For the function <m>f(x) = 2e^x + x^3 - 1</m>, determine the number of roots and find a bracketing interval for each of them.</p></statement>
+
+<solution><p>The derivative <m>f'(x) = 2e^x + 3x^2</m> is always positive. Therefore, the function <m>f</m> increases on the real line. Such a function either has no roots (if its graph never crosses the <m>y</m>-axis), or has one root. Since <m>f(x)\to \infty</m> as <m>x\to \infty</m> and <m>f(x) \to -\infty</m> as <m>x\to-\infty</m>, it follows that the graph crosses the <m>y</m>-axis. We need a finite bracketing interval, since for the bisection method to work, both <m>a</m> and <m>b</m> must be finite. Since <m>f(0) = 2 + 0 - 1 = 1 > 0</m> it remains to find a negative value. For example, <m>f(-1) = 2e^{-1} - 1 - 1 = 2(1-e)/e \lt 0</m>.  </p>
+<p>Answer: one root, with a bracketing interval <m>[-1, 0]</m>.</p>
+</solution>
+</example>
+</section> 
+
+<section xml:id="examples-roots-bisection">
+
+
+<title>End-of-class examples</title>  
+
+
+<example xml:id="example-bracketing-30x-exp">
+   <title> Number of roots and a bracketing interval for each of them</title>
+<statement><p>For the function <m>f(x) = 30x e^{10x} + 1</m>, use  the derivative <m>f'</m> determine the number of roots and find a bracketing interval for each of them. (No programming is needed.)</p></statement>
+
+<solution><p>The derivative <m>f'(x) = 30( 10x + 1) e^{10x}</m> has the same sign as <m>10x+1</m>. Therefore, the function has a minimum at <m>x = -1/10</m>. Its value there is <m>f(-1/10) = 
+- 3e^{-1} + 1 = 1-3/e \lt 0 </m>. </p>
+<p>On the interval <m>(-\infty, -1/10)</m> the function is decreasing, so there is at most one root here. Since <m>f(-1) = -30e^{-10} + 1 > 0</m>, there is a root with bracketing interval <m>[-1, -1/10]</m>.</p> 
+<p>On the interval <m>(-1/10,  \infty)</m> the function is increasing, so there is at most one root here. Since <m>f(0) = 1 > 0</m>, there is a root with bracketing interval <m>[-1/10, 0]</m>.</p> 
+<p>Answer: two roots, with bracketing intervals <m>[-1, -1/10]</m> and <m>[-1/10, 0]</m>.
+</p></solution></example>
+
+<example xml:id="example-discontinuity">
+   <title> Incorrect answer obtained by bisection</title>
+<statement><p>Run the code in <xref ref="example-bisection" /> with the following modification:
+<cd>
+f = @(x) tan(x);
+a = 1;
+b = 2;
+</cd>
+Note that <m>\tan(1) \approx 1.5574 > 0</m> and <m> \tan(2) \approx -2.1850 \lt 0</m>, so the bisection algorithm can run. What is its output, and what is wrong with it? How could this error be avoided? </p></statement>
+
+<solution><p> The program output is <q>Found a root x = 1.57079632679</q>.   
+But this value is not a solution of equation <m>\tan x = 0</m>. It is a point of discontinuity, where the tangent has vertical asymptote <m>x = \pi/2</m>. Because of discontinuity, the tangent function changes sign without passing through 0. </p>
+<p>One way to avoid this error is to check whether the function has a <q>small</q> value at the root that we found, for example as follows.</p>
+<pre>
+x = (a+b)/2;
+if abs(f(x)) &lt; 1e-9
+    fprintf('Found a root x = %.12g\n', x);
+else 
+    fprintf('Suspected discontinuity at x = %.12g\n', x);
+end
+</pre>
+<p>Then the output is <q>Suspected discontinuity at x = 1.57079632679</q></p>
+</solution>
+</example>
+
+</section> 
+
+  
+
+
+
+<exercises xml:id="exercises-roots-bisection">
+    <title>Homework</title>
+
+    <exercise number="1">
+        <statement>
+<p> For the function <m>f(x) = \log(x^2 + 1/2)  + 9x^4 </m>, use  the derivative <m>f'</m> determine the number of roots and find a bracketing interval for each of them. (No programming is needed.)
+</p>
+</statement>
+</exercise>
+
+    <exercise number="2">
+        <statement>
+<p>Write a Matlab script which finds and prints <em>both</em> roots of the equation <m>30x e^{10x} = -1</m>, using the bisection of the bracketing interval found in <xref ref="example-bracketing-30x-exp" />. To avoid duplicating code, write a named function <c>bisection(f, a, b)</c> which takes the function and a bracketing interval as arguments and returns a root by using the algorithm in <xref ref="section-bisection-method" />. The script could look as follows. </p> 
+<pre>
+function hw7()
+    f = @(x) 30*x*exp(10*x) + 1;
+    root1 = bisection(f, -1, -0.1);
+    root2 = ...   
+    fprintf('Found roots at %.12g and %.12g\n', root1, root2)
+end
+
+function x = bisection(f, a, b)
+    ...
+end
+</pre>
+</statement>
+</exercise>
+ 
+</exercises>
+
+</chapter>

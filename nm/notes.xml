@@ -62,6 +62,7 @@ along with MathBook XML.  If not, see <http://www.gnu.org/licenses/>.
         <part xml:id="part-equations">
             <title>Solving Equations</title>
             <xi:include href="./linear_systems.xml" />
+            <xi:include href="./root_finding_bisection.xml" />
         </part>
 
         <part xml:id="part-calculus">
