@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<chapter xml:id="chapter-fixed-point-iteration" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+<title>Root finding: fixed point iteration</title>
+
+
+    <introduction>
+        <p>We look for solutions of the equation <m>f(x)=x</m>, which are called the fixed points of function <m>f</m>. The simplest approach to finding them is to iterate the function: that is, plug the value of <m>f</m> back into <m>f</m>, repeatedly.  </p>
+    </introduction>
+
+<section xml:id="section-classification-fixed-points">
+<title>Classification of fixed points</title>
+
+<p>A <term>fixed point</term> of a function <m>g</m> is a number <m>x^*</m> such that <m>g(x^*)=x^*</m>. This is the same as a root of <m>g(x)-x=0</m> but we will see that writing an equation with <m>x</m> on the right provides a new approach to solving it. </p>
+
+<example>
+    <title>Find all fixed points of a function</title>
+<statement><p>Find all fixed points of the function <m>g(x) = \sqrt{1+x}</m></p> </statement>
+<solution> <p>Squaring both sides of <m>\sqrt{1+x} = x</m> yields <m>x^2 - x - 1</m> which is a quadratic equation with roots <m>(1\pm \sqrt{5})/2 </m>. However, the negative root does not satisfy the original equation  <m>\sqrt{1+x} = x</m>. </p>
+<p>Answer: one fixed point   <m>x^* = (1+\sqrt{5})/2</m>.</p></solution>
+</example>
+
+<p>The process of <term>iterating</term> some function <m>g</m> consists of the following: start from some initial value <m>x_0</m>, let <m>x_1=g(x_0)</m>, <m>x_2 = g(x_1)</m>, and generally <m>x_{n+1} = g(x_n)</m>. If the sequence <m>x_n</m> has a limit  <m>x^* </m>, and <m>g</m> is a continuous function, it follows that <m>g(x^*)=x^*</m>. </p> 
+
+<p>However, can we expect the iteration to converge to a fixed point <m>x^* </m>? The answer depends on the value of <m>g'(x^*)</m>. Indeed, when <m>x\approx x^*</m>, the difference <m>g(x)-x^*</m> is approximately <m>g'(x^*)(x-x^*)</m> because the graph of a differential function is close to its tangent line. When <m>|g'(x^*)|\lt 1</m>, the distance to fixed point is decreasing but if  <m>|g'(x^*)| > 1</m> it is increasing. This leads us to introduce the following concept.</p>
+
+<p><em>Classification of fixed points</em>. A fixed point <m>x^*</m> is called
+<ul>
+    <li><term>repelling</term> if <m>|g'(x^*)| > 1</m> </li>
+    <li><term>attracting</term> if <m>|g'(x^*)| \lt 1</m> </li>
+    <li><term>super-attracting</term> if <m>g'(x^*) = 0 </m> (a special case of attracting fixed points)</li>
+    <li><term>neutral</term> if <m>|g'(x^*)| = 1 </m> </li>
+</ul>
+According to the above, iteration of <m>g</m> may converge to an attracting point but will not converge to a repelling one. The neutral points are a borderline case: some of them are limits of iterative process, some are not. </p>
+
+<example><title>Find and classify the fixed points</title>
+<statement><p>Find and classify all fixed points of the function <m>g(x) = x^3 + x^2 - x</m>.</p></statement>
+<solution><p> The equation <m>x^3 + x^2 - x = x</m> simplifies to <m>x(x^2 + x - 2) =0</m> which has roots <m>0, 1, -2</m>. These are the three fixed points. Plug each into the derivative <m>g'(x) = 3x^2 + 2x - 1</m> to find that 
+<ul>
+    <li> <m>|g'(0)| = |-1| = 1</m>, a neutral fixed point </li>
+    <li> <m>|g'(1)| = |4| = 4</m>, a repelling fixed point </li>
+    <li> <m>|g'(-2)| = |7| = 7</m>, a repelling fixed point </li>
+</ul>
+</p></solution></example>
+
+</section>
+
+<section xml:id="section-rewriting-fixed-point">
+   <title>Rewriting equations in the fixed-point form</title> 
+
+<p>We now have a new method of solving the equations <m>f(x)=0</m>: rewrite it as $g(x)=x$, and build a sequence <m>x_{n+1} = g(x_n)</m>. If this sequence has a limit, which we recognize by <m>|x_{n+1} - x_n|</m> being small, then we have a fixed point of <m>g</m>, hence a root of <m>f</m>. There are multiple ways to rewrite <m>f(x)=0</m> in the fixed-point form:
+<ul>
+    <li> <m>f(x) + x = x</m> </li>
+    <li> <m>x - f(x) = x</m> </li>
+    <li> <m>x - 3 f(x)^3 = x</m> </li>
+</ul>
+and so on. Although the fixed points are the same each case (they are the roots of <m>f</m>), their classification may be different. For example, consider <m>f(x) = x^3 + 4x -5</m>. We know it has a root at <m>x=1</m>. If we try to rewrite the equation <m>f(x) = 0</m> as <m>x^3 + 5x - 5 = x</m> the fixed point at 1 is repelling because <m>(x^3+5x -5)' = 3x^2 + 5</m> has modulus <m>8>1</m>. Another rewrite is <m>(5-x^3)/4 = x</m>. This one works because the derivative of <m>(5-x^3)/4</m> is <m>-3x^2/4</m> with absolute value of <m>3/4</m> at <m>x=1</m>. The denominator 4 helped reduced the derivative here. 
+</p>
+
+<example><title>Rewrite and solve by fixed-point iteration</title>
+<statement><p>Solve the equation <m>x^3 + 5x  = 2</m> by the fixed-point iteration method.</p> </statement>
+<solution><p>The function <m>x^3 + 5x</m> is increasing from 0 to 6 on the interval <m>[0, 1]</m>. Therefore, the equation has a solution in this interval. Following the idea of the previous paragraph, rewrite it as <m>(2-x^3)/5 = x</m>. This means <m>g(x) = (2-x^3)/5</m> and <m>g'(x) = -3x^2/5</m>. Note this <m>|g'| \lt 1</m> on <m>[0, 1]</m> which guarantees that the fixed point is attracting. Here is the code to find it.</p>
+<pre>
+g = @(x) (2-x^3)/5;
+x0 = 0;
+for k = 1:1000
+    x1 = g(x0);
+    if abs(x1-x0) &lt; 100*eps(x0)
+        break
+    end
+    x0 = x1;
+end
+if k &lt; 1000
+    fprintf('Found x = %.12g\n', x1);
+else
+    disp('Failed to converge')
+end
+</pre>
+<p>The reason for using a <c>for</c> loop is to set a limit for the number of attempts (1000). The loop ends sooner if the values of x essentially stop changing. We do not need separate variables for every element of the sequence: x0 and x1 keep being reused for <q>old</q> and <q>new</q> x-values. The output is <q>Found x = 0.388291441005</q>.  
+</p></solution></example>
+
+</section>
+
+<section xml:id="section-rate-convergence">
+<title>The speed of convergence of fixed-point iteration</title>
+
+<p>
+Near an attractive fixed point with $0 \lt |g'(x^*)| \lt  1$, the convergence is linear in the sense that the error at the next step is about $|g'(x^*)|$ times the error of the previous step. But if $g'(x^*)=0$ (superattractive fixed point), then the rate is quadratic: next error is at most a square of the previous error. Compare these to appreciate the difference: 
+ </p>
+
+ 
+ </section>
+  
+
+<section xml:id="examples-fixed-point-iteration">
+
+
+<title>End-of-class examples</title>  
+
+
+<example xml:id="example-bracketing-30x-exp">
+   <title> Number of roots and a bracketing interval for each of them</title>
+<statement><p>For the function <m>f(x) = 30x e^{10x} + 1</m>, use  the derivative <m>f'</m> determine the number of roots and find a bracketing interval for each of them. (No programming is needed.)</p></statement>
+
+<solution><p>The derivative <m>f'(x) = 30( 10x + 1) e^{10x}</m> has the same sign as <m>10x+1</m>. Therefore, the function has a minimum at <m>x = -1/10</m>. Its value there is <m>f(-1/10) = 
+- 3e^{-1} + 1 = 1-3/e \lt 0 </m>. </p>
+<p>On the interval <m>(-\infty, -1/10)</m> the function is decreasing, so there is at most one root here. Since <m>f(-1) = -30e^{-10} + 1 > 0</m>, there is a root with bracketing interval <m>[-1, -1/10]</m>.</p> 
+<p>On the interval <m>(-1/10,  \infty)</m> the function is increasing, so there is at most one root here. Since <m>f(0) = 1 > 0</m>, there is a root with bracketing interval <m>[-1/10, 0]</m>.</p> 
+<p>Answer: two roots, with bracketing intervals <m>[-1, -1/10]</m> and <m>[-1/10, 0]</m>.
+</p></solution></example>
+
+<example xml:id="example-discontinuity">
+   <title> Incorrect answer obtained by bisection</title>
+<statement><p>Run the code in <xref ref="example-bisection" /> with the following modification:
+<cd>
+f = @(x) tan(x);
+a = 1;
+b = 2;
+</cd>
+Note that <m>\tan(1) \approx 1.5574 > 0</m> and <m> \tan(2) \approx -2.1850 \lt 0</m>, so the bisection algorithm can run. What is its output, and what is wrong with it? How could this error be avoided? </p></statement>
+
+<solution><p> The program output is <q>Found a root x = 1.57079632679</q>.   
+But this value is not a solution of equation <m>\tan x = 0</m>. It is a point of discontinuity, where the tangent has vertical asymptote <m>x = \pi/2</m>. Because of discontinuity, the tangent function changes sign without passing through 0. </p>
+<p>One way to avoid this error is to check whether the function has a <q>small</q> value at the root that we found, for example as follows.</p>
+<pre>
+x = (a+b)/2;
+if abs(f(x)) &lt; 1e-9
+    fprintf('Found a root x = %.12g\n', x);
+else 
+    fprintf('Suspected discontinuity at x = %.12g\n', x);
+end
+</pre>
+<p>Then the output is <q>Suspected discontinuity at x = 1.57079632679</q></p>
+</solution>
+</example>
+
+</section> 
+
+  
+
+
+
+<exercises xml:id="exercises-fixed-point-iteration">
+    <title>Homework</title>
+
+    <exercise number="1">
+        <statement>
+<p> For the function <m>f(x) = \log(x^2 + 1/2)  + 9x^4 </m>, use  the derivative <m>f'</m> determine the number of roots and find a bracketing interval for each of them. (No programming is needed.)
+</p>
+</statement>
+</exercise>
+
+    <exercise number="2">
+        <statement>
+<p>Write a Matlab script which finds and prints <em>both</em> roots of the equation <m>30x e^{10x} = -1</m>, using the bisection of the bracketing interval found in <xref ref="example-bracketing-30x-exp" />. To avoid duplicating code, write a named function <c>bisection(f, a, b)</c> which takes the function and a bracketing interval as arguments and returns a root by using the algorithm in <xref ref="section-bisection-method" />. The script could look as follows. </p> 
+<pre>
+function hw7()
+    f = @(x) 30*x*exp(10*x) + 1;
+    root1 = bisection(f, -1, -0.1);
+    root2 = ...   
+    fprintf('Found roots at %.12g and %.12g\n', root1, root2)
+end
+
+function x = bisection(f, a, b)
+    ...
+end
+</pre>
+</statement>
+</exercise>
+ 
+</exercises>
+
+</chapter>

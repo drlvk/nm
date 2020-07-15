@@ -42,8 +42,7 @@ along with MathBook XML.  If not, see <http://www.gnu.org/licenses/>.
 <!-- <pretext xmlns:xi="http://www.w3.org/2001/XInclude" xml:lang="fr-FR"> -->
    
     <book xml:id="numerical-methods">
-        <title>Numerical Methods with Programming</title>
-        <subtitle>Lecture Notes</subtitle>
+        <title>Numerical Methods with Programming</title> 
 
         <xi:include href="./frontmatter.xml" />                 <!-- Title Page, Preface, etc. -->
 
@@ -63,6 +62,7 @@ along with MathBook XML.  If not, see <http://www.gnu.org/licenses/>.
             <title>Solving Equations</title>
             <xi:include href="./linear_systems.xml" />
             <xi:include href="./root_finding_bisection.xml" />
+            <xi:include href="./fixed_point_iteration.xml" />
         </part>
 
         <part xml:id="part-calculus">

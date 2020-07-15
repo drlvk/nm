@@ -92,9 +92,18 @@ fprintf('Found a root x = %.12g\n', (a+b)/2);
 </solution>
 </example>
 
-<p>The bisection method is not very fast, but is very reliable. If the initial bracketing interval had length <m>L</m>, after <m>n</m> iterations we get an interval of length <m>2^{-n}L</m>. So, it takes about 50 iterations to reduce the bracketing interval from length <m>100</m> to length <m>10^{-13}</m>. The speed of convergence of a numerical method is often visualized by plotting the logarithm of the error as a function of the number of steps. For the bisection method, the error after <m>n</m> steps is <m>2^{-n}|a-b|</m> so the logarithm is <m>\log|a-b| - n \log 2</m>. This is a <em>linear</em> function of <m>n</m>, and therefore it is said that the bisection method has <term>linear speed of convergence</term>.</p>  
+<p>The bisection method is not very fast, but is very reliable. If the initial bracketing interval had length <m>L</m>, after <m>n</m> iterations we get an interval of length <m>2^{-n}L</m>. So, it takes about 50 iterations to reduce the bracketing interval from length <m>100</m> to length <m>10^{-13}</m>. The speed of convergence of a numerical method is often visualized by plotting the logarithm of the error as a function of the number of steps. For the bisection method, the error after <m>n</m> steps is <m>2^{-n}|a-b|</m> so the logarithm is <m>\log|a-b| - n \log 2</m>. </p>
 
 <figure xml:id="bisection3-png"><image source="images/bisection3.png" /> <caption>Logarithm of error as a function of the number of steps</caption></figure>
+
+<p>Generally, if some numerical method has error <m>\epsilon_n</m> after <m>n</m> steps, we say that the method is
+<ul>
+   <li><term>linearly convergent</term> if <m>\epsilon_{n+1} \le c\epsilon_b</m> with some constant <m>c \lt 1</m></li>
+   <li><term>quadratically convergent</term> if <m>\epsilon_{n+1} \le M\epsilon_n^2</m> with some constant <m>M</m></li>
+   <li><term>convergent with order <m>p</m></term> if <m>\epsilon_{n+1} \le M\epsilon_n^p</m> with some constants <m>M</m>, <m>p > 0</m>. </li>
+</ul>
+Since for the bisection method <m>\epsilon_{n+1} = \frac{1}{2}\epsilon_n</m>m the  
+  bisection method is linearly convergent.</p>  
 
 </section>
 
@@ -124,8 +133,9 @@ To illustrate the second limitation, consider the equation <m>x^2 - 2x + 0.9999 
 <section xml:id="examples-roots-bisection">
 
 
-<title>End-of-class examples</title>  
+<title>Examples and questions</title>  
 
+<p> These are additional examples for reviewing the topic we have covered. When reading each example, try to find your own solution before clicking <q>Answer</q>. There are also questions for reviewing the concepts of this section. </p>
 
 <example xml:id="example-bracketing-30x-exp">
    <title> Number of roots and a bracketing interval for each of them</title>
@@ -162,6 +172,20 @@ end
 <p>Then the output is <q>Suspected discontinuity at x = 1.57079632679</q></p>
 </solution>
 </example>
+
+
+<question> <title><q>Trisection</q> method</title> 
+<p>The word <q>bisection</q> means dividing something into two parts, usually equal ones. In the bisection method, an interval is divided into two equal parts, of which we keep one. This means that the length of the interval is divided by 2 at each step.</p>
+
+
+<p>One can imagine a similar <q>trisection method</q> where an interval is divided into three equal parts, and one of them is kept. With this method, the length of the interval is divided by 3 at each step, so the interval shrinks faster.  Does this make the trisection method faster than the bisection method? Why or why not?</p>
+</question>
+
+
+<question> <title>Better detection of discontinuity</title> 
+<p>In <xref ref="example-discontinuity" /> we avoid mistaking discontinuity for a root by adding the check <c>abs(f(x)) &lt; 1e-9</c>. What could go wrong with this approach? Think of some situation where this additional check will reject a valid solution. Could it be replaced by a better one?</p> 
+</question>
+
 
 </section> 
 
