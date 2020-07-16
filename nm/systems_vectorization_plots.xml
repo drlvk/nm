@@ -189,9 +189,9 @@ plot(t.*cos(t), t.*sin(t))
 
 <section xml:id="examples-systems-vectorization-plots">
 
-<title>End-of-class examples</title>  
+<title>Examples and questions</title>  
 
-<p> These are additional examples for reviewing the topic we covered. When reading each example, try to find your own solution before clicking <q>Answer</q>. </p>
+<p> These are additional examples for reviewing the topic we have covered. When reading each example, try to find your own solution before clicking <q>Answer</q>. There are also questions for reviewing the concepts of this section. </p>
 
 
 <example><title>Tridiagonal matrix of arbitrary size</title>
@@ -247,6 +247,14 @@ plot(x, y)
 <p>Note the use of semicolons to prevent Matlab from displaying hundreds of numbers that we do not need to see.</p>
 </answer>
 </example>
+
+<question><title>x as a function of y</title>
+<p>How would you plot a function where <m>x</m> is given as a function of <m>y</m>, for example <m>x = y + \cos y</m> with <m>-5\le y\le 5</m>? </p></question> 
+
+<question><title>A <q>wrong</q> way to multiply matrices</title>
+<p>Can you imagine a situation where you would want to compute <c>A.*B</c> where both <c>A</c> and <c>B</c> are square matrices of the same size?</p>
+<p> An idea: a matrix can be used to store a greyscale image, so that each entry is the brightness of the corresponding pixel. What would elementwise  multiplication <c>A.*B</c> mean in this context?</p></question> 
+
 </section>
 
 

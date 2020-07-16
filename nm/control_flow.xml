@@ -222,9 +222,10 @@ end
 
 <section xml:id="examples-control-flow">
 
-<title>End-of-class examples</title>  
+<title>Examples and questions</title>  
 
-<p> These are additional examples for reviewing the topic we have covered. When reading each example, try to find your own solution before clicking <q>Answer</q>. </p>
+<p> These are additional examples for reviewing the topic we have covered. When reading each example, try to find your own solution before clicking <q>Answer</q>. There are also questions for reviewing the concepts of this section. </p>
+
 
 <example xml:id="example-harmonic-series">
 	<title>Partial sums of the harmonic series</title>
@@ -245,7 +246,7 @@ fprintf('The partial sum has %d terms\n', n-1)
 </example>
  
 
-<example> <title>The Collatz conjecture</title>
+<example xml:id="example-collatz"> <title>The Collatz conjecture</title>
 <statement><p> The Collatz conjecture, also known as the <term>Syracuse problem</term>, is a famous unsolved problem in mathematics. Its subject is the following process. 
 <ol>
 <li> Start with a positive integer k. </li>
@@ -277,6 +278,24 @@ plot(1:N, steps, '.')
 </p>
 </answer>
 </example>
+
+<question><title>Avoiding an intermediate variable</title>
+<p>If in <xref ref="example-agm-for-loop" /> we did not introduce the variable <c>g</c> and simply wrote <c>y = sqrt(x*y)</c>, would the result still be correct? Why or why not?</p></question> 
+
+<question><title>Changing the <c>for</c> loop variable</title>
+<p>What exactly would go wrong in <xref ref="example-collatz" /> if we did not introduce <c>k</c> and simply wrote the same <c>while</c> loop with <c>n</c>, as below?</p>
+<pre>
+    while n > 1
+        if mod(n, 2) == 0
+            n = n/2;
+        else 
+            n = 3*n+1;
+        end
+        count = count + 1;
+    end 
+</pre></question>
+
+
 </section>
 
 

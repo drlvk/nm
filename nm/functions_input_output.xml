@@ -137,14 +137,22 @@ displays <q>The number pi is 3.141592653589793 and its cube is 31.006</q>. Expla
 displays the result as <q>The 100th power of pi is 5.187848e+49</q>.
 </p> 
 
+<p>Often it is easiest to the formatting code <c>g</c> which lets Matlab decide between fixed point and exponential notation on its own, based on the size of the number. Here is an example.</p>
+<pre>
+x = 111.111
+fprintf('The first four powers of %.6g are %.6g, %.6g, %.6g, %.6g\n', x, x, x^2, x^3, x^4)
+</pre>
+<p>The output is <q>The first four powers of 111.111 are 111.111, 12345.7, 1.37174e+06, 1.52415e+08</q></p>	
+
 <p>There is also a formatting code <c>%d</c> to be used for integers, when you do not want a decimal dot at all.</p> 
 </section>
 
 <section xml:id="examples-functions-input-output">
 
-<title>End-of-class examples</title>  
+<title>Examples and questions</title>  
 
-<p> These are additional examples for reviewing the topic we have covered. When reading each example, try to find your own solution before clicking <q>Answer</q>. </p>
+<p> These are additional examples for reviewing the topic we have covered. When reading each example, try to find your own solution before clicking <q>Answer</q>. There are also questions for reviewing the concepts of this section. </p>
+
 
 <example><title>Random matrix with entries between two given numbers</title>
 <statement><p> Given numbers <m>a, b</m>  with <m>a \lt b</m>, construct a random 5<times/>5 matrix in which the entries are uniformly distributed between <m>a</m> and <m>b</m>.</p> </statement>
@@ -168,7 +176,7 @@ histogram(m, 30)
 </answer>
 </example>
 
-<example> <title>Difference between mean and median</title>
+<example xml:id="example-difference-mean-median"> <title>Difference between mean and median</title>
 <statement>For 10 randomly chosen numbers (with <c>rand</c>) we can compute both mean and median. How different can these be? That is, how large can the difference |mean-median| be? Try to approach this experimentally by computing this difference 10000 times and taking the maximum.
 </statement>
 <answer>
@@ -181,6 +189,16 @@ disp(max(abs(m-md)))
 <p>The result of computation depends on your luck. There is no guarantee that the maximum found after 10000 random tries is close to the actual maximum. </p>
 </answer>
 </example>
+
+<question><title>Mean and median for a 0-1 vector</title>
+<p>Suppose <c>v</c> is a vector with 10 elements, in which 6 elements are 0 and the others are 1. 
+What are the mean and the median of <c>v</c>? (You should not need a computer for this.) Is the difference between the mean and the median in this example greater than what you found experimentally in <xref ref="example-difference-mean-median" />?</p></question>
+
+
+<question><title>Squaring a random number</title>
+<p>We know that <c>x = rand()</c> produces a random number between 0 and 1. The command <c>x = rand()^2</c> also produces a random number between 0 and 1. Is there a significant difference between these two ways of creating random numbers? </p></question>
+
+
 </section>
 
 

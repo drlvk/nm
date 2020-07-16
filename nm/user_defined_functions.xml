@@ -1,81 +1,69 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-
-<chapter xml:id="chapter-user-defined-functions" xmlns:xi="http://www.w3.org/2001/XInclude">
-
-<title>User-defined functions</title>
-
-
-    <introduction>
-        <p>In addition to the functions built into Matlab, one can define new ones. There are two ways to introduce new functions: <q>anonymous functions</q> and <q>named functions</q>. The use of anonymous functions is similar to mathematical functions like <c>log</c>. The use of named functions has more to do with program structure than with mathematics.</p>
-    </introduction>
-
-<section xml:id="section-anonymous-functions">
-<title>Anonymous functions</title>
-
-<p>The concept of an <term>anonymous function</term> in Matlab closely corresponds to mathematical notion of a function: it consists of a formula that transforms input into output. For example, to have mathematical function <m>f(x) = \exp(-x^2)</m> in your code, you would write <cd>f = @(x) exp(-x^2);</cd> and then use <c>f</c> in expressions such as <c>f(0)</c> or <c>3*f(x-2)</c>.</p> 
-
-<p>When writing a function, one should consider whether it should accept input in the form of a vector or a matrix. The function in the previous paragraph works fine with scalar input, such as <c>f(2)</c> but throws an error if the input is a vector, for example <c>f([0 1 2 3])</c>. The reason is that with this input, <c>x^2</c> becomes <c>[0 1 2 3]^2</c> which is an error in Matlab where <c>^2</c> means matrix multiplication. We want an array operation, not a matrix product. Thus, the function should be written as <cd>f = @(x) exp(-x.^2);</cd>
+<?xml version='1.0' encoding='UTF-8'?>
+<chapter xmlns:xi="http://www.w3.org/2001/XInclude" xml:id="chapter-user-defined-functions">
+  <title>User-defined functions</title>
+  <introduction>
+    <p>In addition to the functions built into Matlab, one can define new ones. There are two ways to introduce new functions: <q>anonymous functions</q> and <q>named functions</q>. The use of anonymous functions is similar to mathematical functions like <c>log</c>. The use of named functions has more to do with program structure than with mathematics.</p>
+  </introduction>
+  <section xml:id="section-anonymous-functions">
+    <title>Anonymous functions</title>
+    <p>The concept of an <term>anonymous function</term> in Matlab closely corresponds to mathematical notion of a function: it consists of a formula that transforms input into output. For example, to have mathematical function <m>f(x) = \exp(-x^2)</m> in your code, you would write <cd>f = @(x) exp(-x^2);</cd> and then use <c>f</c> in expressions such as <c>f(0)</c> or <c>3*f(x-2)</c>.</p>
+    <p>When writing a function, one should consider whether it should accept input in the form of a vector or a matrix. The function in the previous paragraph works fine with scalar input, such as <c>f(2)</c> but throws an error if the input is a vector, for example <c>f([0 1 2 3])</c>. The reason is that with this input, <c>x^2</c> becomes <c>[0 1 2 3]^2</c> which is an error in Matlab where <c>^2</c> means matrix multiplication. We want an array operation, not a matrix product. Thus, the function should be written as <cd>f = @(x) exp(-x.^2);</cd>
 Then we can apply this function to a vector, for example to plot it.</p>
-<pre>
+    <pre>
 x = linspace(-3, 3, 500);
 plot(x, f(x))
 </pre>
-<p>An anonymous function can have multiple variables, for example the mathematical formula <m>f(x) = (xy+1)/z</m> could be defined as <c>f = @(x,y,z) (x.*y + 1)./z</c>. The inclusion of periods allows this function to vectors for its inputs, provided the vectors are of the same size.  </p>
-<p>The names of the parameters (variables inside of anonymous function) do not matter outside of that function. For example, there is no problem with the following code</p>
-<pre>
+    <p>An anonymous function can have multiple variables, for example the mathematical formula <m>f(x) = (xy+1)/z</m> could be defined as <c>f = @(x,y,z) (x.*y + 1)./z</c>. The inclusion of periods allows this function to vectors for its inputs, provided the vectors are of the same size.  </p>
+    <p>The names of the parameters (variables inside of anonymous function) do not matter outside of that function. For example, there is no problem with the following code</p>
+    <pre>
 f = @(x) x + 4;
 x = 1;
 y = 3;
 disp(f(y))
 </pre>
-<p>The result is 7, because this is the output that <c>f</c> produces when its input is 3. The variable <c>x</c> outside of the function (which was given the value of 1) has no relation to the variable <c>x</c> inside of the function.</p>
-
-<p>A limitation of anonymous functions is that they consist of a single expression: there is no place for conditional statements or loops. But one can still construct piecewise defined functions using inequalities as a part of an arithmetic expression. When an inequality such as <c>(x &lt; 3)</c> appears in an expression, it is treated as 1 when the inequality is true, and 0 when false. Therefore, the function defined by <cd>f = @(x) (x>=0).*sqrt(x) + (x &lt; 0).*exp(x)</cd> evaluates to <m>\sqrt{x}</m> when <m>x\ge 0</m> and to <m>e^x</m> when <m> x \lt 0</m>. </p>
-
-
-<example>
-	<title>Sum of reciprocals</title>
-<statement>
-	<p>Write an anonymous function which, when given a number <m>n</m>, returns the sum of the reciprocals of all positive integers between <m>1</m> and <m>n</m>.  </p>
-</statement>
-<answer>
-<pre>
+    <p>The result is 7, because this is the output that <c>f</c> produces when its input is 3. The variable <c>x</c> outside of the function (which was given the value of 1) has no relation to the variable <c>x</c> inside of the function.</p>
+    <p>A limitation of anonymous functions is that they consist of a single expression: there is no place for conditional statements or loops. But one can still construct piecewise defined functions using inequalities as a part of an arithmetic expression. When an inequality such as <c>(x &lt; 3)</c> appears in an expression, it is treated as 1 when the inequality is true, and 0 when false. Therefore, the function defined by <cd>f = @(x) (x&gt;=0).*sqrt(x) + (x &lt; 0).*exp(x)</cd> evaluates to <m>\sqrt{x}</m> when <m>x\ge 0</m> and to <m>e^x</m> when <m> x \lt 0</m>. </p>
+    <example>
+      <title>Sum of reciprocals</title>
+      <statement>
+        <p>Write an anonymous function which, when given a number <m>n</m>, returns the sum of the reciprocals of all positive integers between <m>1</m> and <m>n</m>.  </p>
+      </statement>
+      <answer>
+        <pre>
 H = @(n) sum((1:n).^(-1));
 </pre>
-<p>These sums are called <term>harmonic numbers</term> (hence the letter H for this function). 
+        <p>These sums are called <term>harmonic numbers</term> (hence the letter H for this function). 
 What happens if it is given a negative or fractional input? The regular vector <c>1:n</c> contains all positive integers that are not greater than n. So, <c>1:3.7</c> is <c>[1 2 3]</c>, same as <c>1:3</c>. This means <c>H(3.7)</c> is <c>1/1 + 1/2 + 1/3</c>, same as <c>H(3)</c>. And if a number less than 1 is given, the regular vector <c>1:n</c> is empty, and the sum of an empty set of numbers is 0. For example, <c>H(-2)</c> is 0. 
 </p>
-</answer>
-</example> 
-   
-</section>
-
-<section xml:id="named-functions">
-
-<title>Named functions</title>
-
-<p>Named functions can do the same thing as anonymous functions. Here is <m>\exp(-x^2)</m> again, this time as a named function. </p>
-<pre>
+      </answer>
+    </example>
+  </section>
+  <section xml:id="named-functions">
+    <title>Named functions</title>
+    <p>Named functions can do the same thing as anonymous functions. Here is <m>\exp(-x^2)</m> again, this time as a named function. </p>
+    <pre>
 function y = f(x) 
     y = exp(-x.^2);
 end 
 </pre>
-<p>But there may be multiple lines within the body of a named function, including loops and conditional statements. In general, it looks like this. </p>
-<pre>
+    <p>But there may be multiple lines within the body of a named function, including loops and conditional statements. In general, it looks like this. </p>
+    <pre>
 function y = myFunction(x)
     (do something);
     (do more things);
     (y = result of computations);  
 end 
 </pre>
-<p>A named functions can have multiple inputs: <c>function w = myFunction(x, y, z)</c>. It can also have multiple outputs: <c>function [u, v] = myFunction(x, y, z)</c> in which case both <c>u</c> and <c>v</c> must be assigned some values within the function. </p>
-
-<example xml:id="agm-named-function"><title>Arithmetic-geometric mean with given tolerance</title>
-<statement><p> Write a named function with three inputs: numbers <c>x, y</c> and <c>tol</c>, which finds the arithmetic-geometric mean of <c>a, b</c> with tolerance <c>tol</c> (meaning that the process stops when the difference of arithmetic and geometric mean is less than <c>tol</c>.)</p> </statement>
-<answer>
-<pre>
+    <p>A named functions can have multiple inputs: <c>function w = myFunction(x, y, z)</c>. It can also have multiple outputs: <c>function [u, v] = myFunction(x, y, z)</c> in which case both <c>u</c> and <c>v</c> must be assigned some values within the function. </p>
+    <example xml:id="agm-named-function">
+      <title>Arithmetic-geometric mean with given tolerance</title>
+      <statement>
+        <p> Write a named function with three inputs: numbers <c>x, y</c> and <c>tol</c>, which finds the arithmetic-geometric mean of <c>a, b</c> with tolerance <c>tol</c> (meaning that the process stops when the difference of arithmetic and geometric mean is less than <c>tol</c>.)</p>
+      </statement>
+      <answer>
+        <pre>
 function z = agm(x, y, tol) 
-   while abs(x - y) >= tol
+   while abs(x - y) &gt;= tol
        a = (x + y)/2;
        g = sqrt(x*y);
        x = a;
@@ -84,46 +72,39 @@ function z = agm(x, y, tol)
    z = x;
 end
 </pre>
-<p>Note that the result has to be assigned to whichever function variable was designated as output on th first line of the function: in this case, <c>z</c>.</p>
-</answer>
-</example>
-
-<p><xref ref="agm-named-function"/> illustrates an important point: a function has limited communication with the code outside of it. It receives input and produces certain output; nothing else that it does has any influence on the outside world. Suppose that the following sequence of commands was executed.</p>
-<pre>
+        <p>Note that the result has to be assigned to whichever function variable was designated as output on th first line of the function: in this case, <c>z</c>.</p>
+      </answer>
+    </example>
+    <p><xref ref="agm-named-function"/> illustrates an important point: a function has limited communication with the code outside of it. It receives input and produces certain output; nothing else that it does has any influence on the outside world. Suppose that the following sequence of commands was executed.</p>
+    <pre>
 x = 0.3;
 y = 12;
 disp(agm(x, y, 1e-6))
 disp(x)
 disp(a) 
 </pre>
-<p>The third line will display the AGM which happens to be 3.7136. The fourth line will display the original value of x, which is <c>0.3</c>. Why is it still 0.3, even though the function <c>agm</c> changed the value of x in the loop? This is because a function operates like a separate program with its own variables. The variable x inside of the function is its own <em>local</em> variable x, and changing it does not change x in other places. For the same reason, the last command <c>disp(a)</c> produces an error: the variable <c>a</c> is undefined. A variable with that name was introduces inside of function <c>agm</c> but it does not exist outside of it.</p>  
-
-<p>One can have a function that does not return any values. Here is a function whose job is to plot the sine function on the interval <m>[a, b]</m> using a given number of points.</p> 
-<pre>
+    <p>The third line will display the AGM which happens to be 3.7136. The fourth line will display the original value of x, which is <c>0.3</c>. Why is it still 0.3, even though the function <c>agm</c> changed the value of x in the loop? This is because a function operates like a separate program with its own variables. The variable x inside of the function is its own <em>local</em> variable x, and changing it does not change x in other places. For the same reason, the last command <c>disp(a)</c> produces an error: the variable <c>a</c> is undefined. A variable with that name was introduces inside of function <c>agm</c> but it does not exist outside of it.</p>
+    <p>One can have a function that does not return any values. Here is a function whose job is to plot the sine function on the interval <m>[a, b]</m> using a given number of points.</p>
+    <pre>
 function plotsin(a, b, num) 
     x = linspace(a, b, num);
     plot(x, sin(x))
 end
-</pre>	
-
-<p>One can also have a function with no arguments (no input values). For example, this function computes an approximate value of the Golden Ratio by iterating <m>\sqrt{x+1}</m>.</p>
-<pre>
+</pre>
+    <p>One can also have a function with no arguments (no input values). For example, this function computes an approximate value of the Golden Ratio by iterating <m>\sqrt{x+1}</m>.</p>
+    <pre>
 function z = goldenratio() 
    z = 1;
    for k = 1:100
        z = sqrt(z+1);
    end
-end	
+end 
 </pre>
-<p>One can use this function same as others: <c>x = goldenratio();</c> or <c>disp(goldenratio())</c>.</p>
-
-<p>Back in the days when Matlab was designed, the convention was to put every function in a separate <q>M-file</q> named as that function: for example, <c>goldenratio.m</c>. Today, tying the name of a function to the name of a file in which it is contained seems strange but Matlab still insists on this. Fortunately, it allows us to have multiple functions in the same script file, with the following constraints:
-<ul>
-	<li>The first function is named as the file itself. This function gets executed when we click Run or press <kbd>F5</kbd>.</li>
-	<li>If a script contains named functions, all of its code must be within some function. </li> 
-</ul>
+    <p>One can use this function same as others: <c>x = goldenratio();</c> or <c>disp(goldenratio())</c>.</p>
+    <p>Back in the days when Matlab was designed, the convention was to put every function in a separate <q>M-file</q> named as that function: for example, <c>goldenratio.m</c>. Today, tying the name of a function to the name of a file in which it is contained seems strange but Matlab still insists on this. Fortunately, it allows us to have multiple functions in the same script file, with the following constraints:
+<ul><li>The first function is named as the file itself. This function gets executed when we click Run or press <kbd>F5</kbd>.</li><li>If a script contains named functions, all of its code must be within some function. </li></ul>
 This means that if a script contains named functions, and is saved in a file named <c>hw5.m</c>, it must begin with <c>function hw5()</c>, for example:</p>
-<pre>
+    <pre>
 function hw5()
     x = 0.3;
     y = 12;
@@ -131,7 +112,7 @@ function hw5()
 end
 
 function z = agm(x, y, tol) 
-   while abs(x - y) >= tol
+   while abs(x - y) &gt;= tol
        a = (x + y)/2;
        g = sqrt(x*y);
        x = a;
@@ -140,17 +121,18 @@ function z = agm(x, y, tol)
    z = x;
 end
 </pre>
-<p>Here the first (main) function is executed: it assigns values to x and y, and then calls another function to compute their AGM.</p>
-
-<p>Anonymous functions, described in <xref ref="section-anonymous-functions" />, have no such restrictions.</p> 
-
-<example><title>Smallest prime that is greater than a given number</title>
-<statement><p> Write a function which, given a value <c>n</c>, finds the smallest prime number that is greater than <c>n</c>.</p> 
-<p> To determine whether some number <c>k</c>
+    <p>Here the first (main) function is executed: it assigns values to x and y, and then calls another function to compute their AGM.</p>
+    <p>Anonymous functions, described in <xref ref="section-anonymous-functions"/>, have no such restrictions.</p>
+    <example>
+      <title>Smallest prime that is greater than a given number</title>
+      <statement>
+        <p> Write a function which, given a value <c>n</c>, finds the smallest prime number that is greater than <c>n</c>.</p>
+        <p> To determine whether some number <c>k</c>
 is prime, use <c>isprime(k)</c>. For example, <c>while isprime(k)</c> is a loop that runs as long as <c>k</c> stays prime. To have a loop that runs while <c>k</c> is <em>not</em> prime, use 
-<c>while ~sprime(k)</c>. The character <c>~</c> means logical NOT in Matlab (recall that <c>~=</c> means <q>not equal</q>.) </p> </statement>
-<answer>
-<pre>
+<c>while ~sprime(k)</c>. The character <c>~</c> means logical NOT in Matlab (recall that <c>~=</c> means <q>not equal</q>.) </p>
+      </statement>
+      <answer>
+        <pre>
 function k = smallestprime(n)
     k = n + 1;
     while ~isprime(k)
@@ -158,32 +140,27 @@ function k = smallestprime(n)
     end
 end
 </pre>
-<p>For example, <c>smallestprime(31)</c> is 37, because the numbers 32, 33, 34, 35, 36 are not prime. </p>
-</answer>
-</example>
-
-
-</section>
-
- 
-<section xml:id="examples-user-defined-functions">
-
-<title>Examples</title>  
-
-<p> These are additional examples for reviewing the topic we have covered. When reading each example, try to find your own solution before clicking <q>Answer</q>. </p>
-
-<example xml:id="example-mean-sine"><title>Mean value of sine function</title>
-<statement><p>Define an anonymous function <c>meansin = @(n) ...</c> which computes the mean value of <m>\sin(1)</m>, <m>\sin(2)</m>, ..., <m>\sin(n)</m>. Use it to display the values <c>meansin(n)</c> for n equal to 10, 50, 250, 1870, and 5000. What pattern do you observe?</p>
-</statement>
-<answer>
-<pre>
+        <p>For example, <c>smallestprime(31)</c> is 37, because the numbers 32, 33, 34, 35, 36 are not prime. </p>
+      </answer>
+    </example>
+  </section>
+  <section xml:id="examples-user-defined-functions">
+    <title>Examples and questions</title>
+    <p> These are additional examples for reviewing the topic we have covered. When reading each example, try to find your own solution before clicking <q>Answer</q>. There are also questions for reviewing the concepts of this section. </p>
+    <example xml:id="example-mean-sine">
+      <title>Mean value of sine function</title>
+      <statement>
+        <p>Define an anonymous function <c>meansin = @(n) ...</c> which computes the mean value of <m>\sin(1)</m>, <m>\sin(2)</m>, ..., <m>\sin(n)</m>. Use it to display the values <c>meansin(n)</c> for n equal to 10, 50, 250, 1870, and 5000. What pattern do you observe?</p>
+      </statement>
+      <answer>
+        <pre>
 meansin = @(n) mean(sin(1:n));
 
 for n = [10 50 250 1870 5000]
     disp(meansin(n))
 end
 </pre>
-<p><em>Explanation</em>: this is a reminder that the vector in <c>for</c> loop does not have to be of the form <c>a:b</c> even though this form is most common. Here the use of a loop avoids having to write 
+        <p><em>Explanation</em>: this is a reminder that the vector in <c>for</c> loop does not have to be of the form <c>a:b</c> even though this form is most common. Here the use of a loop avoids having to write 
 <cd>
 disp(meansin(10))
 disp(meansin(50)) 
@@ -191,17 +168,19 @@ disp(meansin(250))
 </cd>
 and so on.
 </p>
-<p> It appears that the mean values approach 0 as <c>n</c> grows. This can be proved mathematically: see the homework section.</p> 
-</answer>
-</example>
-
-<example xml:id="example-eval-poly"><title>Evaluating a polynomial</title>
-<statement><p>Define a named function <c>function y = p(x, a, n)</c> which computes the polynomial 
+        <p> It appears that the mean values approach 0 as <c>n</c> grows. This can be proved mathematically: see the homework section.</p>
+      </answer>
+    </example>
+    <example xml:id="example-eval-poly">
+      <title>Evaluating a polynomial</title>
+      <statement>
+        <p>Define a named function <c>function y = p(x, a, n)</c> which computes the polynomial 
 <me>p(x, a, n) = 1 + \frac{x}{a} + \frac{x^2}{a + 1} + \frac{x^3}{a+2} + \cdots + \frac{x^n}{a+n-1}</me> 
 Assume that <c>x</c> may be a vector, <c>a</c> is a real number, and <c>n</c> is a positive integer (the degree of our polynomial). 
-</p></statement>
-<answer>
-<pre>
+</p>
+      </statement>
+      <answer>
+        <pre>
 function y = p(x, a, n)
     y = 1;
     for k = 1:n
@@ -209,16 +188,17 @@ function y = p(x, a, n)
     end
 end
 </pre>
-<p>One could also start with <c>y = 0</c> and run the loop <c>for k=0:n</c>; the result is the same. </p>
-</answer>
-</example>
-
-
-<example xml:id="example-plot-poly"><title>Plotting a polynomial</title>
-<statement><p>Use the function from <xref ref="example-eval-poly"/> to plot the polynomial with <m> a = -3/2</m> and <m>n = 6</m> on the interval <m>[-1, 1]</m>. Assume the script is in the file <c>example.m</c>. 
-</p></statement>
-<answer>
-<pre>
+        <p>One could also start with <c>y = 0</c> and run the loop <c>for k=0:n</c>; the result is the same. </p>
+      </answer>
+    </example>
+    <example xml:id="example-plot-poly">
+      <title>Plotting a polynomial</title>
+      <statement>
+        <p>Use the function from <xref ref="example-eval-poly"/> to plot the polynomial with <m> a = -3/2</m> and <m>n = 6</m> on the interval <m>[-1, 1]</m>. Assume the script is in the file <c>example.m</c>. 
+</p>
+      </statement>
+      <answer>
+        <pre>
 function example()
     x = linspace(-1, 1, 500);
     plot(x, p(x, -3/2, 6))
@@ -231,52 +211,48 @@ function y = p(x, a, n)
     end
 end
 </pre>
-</answer>
-</example>
-
-</section>
-
-
-
-<exercises xml:id="exercises-user-defined-functions">
+      </answer>
+    </example>
+    <question>
+      <title>Function creating a vector</title>
+      <p>What does the function <c>f</c> defined by <c>f = @(x, y) [x y]</c> do? Can one give it vector inputs <c>x, y</c>. If so, does it matter if they are row vectors or column vectors? Do they need to be of the same size?</p>
+    </question>
+  </section>
+  <exercises xml:id="exercises-user-defined-functions">
     <title>Homework</title>
-
-<exercise number="1">
-<statement> <p>(No programming involved.)
+    <exercise number="1">
+      <statement>
+        <p>(No programming involved.)
 Prove that the following inequality holds for every positive integer <m>n</m>:
 <me>
 |\sin(1) + \sin(2) + \cdots + \sin(n)| \le 2
  </me>
 Why does this explain the observation in <xref ref="example-mean-sine"/>? </p>
-</statement>
-<hint>
-<p> Multiply the sum of sines by <m>\sin(1/2)</m> and use the formula 
+      </statement>
+      <hint>
+        <p> Multiply the sum of sines by <m>\sin(1/2)</m> and use the formula 
 <me> \sin(x)\sin(y) =\frac12 (\cos(x-y) - \cos(x+y))</me>
 to make the sum <q>telescope</q>.  </p>
-</hint>
-</exercise>
-
-<exercise number="2">
-<statement> <p>Write an anonymous function <c>f = @(x, y) ...</c> which implements the mathematical function <me>f(x, y) = \frac{xy^2}{x^2 + y^4}</me> in such a way that the input variables x, y are allowed to be vectors. Then plot the values of <m>f</m> along the parametric curve 
-<md>
-	<mrow>x \amp = t^2 </mrow> <mrow> y \amp = \sin t </mrow>
-</md>
+      </hint>
+    </exercise>
+    <exercise number="2">
+      <statement>
+        <p>Write an anonymous function <c>f = @(x, y) ...</c> which implements the mathematical function <me>f(x, y) = \frac{xy^2}{x^2 + y^4}</me> in such a way that the input variables x, y are allowed to be vectors. Then plot the values of <m>f</m> along the parametric curve 
+<md><mrow>x \amp = t^2 </mrow><mrow> y \amp = \sin t </mrow></md>
 as follows. </p>
-<pre>
+        <pre>
 t = linspace(-1, 1, 500); 
 plot(t, f(t.^2, sin(t)))
 </pre>
-<p> As <m>t</m> approaches 0, what value does <m>f</m> appear to approach?</p>
-</statement>
-</exercise>
-
-
+        <p> As <m>t</m> approaches 0, what value does <m>f</m> appear to approach?</p>
+      </statement>
+    </exercise>
     <exercise number="3">
-        <statement>
-<p>Write a named function <c>function y = cositer(x, n)</c> that takes two arguments x and n and returns the n-th iteration of the mathematical function <m>x\mapsto 2\cos x</m>. For example, if <c>n = 4</c>, the result should be
+      <statement>
+        <p>Write a named function <c>function y = cositer(x, n)</c> that takes two arguments x and n and returns the n-th iteration of the mathematical function <m>x\mapsto 2\cos x</m>. For example, if <c>n = 4</c>, the result should be
 <me>2\cos(2\cos (2\cos (2\cos x))))</me>
 Use this function to plot several of these iterates on the interval <m>[0, 2]</m> as shown below.</p>
-<pre>
+        <pre>
 function hw5()
     x = linspace(0, 2, 2000);   
     hold on
@@ -290,10 +266,8 @@ function y = cositer(x, n)
    (your function goes here)
 end
 </pre>
-<p>Remark: the command <c>hold on</c> refers to displaying several functions on the same plot. Normally, Matlab replaces each plot with next one. With <c>hold on</c>, it keeps the previous plot and draws next one over it, using a different color (unless you specify a color). At the end, <c>hold off</c> is used to restore the normal behavior. </p>
-</statement> 
-</exercise>
- 
-</exercises>
-
+        <p>Remark: the command <c>hold on</c> refers to displaying several functions on the same plot. Normally, Matlab replaces each plot with next one. With <c>hold on</c>, it keeps the previous plot and draws next one over it, using a different color (unless you specify a color). At the end, <c>hold off</c> is used to restore the normal behavior. </p>
+      </statement>
+    </exercise>
+  </exercises>
 </chapter>

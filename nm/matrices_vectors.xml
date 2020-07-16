@@ -171,11 +171,11 @@ disp(B)
 
 <section xml:id="examples-matrices-vectors">
 
-<title>End-of-class examples </title>  
+<title>Examples and questions</title>  
 
-<p> These are additional examples for reviewing the topic we covered. When reading each example, try to find your own solution before clicking <q>Answer</q>. </p>
+<p> These are additional examples for reviewing the topic we have covered. When reading each example, try to find your own solution before clicking <q>Answer</q>. There are also questions for reviewing the concepts of this section. </p>
 
-<example>
+<example xml:id="example-scalar-product">
 	<title>Scalar product of two vectors</title>
 <statement>
 	<p>Write a script that calculates and displays the scalar product of two vectors: [1 2 ... n] and [n n-1 ... 1]. Use the first two digits of SUID as your value of n.</p>
@@ -194,7 +194,7 @@ Recall from <xref ref="section-vectors-matrices"/> that <c>a:h:b</c> means a reg
 </example>
 
 
-<example>
+<example xml:id="example-simpson-vector">
 	<title>Create a vector for use in Simpson's method</title>
 <statement>
 	<p>Write a script that creates and displays a row vector with 25 elements of the form [1 4 2 4 2 ... 2 4 1]. This particular sequence of numbers is used in <q>Simpson's Method</q> of numerical integration which we will encounter later.</p>
@@ -237,6 +237,13 @@ The first line creates an 8<times/>8 matrix of zeros. The second works with the 
 </p>
 </answer>
 </example> 
+
+
+<question><title>Different order of multiplication</title>
+<p>If in <xref ref="example-scalar-product" /> we multiply the vectors in the different order, <c>v'*u</c>, there is no error message and Matlab produces a result. What does this result mean?</p></question> 
+
+<question><title>Even vs odd in Simpson's method</title>
+<p>In <xref ref="example-simpson-vector" />, the mattern 14242..4241 requires an odd number of elements. We had 25 which is an odd number. If 25 is replaced by an even number, Matlab would not complain but the result would have a different pattern. What would it be? Try to answer without running Matlab.</p></question>
 
 </section>
  

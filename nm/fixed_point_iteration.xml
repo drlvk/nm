@@ -86,7 +86,39 @@ end
 <title>The speed of convergence of fixed-point iteration</title>
 
 <p>
-Near an attractive fixed point with $0 \lt |g'(x^*)| \lt  1$, the convergence is linear in the sense that the error at the next step is about $|g'(x^*)|$ times the error of the previous step. But if $g'(x^*)=0$ (superattractive fixed point), then the rate is quadratic: next error is at most a square of the previous error. Compare these to appreciate the difference: 
+Near an attracting fixed point with $0 \lt |g'(x^*)| \lt  1$, the convergence is linear in the sense that the error at the next step is about $|g'(x^*)|$ times the error of the previous step. But if $g'(x^*)=0$ 
+(meaning <m>x_0</m> is a superattractive fixed point), then the rate of convergence is extremely fast. Indeed, Taylor's formula says that <m>|g(x)-g(x^*)|</m> is bounded by a constant multiple of <m>|x-x^*|^2</m>, where the constant depends on the value of the second derivative <m>f''(x^*)</m>. This rate of convergence is called <term>quadratic</term> because at each step, the error size gets squared (and multiplied by a constant).</p>
+
+<p>Compare two functions: <m>g_1(x) = \sqrt{x}</m> and <m>g_2(x) = (x+1/x)/2</m>. Both have a fixed point <m>x^*=1</m>. Since <m>|g_1'(1)| = 1/2</m> and <m>|g_2'(1)| = 0</m>, the point 1 is attracting for <m>g_1</m> and super-attracting for <m>g_1</m>. Let's see how quickly the iteration converges to the fixed point, starting from 5 for example.</p>
+<pre>
+g = @(x) sqrt(x);
+x = 5;
+for k = 1:10
+    x = g(x);
+    fprintf('After %d steps got %.15g\n', k, x)
+end
+</pre>
+<p>The numbers approach 1 but not very quickly.</p> 
+<pre>
+After 1 steps got 2.23606797749979
+After 2 steps got 1.49534878122122
+After 3 steps got 1.22284454499385
+After 4 steps got 1.10582301703024
+After 5 steps got 1.05158119849598
+After 6 steps got 1.02546633220988
+After 7 steps got 1.01265311543977
+</pre>    
+<p>And so on: each error is about half of the previous, indicating linear speed of convergence. After 10 steps we are still more than 0.001 away from the fixed point. In contrast, running the above code with <c>g = @(x) (x+1/x)/2;</c> results in much faster convergence.</p>
+<pre>
+After 1 steps got 2.6
+After 2 steps got 1.49230769230769
+After 3 steps got 1.0812053925456
+After 4 steps got 1.00304952038898
+After 5 steps got 1.00000463565079
+After 6 steps got 1.00000000001074
+After 7 steps got 1
+</pre>    
+<p>After just 7 steps of iteration, the value is so close to 1 that it becomes equal to 1, due to round-off involved. 
  </p>
 
  
@@ -96,44 +128,33 @@ Near an attractive fixed point with $0 \lt |g'(x^*)| \lt  1$, the convergence is
 <section xml:id="examples-fixed-point-iteration">
 
 
-<title>End-of-class examples</title>  
+<title>Examples and questions</title>  
+
+<p> These are additional examples for reviewing the topic we have covered. When reading each example, try to find your own solution before clicking <q>Answer</q>. There are also questions for reviewing the concepts of this section. </p>
 
 
-<example xml:id="example-bracketing-30x-exp">
-   <title> Number of roots and a bracketing interval for each of them</title>
-<statement><p>For the function <m>f(x) = 30x e^{10x} + 1</m>, use  the derivative <m>f'</m> determine the number of roots and find a bracketing interval for each of them. (No programming is needed.)</p></statement>
+<example xml:id="example-rewrite-for-root1">
+   <title> Rewriting an equation to make a specific solution an attracting fixed point</title>
+<statement><p>The equation <m>x^5 -  2x  = 1</m> has a solution in the interval <m>(1, 2)</m>, as one can see from the Intermediate Value Theorem. Rewrite the equation as a fixed-point problem so that this root is an attracting fixed point. </p>
 
-<solution><p>The derivative <m>f'(x) = 30( 10x + 1) e^{10x}</m> has the same sign as <m>10x+1</m>. Therefore, the function has a minimum at <m>x = -1/10</m>. Its value there is <m>f(-1/10) = 
-- 3e^{-1} + 1 = 1-3/e \lt 0 </m>. </p>
-<p>On the interval <m>(-\infty, -1/10)</m> the function is decreasing, so there is at most one root here. Since <m>f(-1) = -30e^{-10} + 1 > 0</m>, there is a root with bracketing interval <m>[-1, -1/10]</m>.</p> 
-<p>On the interval <m>(-1/10,  \infty)</m> the function is increasing, so there is at most one root here. Since <m>f(0) = 1 > 0</m>, there is a root with bracketing interval <m>[-1/10, 0]</m>.</p> 
-<p>Answer: two roots, with bracketing intervals <m>[-1, -1/10]</m> and <m>[-1/10, 0]</m>.
-</p></solution></example>
-
-<example xml:id="example-discontinuity">
-   <title> Incorrect answer obtained by bisection</title>
-<statement><p>Run the code in <xref ref="example-bisection" /> with the following modification:
-<cd>
-f = @(x) tan(x);
-a = 1;
-b = 2;
-</cd>
-Note that <m>\tan(1) \approx 1.5574 > 0</m> and <m> \tan(2) \approx -2.1850 \lt 0</m>, so the bisection algorithm can run. What is its output, and what is wrong with it? How could this error be avoided? </p></statement>
-
-<solution><p> The program output is <q>Found a root x = 1.57079632679</q>.   
-But this value is not a solution of equation <m>\tan x = 0</m>. It is a point of discontinuity, where the tangent has vertical asymptote <m>x = \pi/2</m>. Because of discontinuity, the tangent function changes sign without passing through 0. </p>
-<p>One way to avoid this error is to check whether the function has a <q>small</q> value at the root that we found, for example as follows.</p>
-<pre>
-x = (a+b)/2;
-if abs(f(x)) &lt; 1e-9
-    fprintf('Found a root x = %.12g\n', x);
-else 
-    fprintf('Suspected discontinuity at x = %.12g\n', x);
-end
-</pre>
-<p>Then the output is <q>Suspected discontinuity at x = 1.57079632679</q></p>
-</solution>
+<solution><p>The form <m>(x^5 -1)/ 2 = x</m> does not work here because the function
+ <m>g(x) = (x^5 -1)/ 2 </m> has <m>|g'(x)| = 5x^4/2</m> which is greater than 1 on the interval <m>(1, 2)</m>. But <m>(2x+1)^{1/5} = x</m> works because the function <m>g(x) = (2x+1)^{1/5} </m> has <m>|g'(x)| = 2|2x+1|^{-4/5}/5</m> which is less than <m>2/5</m>. </p></solution>
+</statement>
 </example>
+
+<example xml:id="example-tangent-function">
+   <title> Classify an infinite set of fixed points</title>
+<statement><p>The function <m>g(x) = \tan x</m> has infinitely many fixed points, because the graph of tangent intersects the line <m>y=x</m> infinitely many times. Show that one of the fixed points is neutral and the rest are repelling. </p>
+
+<solution><p>The neutral point is at 0, because <m>\tan 0 = 0</m> and <m>g'(0)=1</m>. How to find <m>g'</m> at other fixed points, if we do not know them? Recall that <m>g'(x) = \sec^2 x = \tan^2 x + 1 = g(x)^2 + 1</m>. Therefore, if <m>x^*</m> is a fixed point, then <m>g'(x^*) = (x^*)^2 + 1</m>. This expression is strictly greater than one when <m>x^* \ne 0</m>. So, all other fixed points are repelling. 
+</p></solution>
+</statement></example>
+
+<question><title> Convergence to a neutral fixed point</title>
+<p>Both functions <m>\sin x</m> and <m>\tan x</m> have 0 as a neutral fixed point. For one of these functions, the iteration method converges to 0, although <em>very</em> slowly. For another it does not. Why? (Hint: consider the plots of these functions.)</p></question>
+
+<question><title>Logarithmic plot of error size</title>
+<p>Recall that a sequence <m>x_n</m> converges to its limit <m>x^*</m> at a linear rate, the graph of <m>\log|x-x_n|</m> as a function of <m>n</m> looks like a line. What will it look like when the rate of convergence is quadratic?</p></question>
 
 </section> 
 
@@ -146,26 +167,23 @@ end
 
     <exercise number="1">
         <statement>
-<p> For the function <m>f(x) = \log(x^2 + 1/2)  + 9x^4 </m>, use  the derivative <m>f'</m> determine the number of roots and find a bracketing interval for each of them. (No programming is needed.)
+<p> For each of the following functions, find all of its fixed points.  Classify each fixed point as attracting, repelling, or neutral. 
+<ol label="(a)">
+    <li><m>f(x) = x^5</m></li>
+<li><m>g(x) = 16/x^3</m></li>
+<li><m>h(x) = x^3 - x/2</m></li>
+</ol>
+(No programming is needed.)
 </p>
 </statement>
 </exercise>
 
     <exercise number="2">
         <statement>
-<p>Write a Matlab script which finds and prints <em>both</em> roots of the equation <m>30x e^{10x} = -1</m>, using the bisection of the bracketing interval found in <xref ref="example-bracketing-30x-exp" />. To avoid duplicating code, write a named function <c>bisection(f, a, b)</c> which takes the function and a bracketing interval as arguments and returns a root by using the algorithm in <xref ref="section-bisection-method" />. The script could look as follows. </p> 
-<pre>
-function hw7()
-    f = @(x) 30*x*exp(10*x) + 1;
-    root1 = bisection(f, -1, -0.1);
-    root2 = ...   
-    fprintf('Found roots at %.12g and %.12g\n', root1, root2)
-end
-
-function x = bisection(f, a, b)
-    ...
-end
-</pre>
+<p>Write a script that solves the equation <m>e^x + \log x = n</m> using the fixed point iteration. Here <m>n</m> is the number formed by the first two digits of your SUID.</p>
+ 
+<p>In order to use the fixed point method, you need to rewrite the given equation as <m>g(x) = x</m>.  There are several ways to do this, try at least two different ones, or as many as are needed until a root is found. Starting from some value of <m>x</m>, such as <m>x=10</m>, below, run fixed point iteration until either it converges to a root, or the number of iterations becomes extremely large. The script should display either <q>Root found at x = ... after ... steps</q> or 
+<q>Failed to converge</q>. When submitting homework on Blackboard, add a comment with the different functions <m>g</m> you tried, and what the outcome was.</p>
 </statement>
 </exercise>
  

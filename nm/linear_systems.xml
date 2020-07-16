@@ -167,10 +167,6 @@ disp(A\b)
 
 <p>There is another logical choice of solution in a problem like this: one could pick the point on the line that is closest to the origin <m>(0, 0, 0)</m>, that is the solution of smallest norm  . This solution can be computed with <c>pinv(A)*b</c>, which results in 
 <c>[-4.5556; 0.1111; 4.7778]</c>. This approach takes longer because it involves computing the <term>pseudoinverse</term> of <m>A</m> which is a subject of MAT 532. </p> 
-</section>
-
-<section xml:id="section-singular-round-off">
-<title>The effect of round-off-errors</title>
  
 <example xml:id="example-square-rank-deficient"><title>Square rank-deficient system</title> 
 <statement>
@@ -188,9 +184,13 @@ disp(A\b)
 </solution></example> 
 
 <p>What explains the result of <xref ref="example-square-rank-deficient"/>?
-When solving it, we get a warning message: <q>Matrix is close to singular or badly scaled. Results may be inaccurate.</q> This means the result of this computation are likely to be influenced by inevitable <term>round-off errors</term> in computer arithmetics.</p> 
+When solving it, we get a warning message: <q>Matrix is close to singular or badly scaled. Results may be inaccurate.</q> This means the result of this computation are likely to be influenced by inevitable <term>round-off errors</term> in computer arithmetics, which is the subject of next section.</p> 
+</section>
 
-<p>The round-off errors are usually very small: for example, 
+<section xml:id="section-round-off">
+<title>The effect of round-off-errors</title>
+
+<p>The round-off errors made by a computer are usually very small: for example, 
 <cd>0.1 + 0.2 - 0.3</cd>
 produces <c>5.5511e-17</c> instead of the expected <c>0</c>. The underlying reason is that, for example, the number <m>0.1</m> is internally represented not as <m>1/10</m> but as a fraction <m>p/q</m> where <m>q</m> must be a power of 2 (because the computer arithmetic is binary in nature. Both <m>p</m> and <m>q</m> are chosen very large which makes the approximation <m>p/q \approx  1/10</m> very good for most purposes. But it cannot be perfect, because if <m>p/q = 1/10</m>, then <m>10p = q</m> which is a contradiction: the left hand side is divisible by 5, so the right hand side cannot be a power of 2.</p> 
 
@@ -212,11 +212,12 @@ The result is not zero due to round-off errors. This is exactly what happens in 
 
 <section xml:id="examples-linear-systems">
 
-<title>End-of-class examples</title>  
+<title>Examples and questions</title>  
 
-<p> These are additional examples for reviewing the topic we have covered. When reading each example, try to find your own solution before clicking <q>Answer</q>. </p>
+<p> These are additional examples for reviewing the topic we have covered. When reading each example, try to find your own solution before clicking <q>Answer</q>. There are also questions for reviewing the concepts of this section. </p>
 
-<example><title>Parabola of best fit</title>
+
+<example xml:id="example-parabola-best-fit"><title>Parabola of best fit</title>
 <statement><p>Using the data of <xref ref="example-line-best-fit"/>, find and plot the parabola <m>y = cx^2+dx+e</m> that fits the data best in the sense of least squares. </p> </statement>
 <answer>
 
@@ -235,7 +236,6 @@ hold off
 </pre>
 <p><em>Explanation</em>: the only modification that we need is to add a column with the squares of x-values. In general, this process allows us to fit a function of the form 
 <m>c_1 f_1(x) + c_2 f_2(x) + \cdots + c_n f_n(x) </m> where <m>f_1, f_2, \dots, f_n</m> are given functions and <m>c_1, c_2, \dots, c_n</m> are coefficients (parameters) to be determined.</p>
-<p> Note that the parabola we get is not very different from a line. The line was already a good fit, and we did not gain much from using a more complicated curve. Later we will consider the issue of <em>model selection</em>: how to decide which model is more appropriate (for example, linear or quadratic). </p>
 </answer>
 </example>
 
@@ -255,6 +255,16 @@ we get the solution <c>[-9.3333; 9.6667; 0.0000]</c> which is quite different. N
 </example>
 </section>
 
+<question><title>Inconsistent system</title>
+<p>The simplest example of an inconsistent linear system is a system of two equations with one variable: 
+<m>x = b_1</m> and <m>x = b_2</m> where <m>b_1, b_2</m> are two unequal real numbers. What is the least-squares solution of this system, and why? (Try to answer without Matlab, and then check the conclusion with Matlab.)</p>
+</question> 
+
+<question><title>Model selection</title>
+<p>How different is the best-fit parabola in <xref ref="example-parabola-best-fit" /> from the line of best fit? If you have to choose between fitting a line or a parabola to this data set, what would you use? </p>
+
+<p>Later we will consider the issue of <em>model selection</em> systematically: how to decide which model is more appropriate (for example, linear or quadratic).</p>
+</question>
 
 
 <exercises xml:id="exercises-linear-systems">
