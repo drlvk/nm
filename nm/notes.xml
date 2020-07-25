@@ -63,6 +63,7 @@ along with MathBook XML.  If not, see <http://www.gnu.org/licenses/>.
             <xi:include href="./linear_systems.xml" />
             <xi:include href="./root_finding_bisection.xml" />
             <xi:include href="./fixed_point_iteration.xml" />
+            <xi:include href="./newton_secant.xml" />
         </part>
 
         <part xml:id="part-calculus">
