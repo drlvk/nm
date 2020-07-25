@@ -148,6 +148,8 @@ hold off
 
 <p>When the rank of matrix <m>A</m> is less than the number of variables, the system has free variables. In a Linear Algebra course, we would move the free variables to the right, and solve the rest of the system. But Matlab sets free variables to <m>0</m> and then solves the system as described in <xref ref="section-systems-without-free-variables"/>. </p>
 
+<p>Note for Octave users: this is one of rare cases when Octave behavior is different, as explained below. This will not make a difference for homework. (In my opinion, Octave has a better approach than Matlab.)</p>
+
 <example xml:id="example-system-free-variable">
     <title>System with a free variable</title>
 <statement>
@@ -165,7 +167,7 @@ disp(A\b)
 
 <p>In geometric terms, the system in <xref ref="example-system-free-variable"/> describes the intersection of two planes in 3-dimensional space. This intersection is a line. The solution that Matlab picks is the point where this line cross one of coordinate planes.</p> 
 
-<p>There is another logical choice of solution in a problem like this: one could pick the point on the line that is closest to the origin <m>(0, 0, 0)</m>, that is the solution of smallest norm  . This solution can be computed with <c>pinv(A)*b</c>, which results in 
+<p>There is another logical choice of solution in a problem like this: one could pick the point on the line that is closest to the origin <m>(0, 0, 0)</m>, that is the solution of smallest norm. This is the approach that Octave uses: when given <xref ref="example-system-free-variable" /> it would produce <c>[-4.5556; 0.1111; 4.7778]</c>. One can get this solution with Matlab by using  <c>pinv(A)*b</c>, which results in 
 <c>[-4.5556; 0.1111; 4.7778]</c>. This approach takes longer because it involves computing the <term>pseudoinverse</term> of <m>A</m> which is a subject of MAT 532. </p> 
  
 <example xml:id="example-square-rank-deficient"><title>Square rank-deficient system</title> 

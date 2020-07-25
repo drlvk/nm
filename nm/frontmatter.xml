@@ -37,7 +37,7 @@
  
  <p>Numerical linear algebra is not included above because it is the subject of a separate course (MAT 532).</p> 
 
-  
+ <p>Although the course is built around Matlab software, one can use <url href="https://www.gnu.org/software/octave/download.html">Octave</url> to run examples and do homework just as well.</p>
 
     </preface>
   

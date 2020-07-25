@@ -120,7 +120,7 @@ results in <c>z</c> being <c>[11 5 2]</c>. But we cannot add <c>[8 -2]</c> and <
 
 
 <example>
-	<title>Matrix multiplication is not commutative.</title>
+	<title>Matrix multiplication is not commutative</title>
 <statement>
 	<p>Write a script which illustrates that the product of two 2<times/>2 matrices depends on their order.</p>
 </statement>
@@ -151,7 +151,7 @@ disp(B*A)
 
 
 <example>
-	<title>Extracting submatrices.</title>
+	<title>Extracting submatrices</title>
 <statement>
 	<p>Display the 2<times/>2 submatrix in the middle of a given 4<times/>4 matrix such as
 <me>A = \begin{pmatrix} 1 \amp 2\amp 3\amp 4 \\ 5\amp 6\amp 7\amp 8 \\ 9\amp 10\amp 11\amp 12 \\ 13\amp 14\amp 15\amp 16 \end{pmatrix}</me>	
@@ -243,7 +243,7 @@ The first line creates an 8<times/>8 matrix of zeros. The second works with the 
 <p>If in <xref ref="example-scalar-product" /> we multiply the vectors in the different order, <c>v'*u</c>, there is no error message and Matlab produces a result. What does this result mean?</p></question> 
 
 <question><title>Even vs odd in Simpson's method</title>
-<p>In <xref ref="example-simpson-vector" />, the mattern 14242..4241 requires an odd number of elements. We had 25 which is an odd number. If 25 is replaced by an even number, Matlab would not complain but the result would have a different pattern. What would it be? Try to answer without running Matlab.</p></question>
+<p>In <xref ref="example-simpson-vector" />, the pattern 14242....4241 requires an odd number of elements. We had 25 which is an odd number. If 25 is replaced by an even number, Matlab would not complain but the result would have a different pattern. What would it be? Try to answer without running Matlab.</p></question>
 
 </section>
  

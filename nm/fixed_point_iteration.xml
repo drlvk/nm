@@ -49,7 +49,7 @@ According to the above, iteration of <m>g</m> may converge to an attracting poin
 <section xml:id="section-rewriting-fixed-point">
    <title>Rewriting equations in the fixed-point form</title> 
 
-<p>We now have a new method of solving the equations <m>f(x)=0</m>: rewrite it as $g(x)=x$, and build a sequence <m>x_{n+1} = g(x_n)</m>. If this sequence has a limit, which we recognize by <m>|x_{n+1} - x_n|</m> being small, then we have a fixed point of <m>g</m>, hence a root of <m>f</m>. There are multiple ways to rewrite <m>f(x)=0</m> in the fixed-point form:
+<p>We now have a new method of solving the equations <m>f(x)=0</m>: rewrite it as <m>g(x)=x</m>, and build a sequence <m>x_{n+1} = g(x_n)</m>. If this sequence has a limit, which we recognize by <m>|x_{n+1} - x_n|</m> being small, then we have a fixed point of <m>g</m>, hence a root of <m>f</m>. There are multiple ways to rewrite <m>f(x)=0</m> in the fixed-point form:
 <ul>
     <li> <m>f(x) + x = x</m> </li>
     <li> <m>x - f(x) = x</m> </li>
@@ -58,7 +58,7 @@ According to the above, iteration of <m>g</m> may converge to an attracting poin
 and so on. Although the fixed points are the same each case (they are the roots of <m>f</m>), their classification may be different. For example, consider <m>f(x) = x^3 + 4x -5</m>. We know it has a root at <m>x=1</m>. If we try to rewrite the equation <m>f(x) = 0</m> as <m>x^3 + 5x - 5 = x</m> the fixed point at 1 is repelling because <m>(x^3+5x -5)' = 3x^2 + 5</m> has modulus <m>8>1</m>. Another rewrite is <m>(5-x^3)/4 = x</m>. This one works because the derivative of <m>(5-x^3)/4</m> is <m>-3x^2/4</m> with absolute value of <m>3/4</m> at <m>x=1</m>. The denominator 4 helped reduced the derivative here. 
 </p>
 
-<example><title>Rewrite and solve by fixed-point iteration</title>
+<example xml:id="example-solve-fixed-point-iteration"><title>Rewrite and solve by fixed-point iteration</title>
 <statement><p>Solve the equation <m>x^3 + 5x  = 2</m> by the fixed-point iteration method.</p> </statement>
 <solution><p>The function <m>x^3 + 5x</m> is increasing from 0 to 6 on the interval <m>[0, 1]</m>. Therefore, the equation has a solution in this interval. Following the idea of the previous paragraph, rewrite it as <m>(2-x^3)/5 = x</m>. This means <m>g(x) = (2-x^3)/5</m> and <m>g'(x) = -3x^2/5</m>. Note this <m>|g'| \lt 1</m> on <m>[0, 1]</m> which guarantees that the fixed point is attracting. Here is the code to find it.</p>
 <pre>
@@ -72,7 +72,7 @@ for k = 1:1000
     x0 = x1;
 end
 if k &lt; 1000
-    fprintf('Found x = %.12g\n', x1);
+    fprintf('Found x = %.12g after %d steps\n', x1, k);
 else
     disp('Failed to converge')
 end
@@ -86,7 +86,7 @@ end
 <title>The speed of convergence of fixed-point iteration</title>
 
 <p>
-Near an attracting fixed point with $0 \lt |g'(x^*)| \lt  1$, the convergence is linear in the sense that the error at the next step is about $|g'(x^*)|$ times the error of the previous step. But if $g'(x^*)=0$ 
+Near an attracting fixed point with <m>0 \lt |g'(x^*)| \lt  1</m>, the convergence is linear in the sense that the error at the next step is about <m>|g'(x^*)|</m> times the error of the previous step. But if <m>g'(x^*)=0</m> 
 (meaning <m>x_0</m> is a superattractive fixed point), then the rate of convergence is extremely fast. Indeed, Taylor's formula says that <m>|g(x)-g(x^*)|</m> is bounded by a constant multiple of <m>|x-x^*|^2</m>, where the constant depends on the value of the second derivative <m>f''(x^*)</m>. This rate of convergence is called <term>quadratic</term> because at each step, the error size gets squared (and multiplied by a constant).</p>
 
 <p>Compare two functions: <m>g_1(x) = \sqrt{x}</m> and <m>g_2(x) = (x+1/x)/2</m>. Both have a fixed point <m>x^*=1</m>. Since <m>|g_1'(1)| = 1/2</m> and <m>|g_2'(1)| = 0</m>, the point 1 is attracting for <m>g_1</m> and super-attracting for <m>g_1</m>. Let's see how quickly the iteration converges to the fixed point, starting from 5 for example.</p>

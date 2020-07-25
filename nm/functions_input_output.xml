@@ -60,13 +60,14 @@ max(sum(abs(A), 2))
 
 <p> The command <c>rand</c> produces random numbers uniformly distributed in the interval from 0 to 1. Without providing parameters, we get a single number: <c>x = rand()</c> can make x equal to, for example, 0.8248. With parameters <c>rand(m, n)</c> we get a random m<times/>n matrix, meaning a matrix in which each entry is chosen randomly. </p> 
 
-<p>The command <c>histogram(v, k)</c> displays a histograph of the data collected in vector <c>v</c> using <c>k</c> bins. This means that the interval from <c>min(v)</c> to <c>max(v)</c> is divided into <c>k</c> equal subintervals, and the histogram counts how many data points fall in each subinterval. If the number of bins <c>k</c> is not provided, Matlab will try to choose it itself. Usually we want 10-50 bins. For example, 
+<p>The command <c>hist(v, k)</c> displays a histograph of the data collected in vector <c>v</c> using <c>k</c> bins. This means that the interval from <c>min(v)</c> to <c>max(v)</c> is divided into <c>k</c> equal subintervals, and the histogram counts how many data points fall in each subinterval. If the number of bins <c>k</c> is not provided, Matlab will try to choose it itself. Usually we want 10-50 bins. For example, 
 <cd>
 v = rand(1, 10000);
-histogram(v, 20)
+hist(v, 20);
 </cd>
 produces a histogram from 10000 random numbers. This will not be an interesting histogram since the numbers are uniformly distributed between 0 and 1. </p>
 
+<p>Technical remark: Matlab recommends a newer command <c>histogram</c> instead of <c>hist</c> but they both work for our purposes. I am using <c>hist</c> because it also works in Octave.</p>
 
 <example xml:id="example-sums-random">
 	<title>Distribution of sums of random numbers</title>
@@ -77,7 +78,7 @@ produces a histogram from 10000 random numbers. This will not be an interesting 
 <pre>
 A = rand(10, 10000);
 S = sum(A, 1);
-histogram(S, 30)
+hist(S, 30);
 </pre>
 <p>This histogram resembles a <q>bell curve</q> of normal distribution. The similarly grows stronger if we take sums of more numbers, and plot more random sums. This is the content of <term>Central Limit Theorem</term> in probability.</p>
 </answer>
@@ -107,7 +108,7 @@ m = input('How many numbers in a sum? ');
 n = input('How many sums to compute? ');
 A = rand(m, n);
 S = sum(A, 1);
-histogram(S, 30)
+hist(S, 30)
 </pre>
 </answer>
 </example> 
@@ -170,7 +171,7 @@ fprintf('The first four powers of %.6g are %.6g, %.6g, %.6g, %.6g\n', x, x, x^2,
 <pre>
 A = rand(10, 10000); 
 m = mean(A, 1);
-histogram(m, 30)
+hist(m, 30)
 </pre>
 <p><em>Explanation</em>. Having created a random matrix A, we take the mean of each column with <c>mean(A, 1)</c>. If we used <c>median(A, 1)</c> the result would be a similar histogram. </p>
 </answer>
