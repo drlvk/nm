@@ -147,7 +147,7 @@ To illustrate the second limitation, consider the equation <m>x^2 - 2x + 0.9999 
 <p>Answer: two roots, with bracketing intervals <m>[-1, -1/10]</m> and <m>[-1/10, 0]</m>.
 </p></solution></example>
 
-<example xml:id="example-discontinuity">
+<example xml:id="example-bisection-discontinuity">
    <title> Incorrect answer obtained by bisection</title>
 <statement><p>Run the code in <xref ref="example-bisection" /> with the following modification:
 <cd>
@@ -181,7 +181,7 @@ end
 
 
 <question> <title>Better detection of discontinuity</title> 
-<p>In <xref ref="example-discontinuity" /> we avoid mistaking discontinuity for a root by adding the check <c>abs(f(x)) &lt; 1e-9</c>. What could go wrong with this approach? Think of some situation where this additional check will reject a valid solution. Could it be replaced by a better one?</p> 
+<p>In <xref ref="example-bisection-discontinuity" /> we avoid mistaking discontinuity for a root by adding the check <c>abs(f(x)) &lt; 1e-9</c>. What could go wrong with this approach? Think of some situation where this additional check will reject a valid solution. Could it be replaced by a better one?</p> 
 </question>
 
 
