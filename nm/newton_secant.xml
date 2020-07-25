@@ -138,8 +138,6 @@ So, for a double root, when the graph of <m>f</m> looks like a parabola near the
 
 <p> These are additional examples for reviewing the topic we have covered. When reading each example, try to find your own solution before clicking <q>Answer</q>. There are also questions for reviewing the concepts of this section. </p>
 
-TO BE WRITTEN
-
 <example xml:id="example-newton-discontinuous">
    <title> Newton's method with a discontinuous function </title>
 <statement><p>Recall from <xref ref="example-bisection-discontinuity" /> that the bisection method had a difficulty with the equation <m>\tan x = 0</m>, mistaking a discontinuity of this function for its root. How does Newton's method behave here, and why? </p>
@@ -153,14 +151,14 @@ TO BE WRITTEN
 <example xml:id="example-secant-speed">
    <title> Rate of convergence of the secant method </title>
 <statement><p>It is difficult to analyze the convergence of secant method in general. A representative example where such analysis can be done is <m>f(x) = x + x^2</m>. Find a simplified form of the function 
-<m>x - \frac{x-p}{f(x)-f(p)} f(x)</m> and try to justify the statement that the rate of convergence is faster than linear, assuming that <m>x</m> and <m>p</m>converge to 0.</p>
+<m>x - \dfrac{x-p}{f(x)-f(p)} f(x)</m> and try to justify the statement that the rate of convergence is faster than linear, assuming that <m>x</m> and <m>p</m> converge to 0.</p>
 </statement>
 <solution><p>Simplification shows that 
-<md>x - \frac{x-p}{f(x)-f(p)} f(x)
-	\amp = x - \frac{x-p}{(x-p) + (x^2-p^2)}(x-x^2) 
-	\\ \amp = x - \frac{1}{1 + x +p}(x-x^2) 
-    \\ \amp = \frac{x + x^2 + px - (x+x^2)}{1 - x -p}
-    \\ \amp = \frac{px}{1 - x -p}
+<md><mrow>x - \frac{x-p}{f(x)-f(p)} f(x)
+	\amp = x - \frac{x-p}{(x-p) + (x^2-p^2)}(x-x^2) </mrow>
+	<mrow> \amp = x - \frac{1}{1 + x +p}(x-x^2)  </mrow>
+    <mrow> \amp = \frac{x + x^2 + px - (x+x^2)}{1 - x -p} </mrow>
+    <mrow> \amp = \frac{px}{1 - x -p} </mrow>
 </md>
 Since <m>x, p \to 0</m>, the denominator is close to 1. Therefore, the method goes from <m>x</m> to approximately <m>px</m> where <p>p</p> is the point preceding <m>x</m>. For comparison, linear convergence would mean going from <m>x</m> to approximately <m>cx</m> where <m>c</m> is a fixed number. 
 Since the factor <p>p</p> itself goes to zero, the secant method has faster than linear rate of convergence. 
