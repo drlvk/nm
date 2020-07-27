@@ -64,14 +64,15 @@ and so on. Although the fixed points are the same each case (they are the roots 
 <pre>
 g = @(x) (2-x^3)/5;
 x0 = 0;
-for k = 1:1000
+max_tries = 1000;
+for k = 1:max_tries
     x1 = g(x0);
     if abs(x1-x0) &lt; 100*eps(x0)
         break
     end
     x0 = x1;
 end
-if k &lt; 1000
+if k &lt; max_tries
     fprintf('Found x = %.12g after %d steps\n', x1, k);
 else
     disp('Failed to converge')

@@ -64,6 +64,7 @@ along with MathBook XML.  If not, see <http://www.gnu.org/licenses/>.
             <xi:include href="./root_finding_bisection.xml" />
             <xi:include href="./fixed_point_iteration.xml" />
             <xi:include href="./newton_secant.xml" />
+            <xi:include href="./multivariable_newton.xml" />
         </part>
 
         <part xml:id="part-calculus">

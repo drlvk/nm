@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<chapter xml:id="chapter-multivariable-newton" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+<title>Systems of several nonlinear equations: multivariable Newton's method</title>
+
+
+    <introduction>
+        <p>Having learned to solve a nonlinear equation with one unknown, we now consider systems
+            of several such equations, with several unknowns. We assume the number of unknowns is equal to the number of equations.</p>
+    </introduction>
+
+<section xml:id="section-nonlinear-systems">
+<title>Systems of nonlinear equations</title>
+
+<p>Consider a non-linear system of more than one equation, such as
+<men xml:id="eq-nonlinear-system">
+    \begin{cases} x^2e^{3y}-30 \amp = 0 \\
+     xy-\sin(x+y^2) \amp =0 
+     \end{cases} 
+</men> 
+What method could we use to solve it numerically? 
+<ul>
+<li> Bisection method does not apply. If we try to imitate it by taking a rectangle in the xy-plane and dividing it into 4 equal subrectangles, it is not clear which rectangle should be kept and why. The issue is that Intermediate Value Theorem, on which this method is based, does not generalize to systems.</li>
+<li> Fixed point iteration still makes sense: we can rewrite the system as  
+<me>
+    \begin{cases} x \amp = g(x, y) \\ y \amp = h(x, y)
+     \end{cases} 
+</me> 
+and start iteration from some point <m>(x_0, y_0)</m>: that is, <m>x_1= g(x_0, y_0)</m>, <m>y_1 = h(x_0, y_0)</m> and so on. If the process converges, we have a solution of the original system. But since there are more directions in which points can move under iteration, convergence is less likely than it was in one dimension.</li> <li>Newton's method, which is essentially a systematic approach to fixed-point iteration, still works. This is the method we will use in this section. </li>
+<li>It is not clear whether secant method makes sense, but its general idea - modifying Newton's method to avoid the use of derivatives - can be carried out. This will be considered later.</li>
+</ul></p>
+
+<p>For notational convenience, we express a nonlinear system of <m>n</m> equations with <m>n</m> unknowns as a <term>vector equation</term> <m>\vec F(\vec x)=0</m> where <m>\vec x</m> is an unknown vector with <m>n</m> components. For example, to express <xref ref="eq-nonlinear-system" /> in vector form we write 
+<men xml:id="eq-function-F">\vec x = \begin{pmatrix} x \\ y \end{pmatrix},\quad 
+    \vec F(\vec x) = \begin{pmatrix}  x_1^2e^{3x_2}-30 \\ x_1 x_2 - \sin(x_1 + x_2^2) \end{pmatrix}
+</men>
+</p>
+
+<p>How should we write a vector function <m>\vec F</m> in Matlab? It can be an anonymous function.</p>
+<pre>
+F = @(x) [x(1)^2*exp(3*x(2)) - 30; x(1)*x(2) - sin(x(1) + x(2)^2)];
+x = [3; -2];
+disp(F(x))
+</pre>
+<p>In this example, the argument of F is a vector and the value it returns is also a vector. Note that 
+<c>F(3, -2)</c> would result in an error <q>too many input arguments</q> because 
+F takes only one argument (which is a vector). It needs to be <c>F([3; -2])</c>. Writing the input as a row vector, <c>F([3, -2])</c> would have the same effect but for consistency with the formulas below it is better to use column vectors. </p>
+
+<p>When the notation <c>x(1), x(2)</c> becomes too cumbersome, one can consider writing F as a named function, where the input vector is first unpacked into separate variables such as <c>x, y</c>. This makes the formula more readable. The downside is the restriction on named functions in Matlab, noted in <xref ref="section-named-functions" />.</p>  
+<pre>
+function v = F(u)
+    x = u(1);
+    y = u(2);
+    v = [x^2*exp(3*y) - 30; x*y - sin(x + y^2)];
+end
+</pre>
+
+</section>
+
+<section xml:id="section-multivariable-newton">
+<title>Multivariable Newton method</title>
+
+<p>Newton's method (<xref ref="section-newton-method-intro" />) is based on the idea of replacing a nonlinear function with its linear approximation, and solving the resulting linear equation. The linear approximation comes from the derivative. In the setting of several variables we have <term>partial derivatives</term> which are arranged into the <term>Jacobian matrix</term>. The <m>(i, j)</m> entry of the Jacobian matrix is the derivative of the <m>i</m>th component of <m>\vec F</m> with respect to the <m>j</m>th component of <m>\vec x</m>:
+<me>
+    J = \begin{pmatrix} \partial F_1/\partial x_1 \amp \partial F_1/\partial x_2 \\
+\partial F_2/\partial x_1 \amp \partial F_2/\partial x_2 \end{pmatrix}
+</me>
+(or more rows/columns if there are more variables).</p>
+
+<example><title>Find the Jacobian matrix</title>
+<statement><p>Find the Jacobian matrix of the function <xref ref="eq-function-F" />. Express it as an anonymous function in Matlab.</p></statement>
+<solution><p> The Jacobian matrix is
+<me>
+J = \begin{pmatrix}
+2x_1e^{3x_2} \amp 3x_1^2e^{3x_2}  \\ 
+x_2-\cos(x_1+x_2^2) \amp x_1-2x_2\cos(x_1+x_2^2) 
+\end{pmatrix} 
+</me>
+As a Matlab function, it can be written as follows.</p>
+<pre>
+J = @(x) [2*x(1)*exp(3*x(2)), 3*x(1)^2*exp(3*x(2)); 
+          x(2) - cos(x(1) + x(2)^2), x(1) - 2*x(2)*cos(x(1) + x(2)^2)];
+</pre>
+<p>The linebreak between matrix rows is optional but improves readability.</p> 
+</solution></example>
+
+<p>The linear approximation to <m>\vec F</m> at a point <m>\vec x</m> is 
+<m>\vec F(\vec x + \vec h) \approx \vec F(\vec x) + J\vec h</m> where <m>J\vec h</m> is a matrix-vector product. </p>
+
+<example xml:id="example-linear-approx-multivariable">
+<title>Find the linear approximation</title>
+<statement><p>Find the linear approximation to function <xref ref="eq-function-F" />
+using <c>x = [2; -1]</c> and <c>h = [0.3, 0.2]</c>. Compare the approximation to the actual value of
+<c>F(x+h)</c>.</p></statement>
+<solution><pre>
+F = @(x) [x(1)^2*exp(3*x(2)) - 30; x(1)*x(2) - sin(x(1) + x(2)^2)];
+J = @(x) [2*x(1)*exp(3*x(2)), 3*x(1)^2*exp(3*x(2)); 
+          x(2) - cos(x(1) + x(2)^2), x(1) - 2*x(2)*cos(x(1) + x(2)^2)];
+
+x = [2; -1];
+h = [0.3; 0.2];
+disp("Linear approximation:")
+disp(F(x) + J(x)*h)
+disp("Actual value:")
+disp(F(x + h))
+</pre></solution></example>
+
+<p>As with the single-variable Newton method, we equate the linear approximation to zero and solve the linear equation. The solution of <m>\vec F(\vec x) + J\vec h=0</m> is <m>\vec h = -J^{-1} \vec F(\vec x)</m>. This formula is only for writing down the theoretical approach, in practice we do not invert the matrix <m>J</m> and simply ask Matlab to solve the linear system (this is more efficient than computing the inverse matrix). So, in Matlab terms the formula is <c>h = -J\F(x)</c>. Having found the vector <m>\vec h</m> we replace <m>\vec x</m> with <m>\vec x + \vec h</m> and repeat. The process stops when the steps becomes sufficiently small, indicating we approached a solution. The size of vectors is measured by their norm: <c>norm(h)</c>.</p>
+
+<p>The typical behavior of Newton's method is that it jumps around for several steps, but once it gets in a neighborhood of a solution, it converges to it very quickly.</p> 
+
+<example xml:id="example-multivariable-newton-solve">
+<title>Solve a system using Newton's method</title>
+<statement><p>Solve the system <xref ref="eq-nonlinear-system" /> using Newton's method. Try different initial points. Does the method always converge? Does it converge to the same solution?</p></statement>
+<solution><p>Following the structure of single-variable Newton method with notational adjustments:</p>
+<pre>
+F = @(x) [x(1)^2*exp(3*x(2)) - 30; x(1)*x(2) - sin(x(1) + x(2)^2)];
+J = @(x) [2*x(1)*exp(3*x(2)), 3*x(1)^2*exp(3*x(2)); 
+          x(2) - cos(x(1) + x(2)^2), x(1) - 2*x(2)*cos(x(1) + x(2)^2)];
+      
+x = [2; 1];
+max_tries = 10000;
+
+for k = 1:max_tries
+    h = -J(x)\F(x);
+    x = x + h;
+    if norm(h) &lt; 100*eps(norm(x))
+        break
+    end
+end
+
+if k &lt; max_tries
+    fprintf('Found a solution after %d steps:\n', k);
+    disp(x)
+    disp('The value F(x)')
+    disp(F(x))
+else
+    disp('Failed to converge')
+end
+</pre>  
+<p>It is reasonable to increase the <q>max tries</q> number in Newton's method when several variables are involved, as convergence may take longer. In the above example, with initial point <c>[2; 1]</c>, a solution <c>[-0.0019; 5.3185]</c> is found in 15 steps. With initial point <c>[1; 2]</c> the method fails to converge. With initial point <c>[2; 2]</c> it converges in 10 steps to a different solution, <c>[-0.2734; 1.9982]</c>.
+</p>
+</solution></example>
+</section> 
+
+<section xml:id="section-multivariable-newton-method-issues">
+<title>Potential issues with multivariable Newton's method</title>
+
+<p>All of the issues of single-variable method in <xref ref="section-newton-method-issues" /> are present here as well. In particular, the problem with derivative <m>f'(x)</m> being zero (or close to it) now becomes the problem with the Jacobian matrix <m>J</m> being singular (not invertible) or close to being such. This is when Matlab displays the warning <q> Matrix is close to singular or badly scaled. Results may be inaccurate.</q> Note that despite this warning, the final outcome may be an accurate solution.  Indeed, the issue with solving the linear system for <m>\vec h</m> may result in a wrong value of <m>\vec h</m> at some step. But this only means that at that particular step, the algorithm jumps where it should not have. It may still converge to a solution afterwards if at the new value of <m>\vec x</m> the Jacobian matrix behaves better. The script in <xref ref="example-multivariable-newton-solve" /> displays the value <m>\vec F(\vec x)</m> at the end as a reassurance that the method indeed found a solution, despite the possible problems at intermediate steps.</p>
+
+<p>A new issue is the <term>scaling</term> of variables. When the components of unknown vector have very different orders of magnitude, it is hard to understand what changes are significant or not. Suppose we are solving a system involving the distance and speed of <url href="https://en.wikipedia.org/wiki/New_Horizons">New Horizons probe</url> which is traveling at the speed of about 14 km/s and has distance about <m>6.43\times 10^9</m> km from the Sun (as of 2020). So the vector we work with will look like <c>[14; 6.43e9]</c>. The difference between this vector and, for example, <c>[20; 6.43e9]</c> looks relatively small: the difference has norm about <m>10^{-9}</m> times the norm of the original vector, one billionth. But of course the difference between 14 and 20 is quite significant. To avoid this, one should try to use units in which the quantities involved have about the same order of magnitude. For New Horizons, one could measure distance in astronomical units (AU) which makes it about 43. So the vector becomes <c>[14; 43]</c> which is much better numerically.</p>  
+</section>
+
+<section xml:id="examples-multivariable-newton">
+
+<title>Examples and questions</title>  
+
+<p> These are additional examples for reviewing the topic we have covered. When reading each example, try to find your own solution before clicking <q>Answer</q>. There are also questions for reviewing the concepts of this section. </p>
+
+<example xml:id="example-durand-kerner-setup">
+   <title> Rewriting a polynomial equation in multivariable form</title>
+<statement><p> Consider a polynomial equation, for example <m>x^3 + 2x^2 - 7x + 1 = 0</m>. This is a scalar equation with one scalar variable, so it could be solved by the methods of previous chapters, including Newton's method in one variable. But then we would get only one root (depending on initial position), not all three. Rewrite this equation as a system of three equations for three roots <m>x_1, x_2, x_3</m>, using the fact that the polynomial factors as <m>(x-x_1)(x-x_2)(x-x-3)</m>.</p> </statement>
+<solution><p>Expanding the product, we find 
+<me>x^3 + 2x^2 - 7x + 1 = (x-x_1)(x-x_2)(x-x_3) = x^3 + Ax^2 + Bx + C</me>
+where <m>A = -(x_1+x_2+x_3)</m>, <m>B = x_1x_2 + x_1x_3 + x_2x_2</m>, and <m>C = -x_1x_2x_3</m>. Equating the coefficients, we get the system
+<me>
+\begin{cases} x_1+x_2+x_3 \amp = -2  \\
+x_1x_2 + x_1x_3 + x_2x_3 \amp = -7 \\ 
+x_1x_2x_3 \amp = -1 
+\end{cases}</me> 
+If we can solve this system, the solution will consist of all three roots of the original equation.  
+ </p> 	
+</solution>
+</example>
+
+<example xml:id="example-durand-kerner-solve">
+   <title> Find all roots of a polynomial simultaneously </title>
+<statement><p>Use the multivariable Newton method to solve the system from <xref ref="example-durand-kerner-setup" />. 
+</p>
+</statement>
+<solution><p>We have the vector function
+<me> \vec F(\vec x) = \begin{pmatrix} x_1+x_2+x_3 +2  \\ 
+x_1x_2 + x_1x_3 + x_2x_3 + 7 \\
+x_1x_2x_3 + 1
+\end{pmatrix} </me>
+and its Jacobian matrix is 
+<me> J(\vec x) = \begin{pmatrix} 1 \amp 1 \amp 1 \\
+x_2 + x_3 \amp x_1 + x_3 \amp x_1+x_2  \\
+x_2 x_3 \amp x_1 x_3 \amp x_1 x_2 
+\end{pmatrix}</me>
+Use the code from <xref ref="example-multivariable-newton-solve" /> with these functions:</p> 
+<pre>
+F = @(x) [x(1) + x(2) + x(3) + 2; 
+          x(1)*x(2) + x(1)*x(3) + x(2)*x(3) + 7;
+          x(1)*x(2)*x(3) + 1];
+J = @(x) [1, 1, 1;
+          x(2) + x(3), x(1) + x(3), x(1) + x(2);
+          x(2)*x(3), x(1)*x(3), x(1)*x(2)];
+</pre>
+<p>The initial point should be a point with distinct coordinates, because at points with equal coordinates like 
+<c>[0; 0; 0]</c> or <c>[1; 1; 1]</c> the Jacobian matrix is singular (it has equal columns). For example, <c>[1; 2; 3]</c> works just fine. </p>
+<pre>
+Found a solution after 9 steps:
+    1.7240    0.1497   -3.8737
+</pre>
+<p>The above process, is a polished and simplified form, is known as the <url href="https://en.wikipedia.org/wiki/Durand%E2%80%93Kerner_method">Durand-Kerner method</url> for finding all polynomial roots at once. </p></solution></example>
+
+<question><title>Another cubic equation</title>
+<p>If we apply the logic of <xref ref="example-durand-kerner-solve" /> to the equation 
+<m>x^3 + 2x^2 - 7x + 5 = 0</m> (so, just replace 1 by 5 in the formula for <c>F</c>), the method fails to converge. Why?</p></question>
+
+<question><title> A trigonometric system </title>
+<p>What goes wrong if we try to use Newton's method to solve the system
+<me> \begin{cases} \sin x \amp = a  \\ \cos y \amp = b \\ \tan z \amp = c\end{cases} </me>
+for some given values of <m>a, b, c</m>? </p></question> 
+ 
+<question><title> Number of variables different from the number of equations</title>
+<p>What prevents us from using Newton's method for systems where the number of equations is not equal to the number of unknowns? For example, the equation <m>(x-2)^2 + (y+1)^2 = 0</m> has a unique solution: can we find it with Newton's method?   
+</p></question> 
+
+</section>
+
+
+<exercises xml:id="exercises-multivariable-newton">
+    <title>Homework</title>
+
+    <exercise number="1">
+        <statement>
+<p> (Theoretical problem.) Let 
+<me> \vec F(x,y,z)
+=\begin{pmatrix} xyz \\ 2(xy+yz+xz) \\ x^2+y^2+z^2 \end{pmatrix} </me>
+Find the Jacobian matrix of <m>\vec F</m>. (The matrix entries will involve the variables <m>x,y,z</m>). </p>
+</statement></exercise>
+
+    <exercise number="2">
+        <statement>
+<p>At which of the following points <m>(x,y,z)</m> is the Jacobian matrix from the previous exercise  invertible? 
+<me>
+    \begin{pmatrix} 1\\1\\1\end{pmatrix}, \begin{pmatrix} 3\\1\\5\end{pmatrix},  \begin{pmatrix} 2\\1\\2\end{pmatrix}
+</me>
+To save time,  use Matlab: define an anonymous function like \verb!J = @(x,y,z) [... ; ... ; ...]! so that you can then do <c>rank(J(1,1,1))</c> and so on, without computing the matrices yourself. Note the difference between this approach to J and the approach of <xref ref="section-multivariable-newton" />: here the function <c>J</c> takes three scalar arguments, instead of one vector argument.
+ </p></statement></exercise>
+
+    <exercise number="3">
+        <statement>
+<p>Let <m>V = 60 + a/5</m>, <m>A = 90 + b</m>, and <m>D = 7 + c/20</m> where <m>a, b, c</m> are the first three digits of your SUID. Write a Matlab script which uses  Newton's method to find the dimensions of a rectangular box with volume <m>V</m>, surface area <m>A</m>, and space diagonal <m>D</m>. The computations in Problem 1 will be helpful, because a box with dimensions <m>x, y, z</m> has volume <m>xyz</m>, surface area <m>2(xy+yz+xz)</m>, and space diagonal <m>\sqrt{x^2+y^2+z^2}</m>. </p>
+</statement>
+</exercise>
+ 
+</exercises>
+
+</chapter>

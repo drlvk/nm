@@ -38,7 +38,8 @@ What happens if it is given a negative or fractional input? The regular vector <
       </answer>
     </example>
   </section>
-  <section xml:id="named-functions">
+
+  <section xml:id="section-named-functions">
     <title>Named functions</title>
     <p>Named functions can do the same thing as anonymous functions. Here is <m>\exp(-x^2)</m> again, this time as a named function. </p>
     <pre>

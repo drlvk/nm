@@ -92,8 +92,9 @@ where the fraction represents division by the slope of secant line. </p></statem
 f = @(x) x^3 - x;
 x = 5;
 p = 7;
+max_tries = 1000
 
-for k = 1:1000
+for k = 1:max_tries
     x1 = x - f(x)*(x-p)/(f(x)-f(p));
     if abs(x1-x) &lt; 100*eps(x)
         break
@@ -102,7 +103,7 @@ for k = 1:1000
     x = x1;
 end
 
-if k &lt; 1000
+if k &lt; max_tries
     fprintf('Found x = %.12g after %d steps\n', x, k);
 else
     disp('Failed to converge')
@@ -155,13 +156,13 @@ So, for a double root, when the graph of <m>f</m> looks like a parabola near the
 </statement>
 <solution><p>Simplification shows that 
 <md><mrow>x - \frac{x-p}{f(x)-f(p)} f(x)
-	\amp = x - \frac{x-p}{(x-p) + (x^2-p^2)}(x-x^2) </mrow>
-	<mrow> \amp = x - \frac{1}{1 + x +p}(x-x^2)  </mrow>
+	\amp = x - \frac{x-p}{(x-p) + (x^2-p^2)}(x+x^2) </mrow>
+	<mrow> \amp = x - \frac{1}{1 + x +p}(x+x^2)  </mrow>
     <mrow> \amp = \frac{x + x^2 + px - (x+x^2)}{1 - x -p} </mrow>
     <mrow> \amp = \frac{px}{1 - x -p} </mrow>
 </md>
-Since <m>x, p \to 0</m>, the denominator is close to 1. Therefore, the method goes from <m>x</m> to approximately <m>px</m> where <p>p</p> is the point preceding <m>x</m>. For comparison, linear convergence would mean going from <m>x</m> to approximately <m>cx</m> where <m>c</m> is a fixed number. 
-Since the factor <p>p</p> itself goes to zero, the secant method has faster than linear rate of convergence. 
+Since <m>x, p \to 0</m>, the denominator is close to 1. Therefore, the method goes from <m>x</m> to approximately <m>px</m> where <m>p</m> is the point preceding <m>x</m>. For comparison, linear convergence would mean going from <m>x</m> to approximately <m>cx</m> where <m>c</m> is a fixed number. 
+Since the factor <m>p</m> itself goes to zero, the secant method has faster than linear rate of convergence. 
 </p></solution></example>
 
  
