@@ -210,7 +210,7 @@ Found a solution after 9 steps:
     1.7240    0.1497   -3.8737
 </pre>
 <p>Although an algebraic formula for the roots of a cubic (degree 3) equation exists, the symbolic form of the roots is often too complicated to be of any use. See what <url href="https://www.wolframalpha.com/input/?i=solve+x%5E3%2B2x%5E2-7x%2B1%3D0">Wolfram Alpha</url> shows as a solution of this equation. </p>
-<p>The above process, is a polished and simplified form, is known as the <url href="https://en.wikipedia.org/wiki/Durand%E2%80%93Kerner_method">Durand-Kerner method</url> for finding all polynomial roots at once. </p></solution></example>
+<p>The above process, in a polished and simplified form, is known as the <url href="https://en.wikipedia.org/wiki/Durand%E2%80%93Kerner_method">Durand-Kerner method</url> for finding all polynomial roots at once. </p></solution></example>
 
 <question><title>Another cubic equation</title>
 <p>If we apply the logic of <xref ref="example-durand-kerner-solve" /> to the equation 

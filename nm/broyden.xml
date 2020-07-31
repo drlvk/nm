@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<chapter xml:id="chapter-broyden" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+<title>Broyden's method</title>
+
+
+    <introduction>
+        <p>A major difficulty in using multivariate Newton's method is having to specify the Jacobian matrix. Broyden's method offers a workaround by building an approximation to the Jacobian matrix based on the values of the function. It can be viewed as a multivariate form of the secant method.</p>
+    </introduction>
+
+<section xml:id="section-broyden-intro">
+<title>Idea of Broyden's method: guess and update the value of derivative</title>
+
+<p>Let us return to one-variable situation first. Newton's method proceeds in steps computed as 
+<m>h = -f(x_0)/f'(x_0)</m> which requires the knowledge of <m>f'(x_0)</m>. Suppose we do not know the derivative but are willing to guess. For notational convenience, let us say we are guessing the value of <m>1/f'(x_0)</m>. We want some non-zero number. Knowing nothing whatsoever, we can guess "1". Let us call this guess <m>b_0 = 1</m>. Armed with this number, we proceed as usual in Newton's method: make the step <m>h = -b_0 f(x_0)</m> arriving at the point <m>x_1 = x_0</m>.</p>
+
+<p>Our next guess, for the value of <m>1/f'(x_1)</m> can be better educated: we can think of the secant line through the two points <m>(x_0, f(x_0))</m> and <m>(x_1, f(x_1))</m>, and decide it would be logical for <m>b_1</m> to be the reciprocal of the slope of this secant line. This means we pick <m>b_1</m> so that 
+ <men xml:id="eq-broyden-1"> b_1(f(x_1)- f(x_0)) = x_1-x_0 </men>
+Then the process continues: we make the step <m>h = -b_1 f(x_1)</m>, arrive at <m>x_2 = x_1+h</m> and use the secant slope through the two newest points, 
+ <me> b_2(f(x_2)- f(x_1)) = x_2-x_1 </me>
+Apart from the initial uneducated guess for <m>b_0</m> this is exactly the secant method, expressed in different notation.</p>
+
+<p>In higher dimensions, we need a guess for the inverse of the Jacobian matrix, which is used in Newton's method <m>\vec h = -J^{-1} \vec F(\vec x)</m>. At first we take an uneducated guess for the value of <m>J(x_0)^{-1}</m>, namely <m>B_0=I</m>, the identity matrix. 
+This enables us to make a step $\vec h = -B_0 F(\vec x_0)$. Now comes the important part we want our next guess to be better informed than the previous one. Looking back at <xref ref="eq-broyden-1" />, it seems we should choose a matrix <m>B_1</m> so that 
+<me>B_1(\vec F(\vec x_1) - \vec F(\vec x_0)) = \vec x_1 - \vec x_0 </me>  
+How to do that? We cannot <q>divide a vector by another</q>, the formula 
+<me>B_1 \overset{?}{=} \frac {\vec x_1 - \vec x_0}{\vec F(\vec x_1) - \vec F(\vec x_0)} </me>  
+makes no sense (this is the difference between one variable and several variables.)
+We need to use linear algebra. 
+</p> 
+</section>
+
+<section xml:id="section-broyden-linear-algebra">
+<title>Outer products</title>
+
+<p>If <c>a</c> and <c>b</c> are column vectors with <m>n</m> entries, then <c>a'*b</c> in Matlab is their scalar product (also called the inner product or the dot product):
+<me>
+  \begin{pmatrix}a_1 \amp a_2 \amp \cdots \amp a_n \end{pmatrix} \begin{pmatrix}b_1 \\ b_2 \\ \cdots \\ b_n \end{pmatrix} = a_1b_1 + a_2b_2 + \dots +a_n b_n 
+</me>
+where multiplication is carried out by the rules of matrix products: 1<times/>n matrix times n<times/>1 matrix gives a 1<times/>1 matrix, a single number. The rules of matrix multiplication also allow us to compute <c>a*b'</c>: 
+<me>
+  \begin{pmatrix}a_1 \\ a_2 \\ \cdots \\ a_n \end{pmatrix} \begin{pmatrix}b_1 \amp b_2 \amp \cdots \amp b_n \end{pmatrix} = 
+\begin{pmatrix}
+  a_1b_1 \amp a_1b_2 \amp \dots \amp  a_1 b_n \\  
+  a_2b_1 \amp a_2b_2 \amp \dots \amp  a_2 b_n \\  
+  \vdots \amp \vdots \amp \ddots \amp  \vdots \\  
+  a_nb_1 \amp a_nb_2 \amp \dots \amp  a_n b_n \\  
+\end{pmatrix}
+</me>
+This matrix is the <term>outer product</term> of vectors <m>\vec a</m> and <m>\vec b</m>. Since all of its rows are proportional to one another, its rank is at most 1. The rank is 0 if one of two vectors is the zero vector; otherwise it is equal to 1.</p>
+
+<example xml:id="example-random-outer-product">
+  <title>Random outer product</title>
+<statement><p>Let <m>M</m> be the outer product of two random vectors with 5 entries, generated with <c>rand</c>. Display the rank and determinant of <m>M</m>.</p></statement> 
+<solution><pre>
+a = rand(5, 1);
+b = rand(5, 1);
+M = a*b';
+disp(rank(M))
+disp(det(M))
+</pre>
+<p>The result should be: rank is 1, and the determinant is some extremely small (but nonzero) number, for example <c>3.2391e-69</c>. Mathematically this is impossible: a 5<times/>5 matrix of rank less than 5 must have determinant equal to 0. But the reality of computer arithmetic is that floating point numbers rarely add up exactly to zero, as noted in <xref ref="section-round-off" />. Matlab's <c>rank</c> command takes this into account and reports the rank as 1 when the matrix is <q>close enough</q> to actually having rank 1. </p>
+</solution></example>
+
+<p>In mathematical notation, the outer product would be written as <m>\vec a\vec b^T</m>, with T indicating the transposed vector (column turned into row). Since  <m>\vec a\vec b^T</m> is a matrix, we can apply it to some vector <m>\vec c</m>. The associative property of matrix multiplication shows that
+<men xml:id="eq-outer-product">
+ (\vec a\vec b^T)\vec c = \vec a (\vec b^T \vec c) = \vec a (\vec b\cdot \vec c) 
+</men>  
+that is, we get the vector <m>\vec a</m> multiplied by the dot product <m>\vec b\cdot \vec c</m>. Formula <xref ref="eq-outer-product" /> gives us an easy way to find a matrix <m>M</m> which satisfies the equation
+<m>M\vec c = \vec d</m> for given vectors <m>\vec c, \vec d</m>. Namely, we can let 
+<men xml:id="eq-construct-M">M = \frac{1}{\vec b^T \vec c} \vec d \vec b^T </men> 
+which is an outer product of two vectors with a scalar factor in front. The associative property shows that 
+<me>M\vec c = \frac{1}{\vec b^T \vec c} \vec d (\vec b^T \vec c) = \vec d</me> 
+Note that the choice of <m>\vec b</m> is up to us: any vector will work as <m>\vec b</m> as long as <m>\vec b^T \vec c \ne 0</m>. </p>
+<p>Once more, to make this point clear: one cannot <q>solve</q> <m>M\vec c = \vec d</m> for <m>M</m> by <q>dividing</q> vector <m>\vec d</m> by <m>\vec c</m>. But the process outlined above produces some matrix <m>M</m> that satisfies this equation.
+</p> 
+</section> 
+
+<section xml:id="section-broyden-method">
+<title>Details of Broyden's method</title>
+
+<p>Recall from <xref ref="section-broyden-intro" /> that we seek to improve our guess for the inverse of Jacobian by finding a matrix <m>B_1</m> such that 
+<me>B_1(\vec F(\vec x_1) - \vec F(\vec x_0)) = \vec x_1 - \vec x_0 </me>  
+To simplify notation, let <m>\vec h = \vec x_1 - \vec x_0</m> and <m>\vec w = \vec F(\vec x_1) - \vec F(\vec x_0)</m>; both these vectors are known. We need 
+<men xml:id="eq-B1-equation">B_1 \vec w = \vec h</men></p>
+
+<question><title>Why would not an outer product work here?</title>
+<statement><p>We already know how to find a matrix that satisfies <xref ref="eq-B1-equation" />, by taking an outer product multiplied by a scalar (<xref ref="eq-construct-M" />). But this would be a bad, illogical choice for <m>B_1</m>. Why?</p></statement>  
+</question>
+
+<p>We want <m>B_1</m> to have some similarity to <m>B_0</m> in the hope that the process of improving guesses<m>B_0, B_1, \dots</m> will converge to something, rather than just jump around. We want to improve the previous guess, not replace it entirely. So, let <m>B_1 = (I + M)B_0 = B_0 + MB_0</m> where <m>M</m> can be constructed from an outer product as in <xref ref="eq-construct-M" />. Namely, we want
+<me> B_0 \vec w + M B_0 \vec w = \vec h</me>
+so 
+<me>  M B_0 \vec w = \vec h - B_0 \vec w </me>
+According to <xref ref="eq-construct-M" /> we can achieve this by letting 
+<me> M = \frac{1}{\vec h^T \vec B_0 w} (\vec h - B_0 \vec w) \vec h^T </me> 
+where the chose the term <m>\vec b</m> to be <m>\vec h</m>. To summarize, the formula for updating our guess for inverse Jacobian is
+<me>B_1 = B_0 + \frac{1}{\vec h^T \vec B_0 w} (\vec h - B_0 \vec w) \vec h^T B_0 </me>  
+It looks messy, but at least the derivation was logical. </p>
+
+<p>The matrix <m>B_1</m> is still a guess, it may be very different from the actual inverse of Jacobian matrix. But it is a more educated guess, and as this process repeats, these repeated corrections will produce more accurate guesses.</p>
+ 
+</section>
+
+<section xml:id="examples-broyden">
+
+<title>Examples and questions</title>  
+
+<p> These are additional examples for reviewing the topic we have covered. When reading each example, try to find your own solution before clicking <q>Answer</q>. There are also questions for reviewing the concepts of this section. </p>
+
+<example xml:id="example-durand-kerner-broyden">
+   <title> Use Broyden's method to find all roots of a cubic polynomial</title>
+<statement><p> Redo <xref ref="example-durand-kerner-solve" /> using Broyden's method instead of Newton's method. 
+</p> </statement>
+<solution><p>We have the same vector functionto be equated to zero
+<me> \vec F(\vec x) = \begin{pmatrix} x_1+x_2+x_3 +2  \\ 
+x_1x_2 + x_1x_3 + x_2x_3 + 7 \\
+x_1x_2x_3 + 1
+\end{pmatrix} </me>
+but no longer use its Jacobian matrix. The code is modified by computing the steps as <c>h = -B*F(x)</c> and updating the matrix <c>B</c> according to Broyden's method.</p>
+<pre>
+F = @(x) [x(1) + x(2) + x(3) + 2; 
+          x(1)*x(2) + x(1)*x(3) + x(2)*x(3) + 7;
+          x(1)*x(2)*x(3) + 1];
+
+x = [1; 2; 3];
+B = eye(3);
+max_tries = 10000;
+
+for k = 1:max_tries
+    h = -B*F(x);
+    w = F(x+h) - F(x);
+    B = B + (h - B*w)*h'*B / (h'*B*w);
+    x = x + h;
+    if norm(h) &lt; 100*eps(norm(x))
+        break
+    end
+end
+
+if k &lt; max_tries
+    fprintf('Found a solution after %d steps:\n', k);
+    disp(x)
+    disp('The value F(x)')
+    disp(F(x))
+else
+    disp('Failed to converge')
+end
+</pre>
+<p>Starting from the same point <c>[1; 2; 3]</c> as we used for Newton's method, we get:</p>
+<pre>
+Found a solution after 1359 steps:
+    1.7240
+   -3.8737
+    0.1497
+</pre>
+<p>By contrast, Newton's method converged in 9 steps. There is a price to pay for the lack of Jacobian matrix.</p>
+</solution></example>
+
+<question><title>The role of the starting point</title>
+<p>The starting point <c>[1; 2; 3]</c> seems unfortunately chosen in <xref ref="example-durand-kerner-broyden" />, because if we start with <c>[1; 1; 1]</c> instead, the method converges much faster: in 37 steps. Recall that for Newton's method this starting point did not work at all. What makes the difference? </p></question>
+
+<question><title>The role of the starting matrix </title>
+<p>If we keep the starting point <c>[1; 2; 3]</c> in <xref ref="example-durand-kerner-broyden" /> but change the initial guess for inverse Jacobian to the matrix
+<cd>
+B = 0.1*eye(3);
+</cd>
+the algorithm converges much faster: in 53 steps. Why could this be? In what way does the <q>smaller</q> matrix help? Is the factor of 0.1 an under-relaxation parameter here? </p></question> 
+
+</section>
+
+
+<exercises xml:id="exercises-broyden">
+    <title>Homework</title>
+
+    <exercise number="1">
+        <statement>
+<p> (Theoretical problem.)  Find a matrix <m>A</m> of rank 1 such that   
+<me>
+A \begin{pmatrix}
+1 \\ 2 \\ 3
+\end{pmatrix} = \begin{pmatrix}
+3 \\ 1 \\ 5
+\end{pmatrix}
+</me>
+</p>
+</statement></exercise>
+
+    <exercise number="2">
+        <statement>
+<p>Use Broyden's method to solve the nonlinear system 
+<me>
+\begin{cases}
+x^2 + y^2 +\sin(x+y) \amp = a \\
+x+y+\cos(xy) \amp = 5
+\end{cases}
+</me>
+where <m>a</m> is the number formed by the first two digits of your SUID. </p>
+
+<p>Try at least two different starting points (or more, if needed to find a solution). Report the outcome of running the method for each starting point. Was the root you found always the same?</p>
+</statement></exercise>
+ 
+</exercises>
+
+</chapter>

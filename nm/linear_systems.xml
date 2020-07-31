@@ -262,6 +262,16 @@ we get the solution <c>[-9.3333; 9.6667; 0.0000]</c> which is quite different. N
 <m>x = b_1</m> and <m>x = b_2</m> where <m>b_1, b_2</m> are two unequal real numbers. What is the least-squares solution of this system, and why? (Try to answer without Matlab, and then check the conclusion with Matlab.)</p>
 </question> 
 
+<question><title>Testing for invertibility with determinant or rank</title>
+<p>Linear algebra says that an <m>n\times n</m> matrix <m>A</m> is singular (non-invertible) if and only if <m>\det A = 0</m>, if and only if <m>\rank A \lt n</m>. But in computational practice these two tests for invertibility can give different results. Consider the diagonal matrix with entries <m>10^{16}</m> and <m>1</m>.</p>
+<pre>
+A = [1e16 0; 0 1];
+disp(det(A))
+disp(rank(A))
+</pre>
+<p>Matlab says the determinant is <m>10^{16}</m> which makes sense: it is the product of diagonal entries. Yet, it also says the rank is <m>1</m>. Why?</p></question>
+
+
 <question><title>Model selection</title>
 <p>How different is the best-fit parabola in <xref ref="example-parabola-best-fit" /> from the line of best fit? If you have to choose between fitting a line or a parabola to this data set, what would you use? </p>
 
