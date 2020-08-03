@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<chapter xml:id="chapter-numerical-differentiation" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+<title>Numerical Differentiation</title>
+
+
+    <introduction>
+        <p>We already encountered a situation (Newton's method) where it would be useful to be able to find the derivative of a given function numerically. This problem also arises in engineering applications: for example, having measured the position of some object over time, we may want to know its velocity, which is the derivative of position. In this section we study this process, with emphasis on the accuracy of formulas that give an approximate value of various derivatives.</p>
+    </introduction>
+
+<section xml:id="section-differentiation-intro">
+<title>Main ideas: the definition of derivative, order of error </title>
+
+<p>The definition of derivative says: <me>f'(x) = \lim_{h\to 0} \frac{f(x+h)-f(x)}{h}</me> This suggests a way to approximate <m>f'(x)</m>: take two consecutive values of <m>f</m>, subtract, divide by difference of x-values:
+<men xml:id="eq-diff-f1">f'(x) \approx \frac{f(x+h)-f(x)}{h}</men>
+Here the value of <m>h</m> is some concrete number, so the two sides are only approximately equal. One can express this more precisely as
+<me>\frac{f(x+h)-f(x)}{h} = f'(x) + e(h) </me>
+where the error term <m>e</m> is a function of <m>h</m>. The accuracy of approximation is measured by the <term>order</term> of the error term, which is a number <m>d</m> such that <m>|e(h)|</m> is bounded by some multiple of <m>|h|^d</m>. </p>
+
+<p>There  is a method to determine the order of error of an approximation to some derivative of <m>f</m>: 
+<ol> 
+	<li> Let <m>n= 0</m></li>
+	<li> Plug <m>f(x) = x^n</m> into the formula and find the error term.</li>
+	<li> If the error term is some nonzero multiple of a power of <m>h</m>, the exponent of <m>h</m> is the order of the error term.</li>
+	<li> If the error term is zero, increase <m>n</m> by <m>1</m> and return to step 2.
+	</li>
+</ol> 
+</p>
+
+<example xml:id="example-error-diff-f1">
+  <title>Find the order of error of approximation to <m>f'</m> </title>
+<statement><p>Find the order of error of the formuls <xref ref="eq-diff-f1" />.</p></statement> 
+<solution><p>
+<ul>
+<li>With <m>f(x) = x^0</m> we get <m>f'(x) = 0</m> and <m>\frac{f(x+h)-f(x)}{h}=0</m>, so the error term is zero for this function. </li>
+<li>With <m>f(x) = x^1</m> we get <m>f'(x) = 1</m> and <m>\frac{f(x+h)-f(x)}{h}=\frac{h}{h}=1</m>, so the error term is zero for this function. </li>
+<li>With <m>f(x) = x^2</m> we get <m>f'(x) = 2x</m> and <m>\frac{f(x+h)-f(x)}{h}=\frac{x^2+2xh+h^2}{h}=2x + h</m>, so the error term for this function is <m>h^1</m>. </li>
+</ul>
+In conclusion, the formula has order of error 1.</p></solution></example>
+
+<p>The importance of the order of error can be illustrated by an example. Suppose we want to find <m>f'(x)</m> with absolute error at most <m>10^{-12}</m>. 
+<ul>
+<li>If the error term of our formula is <m>h^1</m>, we need to use extremely small <m>h</m>; that is <m>|h|\le 10^{-12}</m>. </li>
+<li>If the error term is <m>h^2</m>, we need <m>|h|\le 10^{-6}</m> which is still small but not as extreme.</li>
+<li>If the error term is <m>h^3</m>, we need <m>|h|\le 10^{-4}</m>. </li>
+<li>If the error term is <m>h^4</m>, we need <m>|h|\le 10^{-3}</m>. </li>
+</ul>
+Thus, a higher-order formula should allow us to obtain an accurate result while avoidung extremely small values of <m>h</m>. But why do we want to avoid extremely small <m>h</m>? This is explained in next section. </p>
+
+</section> 
+
+<section xml:id="section-loss-significance">
+<title>Loss of significance</title>
+
+<p><term>Loss of significance</term> may occur when we subtract two numbers that are very close to each other. This can occur in any context, not just numeric differentiation. But since differentiation involves expressions like <m>f(x+h)-f(x)</m> with small <m>h</m>, it is particularly vulnerable to the loss of significance. </p>
+
+<p>A simplified illustration of the loss of significance: suppose we can only have three decimal digits, any others have to be rounded. This can still be useful for approximate computations like <m>9.23 + 3.45 = 12.7</m> or <m>3.45 + 100 = 103</m> (note the rounding here). These approximate results are relatively close to what we would get with exact arithmetic. But when <em>subtraction</em> of nearly equal quantities are involved, the results can be less satisfactory:  
+<men xml:id="eq-loss-sig1"> (3.45 + 100) - 102 = 103 - 102 = 1</men> 
+while the exact arithmetic gives <m>1.45</m>. The error is nearly <m>50\%</m>.</p> 
+
+<p>An actual illustration is the following attempt to compute the derivative of <m>f(x) = \sqrt{x}</m> at the point <m>x = 10^6</m>. Note that <m>f(10^6) = 1000</m> and <m>f'(10^6) = 1/2000 = 5\cdot 10^{-4}</m>. Both looks like reasonable numbers. Let us try to use the approximation <xref ref="eq-diff-f1" /> with the values 
+<m>h = 10^{-9}, 10^{-10}, 10^{-11}</m>, in Matlab console:</p>
+<pre>
+>> x = 1e6;
+>> h = 1e-9; (sqrt(x+h) - sqrt(x))/h
+ans = 5.6843e-04
+
+>> h = 1e-10; (sqrt(x+h) - sqrt(x))/h
+ans = 0.0011
+
+>> h = 1e-11; (sqrt(x+h) - sqrt(x))/h
+ans = 0
+</pre>
+<p>The first result is off by about <m>10\%</m>, the second is more than twice the real answer, the third is even worse. All this is due to the loss of significant digits similar to what we see in <xref ref="eq-loss-sig1" />.</p>
+
+<p>Sometimes one can avoid the loss of significance by rearranging the expression algebraically. For example, 
+<me>
+\frac{\sqrt{x+h} - \sqrt{x}}{h} = 	\frac{(\sqrt{x+h} - \sqrt{x})(\sqrt{x+h} + \sqrt{x})}{h(\sqrt{x+h} + \sqrt{x})} = \frac{x+h-x}{h(\sqrt{x+h} + \sqrt{x})} = \frac{1}{\sqrt{x+h} + \sqrt{x}} 
+</me>
+Algebraically these expressions are identical, but in Matlab, <c>1/(sqrt(x+h) + sqrt(x))</c> produces accurate answer <c>5.0000e-04</c> for any of the above values of <m>h</m>. 
+Matlab also has some built-in logic for avoiding loss of significance in two frequently encountered situations: 
+<m>e^{x} - 1</m> and <m>\log (1+x)</m> when <m>x\approx 0</m>. These are the functions <c>expm1</c> and <c>log1p</c>. To see the difference, compare the results of <c>(exp(x)-1)/x</c> and <c>expm1(x)/x</c> when <c>x=1e-20</c>.
+</p>  
+</section>
+
+
+<section xml:id="section-symmetric-difference">
+<title>Symmetric difference formulas</title>
+
+<p>Although the formula <xref ref="eq-diff-f1" /> looks natural, it is not the best way to find the approximate value of <m>f'(x)</m>. The following <term>symmetric difference</term> formula works better: 
+<men xml:id="eq-diff-f1-symm">
+f'(x) \approx \frac{f(x+h)-f(x-h)}{2h}
+</men> The following computation explains why.</p>
+
+<example xml:id="example-error-diff-f1-symm">
+  <title>Order of error of symmmetric difference approximation to <m>f'</m> </title>
+<statement><p>Find the order of error of the formuls <xref ref="eq-diff-f1-symm" />.</p></statement> 
+<solution><p>
+<ul>
+<li>With <m>f(x) = x^0</m> we get <m>f'(x) = 0</m> and <m>\frac{f(x+h)-f(x-h)}{2h}=0</m>, so the error term is zero for this function. </li>
+<li>With <m>f(x) = x^1</m> we get <m>f'(x) = 1</m> and <m>\frac{f(x+h)-f(x-h)}{2h}=\frac{2h}{2h}=1</m>, so the error term is zero for this function. </li>
+<li>With <m>f(x) = x^2</m> we get <m>f'(x) = 2x</m> and <m>\frac{f(x+h)-f(x-h)}{2h}=\frac{4xh}{2h}=2x</m>, so the error term is zero for this function. </li>
+<li>With <m>f(x) = x^3</m> we get <m>f'(x) = 3x^2</m> and <m>\frac{f(x+h)-f(x-h)}{2h}=\frac{6x^2h +2h^3}{2h}=3x^2 + h^2</m>, so the error term for this function is <m>h^2</m>. </li>
+</ul>
+In conclusion, the formula has order of error equal to 2.</p></solution></example>
+
+<p>Here is a quick computation in Matlab console which compares the performance of both formulas on the function 
+<m>f(x) = e^x</m> at <m>x = 0</m> with <m>h = 0.1</m>. The error of symmetric difference formula is about 30 times smaller in this example, despite the same value of <m>h</m> and the same amount of computations involved.</p>
+<pre>
+>> x = 0; h = 0.1;
+>> (exp(x+h)-exp(x))/h
+ans = 1.0517
+>> (exp(x+h)-exp(x-h))/(2*h)
+ans = 1.0017
+</pre>
+
+<p>The <em>second order derivative</em> also has a convenient symmetric formula: 
+<men xml:id="eq-diff-f2">
+f''(x)\approx \frac{f(x+h)-2f(x)+f(x-h)}{h^2}
+</men>
+One can derive many other formulas for derivative of any order <m>k</m>, starting with Taylor series for <m>f</m>:
+<men xml:id="eq-taylor-expansion">
+f(x + \delta) = f(x) + f'(x)\delta + \frac{f''(x)}{2} \delta^2 + \frac{f'''(x)}{6} \delta^3 + \cdots
+</men> 
+One can use <xref ref="eq-taylor-expansion" /> with values like <m>\delta=h</m>,  <m>\delta=-h</m>, <m>\delta=0</m>, or maybe <m>\delta=2h</m>, and so on; and then take a linear combination of these expressions so that the derivatives of orders less than <m>k</m> cancel out, while the derivative of order <m>k</m> remains. The order of error of this formula will depends on what derivative of order greater than <m>k</m> remain in the linear combination. To have order of error <m>n</m>, one needs to make sure that the derivatives of orders between <m>k</m> and <m>k+n</m> also cancel out. </p>
+</section>
+
+<section xml:id="section-richardson-extrapolation">
+<title>Richardson extrapolation</title> 
+<p><term>Richardson extrapolation</term> is a method that allows one to reduce the error of an approximate formula, provided that the order of this error is known.  The idea is to use two different step sizes, for example <m>h</m> and <m>2h</m>. If the order of error is <m>n</m>, then the second approximation will have an error that is about <m>2^n</m> times greater. How can we use this information?</p>
+
+<p>Let <m>Q</m> be the quantity we want to find. Using step size <m>h</m> we get an approximation <m>A_1</m> with error term <m>E_1</m>, meaning that 
+<men xml:id="eq-rich-1"> Q = A_1 + E_1</men>  
+ Using step size <m>2h</m> we get an approximation <m>A_2</m> with error term <m>E_2</m>, meaning that 
+<men xml:id="eq-rich-2"> Q = A_2 + E_2</men>  
+Since we know that <m>E_2</m> is close to <m>2^n E_1</m>, we can try to cancel out the error terms: multiply <xref ref="eq-rich-1" /> by <m>2^n</m> and subtract <xref ref="eq-rich-2" />. The result is
+<me>(2^n-1) Q = 2^n A_1 - A_2 + [2^n E_1 - E_2]</me>
+Since the error terms should almost cancel each other, the new approximation 
+<men xml:id="eq-rich-main"> Q \approx \frac{2^n A_1 - A_2}{2^n-1}</men>
+should be much more accurate than the original approximation <xref ref="eq-rich-1" />. The formula <xref ref="eq-rich-main" /> expresses the method of Richardson extrapolation. This idea is not specific to numerical differentiation; it can be used any time a computed quantity has an error proportional to a known power of step size. </p> 
+
+<example xml:id="example-apply-richardson">
+<title>Apply Richardson extrapolation to the symmetric formula for <m>f'</m></title>	
+<statement><p> Use Richardson extrapolation to improve the accuracy of the symmetric difference 
+formula <xref ref="eq-diff-f1-symm" />.</p></statement> 
+<solution><p>Recall from <xref ref="example-error-diff-f1-symm" /> that the symmetric difference formula  
+has error of order 2. Therefore, in the equation <xref ref="eq-rich-main" /> we have <m>2</m>. The approximation <m>A_1</m> is the original formula 
+<me>A_1 = \frac{f(x+h)-f(x-h)}{2h}</me> 
+To get <m>A_2</m> we replace <m>h</m> by <m>2h</m>:
+<me>A_2 = \frac{f(x+2h)-f(x-2h)}{4h}</me>
+The formula <xref ref="eq-rich-main" /> now tells us that 
+<men xml:id="eq-symm-extrapolated">
+f'(x) \approx 	\frac{4 A_1 - A_2}{3}
+= 2\frac{f(x+h)-f(x-h)}{3h} - \frac{f(x+2h)-f(x-2h)}{12h}
+</men>
+which is the extrapolated approximation to <m>f'(x)</m>. 
+</p></solution></example>
+</section>
+
+<section xml:id="examples-numerical-differentiation">
+
+<title>Examples and questions</title>  
+
+<p> These are additional examples for reviewing the topic we have covered. When reading each example, try to find your own solution before clicking <q>Answer</q>. There are also questions for reviewing the concepts of this section. </p>
+
+<example xml:id="example-avoid-loss-of-significance">
+<title>Rewrite a formula to avoid the loss of significance</title>
+<statement><p>The formula <m>(1-cos(x))/x^2</m> is prone to loss of significance when <m>x</m> is close to <m>0</m>. Rewrite it in a mathematically equivalent way which avoids this issue. Compare the performance of both formulas in Matlab with <m>x = 10^{-9}</m>. </p></statement>
+<solution> <p>The issue is that <m>\cos x</m> is close to <m>1</m> and we subtract it from <m>1</m>. The identity <me>(1-\cos x)(1+\cos x) = 1-\cos^2 x = \sin^2 x</me> 
+can be used to avoid this issue. According to it, 
+ <me>
+\frac{1-cos(x)}{x^2} = \frac{\sin^2(x)}{x^2(1+\cos x)}
+</me>
+There is no loss of significance in the formula on the right. Compare in Matlab:</p>
+<pre>
+f = @(x) (1-cos(x))/x^2;
+g = @(x) sin(x)^2/(x^2*(1+cos(x)));
+disp(f(1e-9))
+disp(g(1e-9))
+</pre>
+<p>The first formula produces <m>0</m>, the second produces <m>0.5</m>. The second value is correct. Indeed, 
+ <me>
+\frac{1-cos(x)}{x^2} \to \frac12 \quad \text{as } x\to 0
+</me>
+</p></solution></example>
+
+
+<example xml:id="example-plot-log-difference">
+   <title> Compare the accuracy of three approximations to <m>f'</m></title>
+<statement><p>Consider the function <m>f(x) = \sin x</m> on the interval <m>[0, 5]</m>. Compare the accuracy of the three approximations to its derivative (<xref ref="eq-diff-f1" />, <xref ref="eq-diff-f1-symm" />, <xref ref="eq-symm-extrapolated" />) by plotting the <em>base 10 logarithm</em> of the error for each of them. Use <m>h = 0.1</m>.</p></statement>
+<solution> <pre> 
+f = @(x) sin(x);
+fp = @(x) cos(x);
+
+x = linspace(0, 5, 500);
+h = 0.1;
+
+original = (f(x+h) - f(x))/h;
+symmetric = (f(x+h) - f(x-h))/(2*h);
+extrapolated = 2*(f(x+h) - f(x-h))/(3*h) - (f(x+2*h) - f(x-2*h))/(12*h);
+exact = fp(x);
+
+hold on 
+plot(x, log10(abs(original - exact)))
+plot(x, log10(abs(symmetric - exact)))
+plot(x, log10(abs(extrapolated - exact)))
+legend('original', 'symmetric', 'extrapolated')
+hold off
+</pre>
+<p>The result, shown below, indicates that the error is about <m>10^{-1}</m> for the original formula (from the definition of derivative), about <m>10^{-3}</m> for the symmetric formula, and about <m>10^{-6}</m> for the extrapolated formula.</p>
+
+<figure xml:id="differentiation1-png"><image source="differentiation1.png" /> <caption>Comparison of errors</caption></figure> 
+
+<p>Note that Matlab's command <c>semilogy</c> can be used to plot on logarithmic scale directly, for example
+<cd>semilogy(x, abs(original - exact))</cd>
+has the same result as 
+<cd>plot(x, log10(abs(original - exact)))</cd>
+</p></solution></example>  
+
+<question><title>What makes the error smaller in some places?</title>
+<p>As we see in <xref ref="differentiation1-png" />, the size of error suddently becomes much smaller in certain parts of the interval. What is special about those places that makes the approximation more accurate? </p>
+<hint><p>Recall the connection with Taylor series: the error term involves derivatives of higher order.</p></hint>
+</question> 
+
+</section>
+
+
+<exercises xml:id="exercises-broyden">
+    <title>Homework</title>
+
+    <exercise number="1">
+        <statement>
+<p> Rewrite the formula 
+<me>\frac{\sqrt{9 + x^4} - 3}{\sin(x^4)}</me>
+to avoid the loss of significance when <m>x</m> is close to <m>0</m>. Evaluate both the original and rewritten formulas when <m>x = 10^{-4}</m>. How different are the results? </p>
+</statement></exercise>
+
+    <exercise number="2">
+        <statement>
+<p>A function <m>f</m> has been evaluated at the points <m>0, 0.1, 0.2, \dots, 1</m> (in Matlab notation, 
+<c>x = 0:0.1:1</c>). Its values are</p>
+<pre>
+y = [1, 0.99, 0.96, 0.91, 0.85, 0.78, 0.7, 0.61, 0.53, 0.44, 0.37]
+</pre>
+<p>Write a script which plots this function together with its first derivative <m>f'</m> and its second derivative <m>f'</m>. Use symmetric difference formulas with <m>h=0.1</m>.</p>
+</statement>
+
+<hint><p>Expressions like <c>y(3:end) - y(1:end-2)</c> will be useful. Note that while the values of <m>f</m> can be plotted against the given vector <c>x</c>, the derivatives need to be plotted against <c>x(2:end-1)</c> because the symmetric formulas do not apply at the endpoints.</p></hint></exercise>
+
+</exercises> 
+
+</chapter>
