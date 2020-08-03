@@ -10,7 +10,7 @@
     </introduction>
 
 <section xml:id="section-differentiation-intro">
-<title>Main ideas: the definition of derivative, order of error </title>
+<title>Definition of derivative and the order of error </title>
 
 <p>The definition of derivative says: <me>f'(x) = \lim_{h\to 0} \frac{f(x+h)-f(x)}{h}</me> This suggests a way to approximate <m>f'(x)</m>: take two consecutive values of <m>f</m>, subtract, divide by difference of x-values:
 <men xml:id="eq-diff-f1">f'(x) \approx \frac{f(x+h)-f(x)}{h}</men>
@@ -166,11 +166,11 @@ which is the extrapolated approximation to <m>f'(x)</m>.
 
 <example xml:id="example-avoid-loss-of-significance">
 <title>Rewrite a formula to avoid the loss of significance</title>
-<statement><p>The formula <m>(1-cos(x))/x^2</m> is prone to loss of significance when <m>x</m> is close to <m>0</m>. Rewrite it in a mathematically equivalent way which avoids this issue. Compare the performance of both formulas in Matlab with <m>x = 10^{-9}</m>. </p></statement>
+<statement><p>The formula <m>(1-\cos(x))/x^2</m> is prone to loss of significance when <m>x</m> is close to <m>0</m>. Rewrite it in a mathematically equivalent way which avoids this issue. Compare the performance of both formulas in Matlab with <m>x = 10^{-9}</m>. </p></statement>
 <solution> <p>The issue is that <m>\cos x</m> is close to <m>1</m> and we subtract it from <m>1</m>. The identity <me>(1-\cos x)(1+\cos x) = 1-\cos^2 x = \sin^2 x</me> 
 can be used to avoid this issue. According to it, 
  <me>
-\frac{1-cos(x)}{x^2} = \frac{\sin^2(x)}{x^2(1+\cos x)}
+\frac{1-\cos(x)}{x^2} = \frac{\sin^2(x)}{x^2(1+\cos x)}
 </me>
 There is no loss of significance in the formula on the right. Compare in Matlab:</p>
 <pre>
@@ -181,7 +181,7 @@ disp(g(1e-9))
 </pre>
 <p>The first formula produces <m>0</m>, the second produces <m>0.5</m>. The second value is correct. Indeed, 
  <me>
-\frac{1-cos(x)}{x^2} \to \frac12 \quad \text{as } x\to 0
+\frac{1-\cos(x)}{x^2} \to \frac12 \quad \text{as } x\to 0
 </me>
 </p></solution></example>
 
@@ -210,7 +210,7 @@ hold off
 </pre>
 <p>The result, shown below, indicates that the error is about <m>10^{-1}</m> for the original formula (from the definition of derivative), about <m>10^{-3}</m> for the symmetric formula, and about <m>10^{-6}</m> for the extrapolated formula.</p>
 
-<figure xml:id="differentiation1-png"><image source="differentiation1.png" /> <caption>Comparison of errors</caption></figure> 
+<figure xml:id="differentiation1-png"><image source="images/differentiation1.png" /> <caption>Comparison of errors</caption></figure> 
 
 <p>Note that Matlab's command <c>semilogy</c> can be used to plot on logarithmic scale directly, for example
 <cd>semilogy(x, abs(original - exact))</cd>
@@ -226,7 +226,7 @@ has the same result as
 </section>
 
 
-<exercises xml:id="exercises-broyden">
+<exercises xml:id="exercises-numerical-differentiation">
     <title>Homework</title>
 
     <exercise number="1">
