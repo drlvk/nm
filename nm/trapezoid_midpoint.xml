@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<chapter xml:id="chapter-trapezoid-midpoint" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+<title>Numerical integration: basic rules</title>
+
+
+    <introduction>
+        <p>We begin the study of numerical integration: the problem of finding, approximately, the definite integral of a given function on a given interval. This chapter covers basic rules of numerical integration that are covered in Calculus books.</p>
+    </introduction>
+
+<section xml:id="section-riemann-sums">
+<title>Riemann sums</title>
+
+<p>Numerical integration problem amounts to the following: we have a function <m>f</m> on some interval 
+<m>[a,b]</m>, and we try to compute <m>\int_a^b f(x)\,dx</m> based on evaluating <m>f</m> at some points of 
+this interval. To begin with, recall that by definition, <m>\int_a^b f(x)\,dx</m> is the limit of 
+<term>Riemann sums</term> of $f$. The process of computing a Riemann sum is as follows.
+<ol>
+<li> Divide <m>[a,b]</m> into subintervals. It can be divided into <m>n</m> subintervals by choosing some points 
+<m>x_0 \lt x_1 \lt x_2 \lt \cdots \lt  x_n</m> so that <m>x_0=a</m> and <m>x_n=b</m>. The subintervals are
+<m>I_k = [x_{k-1},x_k]</m> where <m>k=1, 2, \dots, n</m></li>
+<li> Evaluate <m>f</m> at some point <m>s_k</m> (a sample point) of each subinterval <m>I_k</m>.</li> 
+<li> Compute the sum of the products <m>f(s_k)(x_k-x_{k-1})</m> for <m>k=1,\dots,n</m>. This is the Riemann sum:
+<me>S = \sum_{k=1}^n f(s_k)(x_k-x_{k-1})</me>
+</li> 
+</ol>
+Therefore, our strategy of numeric integration consists of choosing subintervals and then choosing a point in each.</p>
+
+<p>The simplest choice of subintervals is to have subintervals of equal length, meaning each has length 
+<m>h=(b-a)/n</m>, which makes <m>x_k = a + kh</m>. We will eventually see that this choice is not as good as it seems, but it will do for now.</p>
+
+</section>
+
+<section xml:id="section-left-right-midpoint">
+<title>Left, right, midpoint rules</title>
+
+<p>The three rules considered here use equal subintervals, but different choices of same points. In a subinterval 
+<m>[x_{k-1}, x_k]</m> we have three natural choices for a sample point: left endpoint <m>x_{k-1}</m>, right endpoint <m>x_k</m>, and midpoint <m>\bar x_k = (x_{k-1} + x_k)/2</m>. They give us three ways of approximating the integral: 
+<ul>
+<li> Left endpoint approximation <m>L_n=h(f(x_0)+f(x_1)+\dots+f(x_{n-1}))</m></li> 
+<li> Right endpoint approximation <m>R_n=h (f(x_1)+f(x_2)+\dots+f(x_{n}))</m></li>
+<li> Midpoint Rule: <m>M_n=h (f(\bar x_1)+f(\bar x_2)+\dots+f(\bar x_{n}))</m></li>
+</ul>
+</p>
+
+<example xml:id="example-lrm-rules"><title>Computing with left- right- and midpoint rules</title>
+<statement><p>For the function <m>f(x) = \sin(x^2)</m> on the interval <m>[1, 3]</m>, use Matlab to compute 
+the left-, right, and midpoint approximations with <m>n=10</m></p></statement>
+<solution><pre>
+f = @(x) sin(x.^2);
+a = 1;
+b = 3;
+n = 10;
+h = (b-a)/n;
+x = a:h:b;
+
+L = sum(f(x(1:end-1)))*h;
+R = sum(f(x(2:end)))*h;
+midpoints = (x(1:end-1) + x(2:end))/2;
+M = sum(f(midpoints))*h;
+fprintf('Leftpoint %g, Rightpoint %g, Midpoint %g\n', L, R, M);
+</pre>
+<p>The output is <q>Leftpoint 0.483958, Rightpoint 0.398087, Midpoint 0.474599</q>. (One can check with 
+WolframAlpha that the actual value of the integral is about 0.4633.)</p>
+</solution></example>
+
+
+
+
+
+
+
+
+
+
+</section>
+</chapter>
+

@@ -231,6 +231,12 @@ has the same result as
 
     <exercise number="1">
         <statement>
+<p> Find the order of error of the formula <xref ref="eq-diff-f2" /> (theoretical exercise).</p>
+</statement></exercise>
+
+
+    <exercise number="2">
+        <statement>
 <p> Rewrite the formula 
 <me>\frac{\sqrt{9 + x^4} - 3}{\sin(x^4)}</me>
 to avoid the loss of significance when <m>x</m> is close to <m>0</m>. Evaluate both the original and rewritten formulas when <m>x = 10^{-4}</m>. How different are the results? </p>
