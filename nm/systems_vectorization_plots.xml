@@ -31,7 +31,7 @@ is not actually used, it suggests the notation used by Matlab. For two numbers <
 <example>
 	<title>Solve and verify</title>
 <statement>
-	<p>Write a Matlab which solves the linear system 
+	<p>Write a Matlab script which solves the linear system 
 <md>
 	<mrow>5x_1 + 3x_2 \amp = 2 </mrow>
 	<mrow>-2x_1 + x_2  - 6x_3 \amp = 0 </mrow>
@@ -195,7 +195,7 @@ plot(t.*cos(t), t.*sin(t))
 
 
 <example><title>Tridiagonal matrix of arbitrary size</title>
-<statement> Given a positive integer <m>n</m>, construct a tridiagonal matrix of the above form with size <m>n\times n</m>. </statement>
+<statement> Given a positive integer <m>n</m>, construct a tridiagonal matrix which has entries -1, 2, -1 (as in <xref ref="section-large-matrices" />) and size <m>n\times n</m>. </statement>
 <answer>
 <pre>diag(2*ones(1, n)) - diag(ones(1, n-1), 1) - diag(ones(1, n-1), -1)</pre>
 <p>or</p>
