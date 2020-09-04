@@ -110,7 +110,7 @@ disp(norm(Ax-b))
 </md> 
 This system can be written as <m>Az=b</m> where 
 <me>
-A = \begin{pmatrix} x_1 \amp 1 \\ x_2 \amp 1 \\ \vdots \amps \vdots \\ x_m \amp 1 \end{pmatrix},
+A = \begin{pmatrix} x_1 \amp 1 \\ x_2 \amp 1 \\ \vdots \amp \vdots \\ x_m \amp 1 \end{pmatrix},
 \quad 
 b = \begin{pmatrix} y_1 \\ y_2 \\ \vdots \\ y_m \end{pmatrix}, 
 \quad z = \begin{pmatrix} c \\ d \end{pmatrix} </me> 

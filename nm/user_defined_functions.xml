@@ -13,7 +13,7 @@ Then we can apply this function to a vector, for example to plot it.</p>
 x = linspace(-3, 3, 500);
 plot(x, f(x))
 </pre>
-    <p>An anonymous function can have multiple variables, for example the mathematical formula <m>f(x) = (xy+1)/z</m> could be defined as <c>f = @(x,y,z) (x.*y + 1)./z</c>. The inclusion of periods allows this function to vectors for its inputs, provided the vectors are of the same size.  </p>
+    <p>An anonymous function can have multiple variables, for example the mathematical formula <m>f(x, y, z) = (xy+1)/z</m> could be defined as <c>f = @(x,y,z) (x.*y + 1)./z</c>. The inclusion of periods allows this function to vectors for its inputs, provided the vectors are of the same size.  </p>
     <p>The names of the parameters (variables inside of anonymous function) do not matter outside of that function. For example, there is no problem with the following code</p>
     <pre>
 f = @(x) x + 4;
