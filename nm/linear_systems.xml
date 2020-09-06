@@ -231,10 +231,7 @@ A = [x.^2, x, x.^0];
 z = A\y;
 xx = linspace(min(x), max(x), 500)';
 yy = [xx.^2, xx, xx.^0]*z;
-hold on
-plot(xx, yy)
-plot(x, y, 'r*')
-hold off
+plot(xx, yy, 'b', x, y, 'r*')
 </pre>
 <p><em>Explanation</em>: the only modification that we need is to add a column with the squares of x-values. In general, this process allows us to fit a function of the form 
 <m>c_1 f_1(x) + c_2 f_2(x) + \cdots + c_n f_n(x) </m> where <m>f_1, f_2, \dots, f_n</m> are given functions and <m>c_1, c_2, \dots, c_n</m> are coefficients (parameters) to be determined.</p>
@@ -316,12 +313,9 @@ x_1 -2 x_2 + 3x_3 - x_4 \amp =  -3  \\
 function hw6()
   x =  1980:5:2015;  % years  
   y =                % population of your hometown in these years 
-  plot(x, y, 'r*')   % plot as red asterisks
-  hold on            % keep this plot; we'll put another one on top of it
   [c, d] = linearfit(x, y);            % find the coefficient of linear fit
   xx = linspace(min(x), max(x), 500);  % to be used for plotting the line
-  plot(t, c*xx + d)                    % plot the line
-  hold off                             % stop holding on to the plot 
+  plot(x, y, 'r*', xx, c*xx + d, 'b')  % plot red points and blue line
 end
 
 function [k, c] = linearfit(x,y)
