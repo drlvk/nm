@@ -15,7 +15,7 @@
 <p>Numerical integration problem amounts to the following: we have a function <m>f</m> on some interval 
 <m>[a,b]</m>, and we try to compute <m>\int_a^b f(x)\,dx</m> based on evaluating <m>f</m> at some points of 
 this interval. To begin with, recall that by definition, <m>\int_a^b f(x)\,dx</m> is the limit of 
-<term>Riemann sums</term> of $f$. The process of computing a Riemann sum is as follows.
+<term>Riemann sums</term> of <m>f</m>. The process of computing a Riemann sum is as follows.
 <ol>
 <li> Divide <m>[a,b]</m> into subintervals. It can be divided into <m>n</m> subintervals by choosing some points 
 <m>x_0 \lt x_1 \lt x_2 \lt \cdots \lt  x_n</m> so that <m>x_0=a</m> and <m>x_n=b</m>. The subintervals are
@@ -154,16 +154,17 @@ the error of <m>h^2/2</m>, which cam be written as <m>\dfrac{1}{2} \ 1! \ h^2</m
 </p></solution></example>
 
 <example xml:id="example-improper-substitution"><title>Using substitution to evaluate an improper integral</title>
-<statement><p>The integral <m>\int_1^\infty \dfrac{e^{-x}}{x} \,dx</m> is improper (of first kind, meaning the interval of integratio is infinite). Having an integration limit $b = \infty$ is not good for our integration rules. Make a substitution to transform this  integral into a proper one. </p></statement>
+<statement><p>The integral <me>\int_1^\infty \frac{e^{-x}}{x} \,dx</me> is improper (of first kind, meaning the interval of integration is infinite). Having an integration limit <m>b = \infty</m> is not good for any of the integration rules in this chapter. Make a substitution to transform this  integral into a proper one. </p></statement>
 <solution><p> The substitution <m>u = e^{-x}</m> works well here. Since <m>du = -e^{-x}\,dx</m> and <m>x = -\log u</m>, it follows that 
 <me>\int_1^\infty \dfrac{e^{-x}}{x} \,dx 
 = -\int_0^{1/e} \dfrac{1}{\log u} \,du 
 </me>
-The integral on the right is proper. As <m>u\to 0+</m>, the logarithm tends to negative infinity, but this only makes the integrand zero; so it is a continuous function on the interval of integration. 
-</p></solution></example> 
+The integral on the right is proper. As <m>u\to 0+</m>, the logarithm tends to negative infinity, but this only makes the integrand zero; so it is a continuous function on the interval of integration. </p>
+<p>Note that the substitution does not bring us any closer to the symbolic solution, since <m>1/\log u</m> cannot be integrated with calculus methods either. But it makes a more convenient integral for numerical methods. </p>
+</solution></example> 
 
 <question><title>Failure of error estimates</title>
-<p>The integral <m>\int_0^{1/e} \dfrac{1}{\log u} \,du</m> could be approximated using any of the above rules. The endpoint 0 is not a problem; Matlab is okay with <c>1/log(0)</c> which it evaluates as 0. Try the midpoint rule with <m>n=5</m>, for example. Then try to estimate the error of this rule using the formula in <xref ref="example-error-midpoint-rule"/>. What goes wrong, and what does this mean for the approximation? 
+<p>The integral <me>\int_0^{1/e} \dfrac{1}{\log u} \,du</me> could be approximated using any of the  rules in this chapter. The endpoint 0 is not a problem, because Matlab is okay with <c>1/log(0)</c>: it simply evaluates it as 0. But it is still a good idea to avoid this endpoint, so the midpoint rule is preferable. Try it with <m>n=5</m>, for example. Then try to estimate the error of this rule using the formula in <xref ref="example-error-midpoint-rule"/>. What goes wrong, and what does this mean for the approximation? 
 </p>
 </question> 
 
