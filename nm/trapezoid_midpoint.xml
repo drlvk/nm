@@ -64,16 +64,141 @@ fprintf('Leftpoint %g, Rightpoint %g, Midpoint %g\n', L, R, M);
 <p>The output is <q>Leftpoint 0.483958, Rightpoint 0.398087, Midpoint 0.474599</q>. (One can check with 
 WolframAlpha that the actual value of the integral is about 0.4633.)</p>
 </solution></example>
+</section>
+
+<section xml:id="section-trapezoidal-rulet">
+<title>Trapezoidal rule</title>
+
+<p>When a function is increasing, the leftpoint rule underestimates its integral, and rightpoint rule overestimates it. So, their average <m>T_n=(L_n+R_n)/2</m> should be a better approximation. This is the 
+<term>Trapezoidal Rule</term>: 
+<me>
+T_n = \frac{h}{2}(f(a)+f(b)) + h( f(x_1)+\dots+f(x_{n-1}))
+</me>
+In Matlab, the computation is similar to <xref ref="example-lrm-rules" />
+<cd>
+T = (f(x(1)) + f(x(end))) * h/2 + sum(f(x(2:end-1)))*h;	
+</cd>
+It may be simpler to compute the vector <c>y = f(x)</c> first, which reduces the number of calls to function <c>f</c> and the number of parentheses: 
+<cd>
+T = (y(1) + y(end)) * h/2 + sum(y(2:end-1))*h;	
+</cd>
+</p> 
+
+<example xml:id="example-lrmt-rules-compare"><title>Comparing the accuracy of four rules</title>
+<statement><p>For the function <m>f(x) = e^x </m> on the interval <m>[-1, 1]</m>, use Matlab to compute 
+the left-, right, and midpoint approximations with <m>n=10</m> and find the error of each approximation (that is, its difference with the actual integral). </p></statement>
+<solution><pre>
+f = @(x) exp(x);
+a = -1;
+b = 1;
+n = 10;
+h = (b-a)/n;
+x = a:h:b;
+y = f(x);
+
+L = sum(y(1:end-1))*h;
+R = sum(y(2:end))*h;
+T = (y(1) + y(end)) * h/2 + sum(y(2:end-1))*h; 
+midpoints = (x(1:end-1) + x(2:end))/2;
+M = sum(f(midpoints))*h;
+
+exact = exp(1)-exp(-1);
+er = abs([L R T M] - exact);
+fprintf('Errors: Leftpoint %g, Rightpoint %g, Trapezoidal %g, Midpoint %g\n', er);
+</pre>
+<p>Here <c>fprintf</c> <q>unpacks</q> the vector <c>er</c>, inserting its entries in the right places.</p>
+</solution></example>
+</section>
+
+<section xml:id="section-lrtm-error-estimates">
+<title>Error estimates</title>
+
+<p>How to estimate the accuracy of integration rules? Here is an empirical method which is similar to how we estimated the accuracy of differentiation rules in <xref ref="section-differentiation-intro" />. </p>
+
+<p>There  is a method to determine the order of error of an approximation to some derivative of <m>f</m>: 
+<ol> 
+	<li> Let <m> d = 0</m></li>
+	<li> Apply the integration rule to <m>f(x) = x^d</m> on the interval <m>[0, h]</m>, with the smallest possible number of evaluation points. Find the error term. </li>
+	<li> If the error term is zero, increase <m>d</m> by <m>1</m> and return to step 2. </li>
+	<li> Express the error as <m> C \,d! \,h^{d+1}</m> with an explicit constant <m>C</m>. Note that the factorial <m>d!</m> is here because it is the derivative of <m>f</m> of order <m>d</m>, which is the source of the error.</li>
+    <li> The error bound for a single subinterval is <m>C \max |f^{(d)}|  h^{d+1}</m>. </li>
+    <li>When the estimate is applied on an interval <m>[a,b]</m> with step size <m>h=(b-a)/n</m>, the error estimate is multiplied by <m>n</m>; thus the final result is <m>C \max |f^{(d)}|  (b-a)  h^d </m>. 
+	</li>
+</ol> 
+</p>
+
+<example xml:id="example-error-midpoint-rule"><title>The error of midpoint rule</title>
+<statement><p>Using the process describe above, estimate the error of the midpoint rule.</p></statement>
+<solution><p> The midpoint rule is exact for <m>x^0</m> and <m>x^1</m>. But for <m>\int_0^h x^2\,dx</m> it predicts <m>\int_0^h x^2\,dx  = h^3/4</m>, while the true value is <m>h^3/3</m>. So we stop at <m>d=2</m> with 
+the error of <m>h^3/12</m>, which cam be written as <m>\dfrac{1}{24} \ 2! \ h^3</m>. Therefore, the constant factor in the error formula: is <m>C=1/24</m>. In conclusion, the error of the midpoint rule is at most
+<me>
+|\text{error}| \le \frac{1}{24}\max_{[a,b]} |f''|  (b-a) h^2
+</me>
+</p></solution></example>
+</section>
 
 
+<section xml:id="examples-trapezoid-midpoint">
+
+<title>Examples and questions</title>  
+
+<p> These are additional examples for reviewing the topic we have covered. When reading each example, try to find your own solution before clicking <q>Answer</q>. There are also questions for reviewing the concepts of this section. </p>
+
+<example xml:id="example-error-rightpoint-rule"><title>The error of rightpoint rule</title>
+<statement><p>Estimate the error of the rightpoint rule.</p></statement>
+<solution><p> The rightpoint rule is exact for <m>x^0</m>. But for <m>\int_0^h x^1\,dx</m> it predicts <m>\int_0^h x^1\,dx  = h^2</m>, while the true value is <m>h^2/2</m>. So we stop at <m>d=1</m> with 
+the error of <m>h^2/2</m>, which cam be written as <m>\dfrac{1}{2} \ 1! \ h^2</m>. Therefore, the constant factor in the error formula: is <m>C=1/2</m>. In conclusion, the error of the rightpoint rule is at most
+<me>
+|\text{error}| \le \frac{1}{2}\max_{[a,b]} |f'|  (b-a) h
+</me>
+</p></solution></example>
+
+<example xml:id="example-improper-substitution"><title>Using substitution to evaluate an improper integral</title>
+<statement><p>The integral <m>\int_1^\infty \dfrac{e^{-x}}{x} \,dx</m> is improper (of first kind, meaning the interval of integratio is infinite). Having an integration limit $b = \infty$ is not good for our integration rules. Make a substitution to transform this  integral into a proper one. </p></statement>
+<solution><p> The substitution <m>u = e^{-x}</m> works well here. Since <m>du = -e^{-x}\,dx</m> and <m>x = -\log u</m>, it follows that 
+<me>\int_1^\infty \dfrac{e^{-x}}{x} \,dx 
+= -\int_0^{1/e} \dfrac{1}{\log u} \,du 
+</me>
+The integral on the right is proper. As <m>u\to 0+</m>, the logarithm tends to negative infinity, but this only makes the integrand zero; so it is a continuous function on the interval of integration. 
+</p></solution></example> 
+
+<question><title>Failure of error estimates</title>
+<p>The integral <m>\int_0^{1/e} \dfrac{1}{\log u} \,du</m> could be approximated using any of the above rules. The endpoint 0 is not a problem; Matlab is okay with <c>1/log(0)</c> which it evaluates as 0. Try the midpoint rule with <m>n=5</m>, for example. Then try to estimate the error of this rule using the formula in <xref ref="example-error-midpoint-rule"/>. What goes wrong, and what does this mean for the approximation? 
+</p>
+</question> 
 
 
-
-
-
-
-
+<question><title>An improper integral of second kind</title>
+<p>The integral <m>\int_0^1 x^{-1/2}\,dx</m> is improper (of second kind) but it converges. Which of the above integration rules could be used to evaluate this integral? Which of those rules would you use? 
+</p>
+</question> 
 
 </section>
+
+
+<exercises xml:id="exercises-trapezoid-midpoint">
+    <title>Homework</title>
+
+    <exercise number="1">
+        <statement>
+<p> Estimate the error of the trapezoidal rule following the procedure  in <xref ref="section-lrtm-error-estimates" /> (theoretical exercise).</p>
+</statement></exercise>
+
+    <exercise number="2">
+        <statement>
+<p> Calculate an approximate value of <m>\pi</m> using from the formula 
+<me>
+\int_0^\infty \sin(x^2)\,dx = \sqrt{\frac{\pi}{8}}
+</me>
+Two approximations must be made here: replacing <m>\infty</m> in the integral with a large number <m>b</m>, and using the <em>trapezoidal</em> rule with a large number of subintervals <m>n</m>. While avoiding extremely large <m>b</m> and <m>n</m> that might freeze your computer, calculate the value of integral <m>I</m> with enough precision so that <c>round(8*I^2, 2)</c> (rounding to 2 places) produces 3.14, a reasonable approximation to <m>\pi</m>.</p>    
+
+<p>Questions to answer: (a) What values of <m>b</m> and <m>n</m> did you use to achieve 3.14? (b) If you increase <m>b</m> while keeping <m>n</m> fixed, does the answer become more precise or less precise? Why? (Hint: think of the error estimate formula) </p>
+</statement></exercise>
+ 
+
+
+
+</exercises> 
+
 </chapter>
 

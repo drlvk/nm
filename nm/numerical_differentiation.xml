@@ -242,7 +242,7 @@ has the same result as
 to avoid the loss of significance when <m>x</m> is close to <m>0</m>. Evaluate both the original and rewritten formulas when <m>x = 10^{-4}</m>. How different are the results? </p>
 </statement></exercise>
 
-    <exercise number="2">
+    <exercise number="3">
         <statement>
 <p>A function <m>f</m> has been evaluated at the points <m>0, 0.1, 0.2, \dots, 1</m> (in Matlab notation, 
 <c>x = 0:0.1:1</c>). Its values are</p>
