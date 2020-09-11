@@ -193,7 +193,7 @@ Since the factor <m>p</m> itself goes to zero, the secant method has faster than
 
     <exercise number="3">
         <statement>
-<p>Write a script that attempts to solve the equation <m>\tan x - 1 = 0</m> using Newton's method. Similarly to <xref ref="example-secant-method" /> and <xref ref="example-solve-fixed-point-iteration" />, the script should show the number of steps it took to find a solution, or report that it failed to converge. Allow the algorithm up to 10000 steps before giving up. As the initial point <c>x0</c>, use the number formed by the first two digits of your SUID. (Note: it is expected that your script will fail to converge.)</p>
+<p>Write a script that attempts to solve the equation <m>\arctan x - 1 = 0</m> using Newton's method (Note that Matlab's  notation for arctangent is <c>atan</c>.) Similarly to <xref ref="example-secant-method" /> and <xref ref="example-solve-fixed-point-iteration" />, the script should show the number of steps it took to find a solution, or report that it failed to converge. Allow the algorithm up to 10000 steps before giving up. As the initial point <c>x0</c>, use the number formed by the first two digits of your SUID. (Note: it is expected that your script will fail to converge.)</p>
  
 <p>Introduce a relaxation parameter <m>\omega</m> in your script to help it converge. What value of <m>\omega</m> achieves convergence? Be careful: <m>\omega</m> should be small, but if it is too small, the algorithm will fail to converge because it takes too long.</p> 
 
