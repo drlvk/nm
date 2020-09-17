@@ -165,7 +165,7 @@ end
 
 <example xml:id="example-durand-kerner-setup">
    <title> Rewriting a polynomial equation in multivariate form</title>
-<statement><p> Consider a polynomial equation, for example <m>x^3 + 2x^2 - 7x + 1 = 0</m>. This is a scalar equation with one scalar variable, so it could be solved by the methods of previous chapters, including Newton's method in one variable. But then we would get only one root (depending on initial position), not all three. Rewrite this equation as a system of three equations for three roots <m>x_1, x_2, x_3</m>, using the fact that the polynomial factors as <m>(x-x_1)(x-x_2)(x-x-3)</m>.</p> </statement>
+<statement><p> Consider a polynomial equation, for example <m>x^3 + 2x^2 - 7x + 1 = 0</m>. This is a scalar equation with one scalar variable, so it could be solved by the methods of previous chapters, including Newton's method in one variable. But then we would get only one root (depending on initial position), not all three. Rewrite this equation as a system of three equations for three roots <m>x_1, x_2, x_3</m>, using the fact that the polynomial factors as <m>(x-x_1)(x-x_2)(x-x_3)</m>.</p> </statement>
 <solution><p>Expanding the product, we find 
 <me>x^3 + 2x^2 - 7x + 1 = (x-x_1)(x-x_2)(x-x_3) = x^3 + Ax^2 + Bx + C</me>
 where <m>A = -(x_1+x_2+x_3)</m>, <m>B = x_1x_2 + x_1x_3 + x_2x_2</m>, and <m>C = -x_1x_2x_3</m>. Equating the coefficients, we get the system

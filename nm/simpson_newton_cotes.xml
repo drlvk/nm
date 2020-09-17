@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<chapter xml:id="chapter-simpson-newton-cotes" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+<title>Simpson's rule and other Newton-Cotes rules</title>
+
+
+    <introduction>
+        <p>This chapter introduces more sophisticated integration rules which attach different weights to different points of evaluation. However, the evaluation points are still chosen in a simple way, by putting them at equal distance from one another. This will eventually become a problem.</p>
+    </introduction>
+
+<section xml:id="section-simpson-rule">
+<title>Simpson's Rule</title>
+
+<p>Consider the trapezoidal rule on the interval <m>[-1,1]</m> with <m>n=2</m>. It has <m>h=1</m>, so 
+<men xml:id="eq-trap1">
+\int_{-1}^{1} f(x)\,dx \approx  f(0) +  \frac{1}{2}(f(-1)+f(1))
+</men>
+Surprisingly, the approximation <xref ref="eq-trap1" /> can be made much more precise without doing more computations. As in <xref ref="section-richardson-extrapolation" />, we use the Richardson extrapolation to improve the accuracy. The same trapezoidal rule with doubled step size <m>h=2</m> yields
+<men xml:id="eq-trap2">
+\int_{-1}^{1} f(x)\,dx \approx \frac{2}{2} (f(-1)+f(1)) 
+</men>
+Since the error of trapezoidal rule is proportional to <m>h^2</m> (the rule has second order of accuracy), we expect the second approximation <xref ref="eq-trap2" /> to have error 4 times greater than the first approximation <xref ref="eq-trap1" />. To cancel out most of the error, we divide <xref ref="eq-trap2" /> by 4 and subtract it from <xref ref="eq-trap1" />. The result is
+<me>
+\frac34 \int_{-1}^{1} f(x)\,dx \approx f(0) +  \frac{1}{2}(f(-1)+f(1)) - \frac14 (f(-1)+f(1)) 
+</me>
+Hence 
+<men xml:id="eq-simps1">
+\int_{-1}^{1} f(x)\,dx \approx \frac43 f(0) + \frac{1}{3}(f(-1)+f(1))
+</men>
+The approximation <xref ref="eq-simps1" /> uses the same information about function <m>f</m> as the 
+trapezoidal rule <xref ref="eq-trap1" />: the values at -1, 0, 1. But the result is much more accurate. Consider, for example, the integral <m>\int_{-1}^1 e^x\,dx = e - 1/e \approx 2.3504</m>. The trapezoidal rule <xref ref="eq-trap1" /> approximates it by  
+<me>
+e^0 +  \frac{1}{2}(e^{-1} + e^1) \approx 2.5431     
+</me>
+with the error of 0.1927.  The formula <xref ref="eq-simps1" /> produces 
+<me>
+\frac43 e^0 + \frac{1}{3}(e^{-1}+ e^1) \approx 2.3621
+</me>
+with the error of 0.0117. This is 16 times more accurate. This improvement was achieved by changing the 
+<term>weights</term> (coefficients) attached to the values <m>f(-1), f(0), f(1)</m>: for trapezoidal rule they are <m>1/2, 1, 1/2</m>, but the formula <xref ref="eq-simps1" /> uses the weights <m>1/3, 4/3, 1/3</m>. 
+The formula <xref ref="eq-simps1" /> is Simpson's rule (with <m>n=2</m> subintervals). </p>
+ 
+<p>Simpson's rule can be used with more subintervals, but their number <m>n</m> has to be even, since we are combining trapezoidal rule with <m>n</m> and <m>n/2</m> subintervals. With <m>h=(b-a)/n</m> we get 
+<men xml:id="eq-simps2">
+\int_a^b f(x)\,dx \approx \frac{h}{3}(1,4,2,4,\dots,2,4,1) \cdot (\text{vector of y-values})  
+</men>
+A better way to think of this formula is that we first divide the interval into some number of equal parts and then use Simpson's rule on each part. The result is called <q>composite Simpson's rule</q> in contrast to the <q>simple Simpson's rule</q> that we started with.
+</p>
+
+<p>To summarize: Simpson's rule is the result of Richardson extrapolation of the Trapezoidal rule.
+Its order of accuracy is 4, meaning the error is proportional to <m>h^4</m>.</p>
+</section>
+ 
+<section xml:id="section-newton-cotes">
+<title>Newton-Cotes rules</title>
+
+<p>One can create rules of any given order of accuracy, using enough sample points. Usually such rules are derived for the convenient interval <m>[-1,1]</m>, and then applied to other intervals by change of variable.</p>
+
+<p>Let <m>(x_1,\dots, x_n)</m> be some points in the interval <m>[-1,1]</m>. We want to come up with an integration rule
+<men xml:id="eq-cotes1">
+\int_a^b f(x)\,dx \approx w_1 f(x_1) + \dots w_n f(x_n)
+</men>
+where <m>w_k</m> are coefficients (weights). For example, Simpson's rule (in its simple form) has evaluation points <m>-1,0,1</m> and weights <m>1/3, 4/3, 1/3</m>.</p>
+
+<p>How to find the weights that make the rule <xref ref="eq-cotes1" /> as accurate as possible? We can require both sides to be equal when <m>f</m> is each of the following: <m>x^0, x^1, \dots, x^{n-1}</m>. This gives <m>n</m> linear equations with <m>n</m> unknowns <m>w_j</m>. Then solve the system, perhaps using Matlab. 
+The resulting rules are called Newton-Cotes rules when the points are distributed at equal intervals. They include trapezoidal rule (2 points) and Simpson's rule (3 points) as special cases. 
+</p>
+
+<example xml:id="example-find-cotes-weights">
+  <title>Find the weights for a 5-point Newton-Cotes formula </title>
+<statement><p>Let evaluation points on <m>[-1, 1]</m> be <m>-1, -1/2, 0, 1/2, 1</m>. What will their weights be?</p> </statement>
+
+<solution><p> We need 5 linear equations involving integrals of <m>x^0, x^1, \dots, x^4</m>. If we number them by index <m>i</m> running from 1 to 5, then the equation has <m>\int_{-1}^1 x^{i-1}\,dx</m>  on the right hand side, which is <m>(1-(-1)^i)/i</m>. On the left we have the sum <m>\sum_j w_j x_j^{i-1}</m> which means the coefficients of the unknown <m>w_j</m> is <m>x_j^{i-1}</m>. We can create a matrix using outer exponentiation of a row vector by a column vector.</p> 
+<pre>
+n = 5;
+x = linspace(-1, 1, n);
+i = (1:n)'; 
+A = x.^(i-1);
+b = (1-(-1).^i)./i;
+w = A\b;
+disp(rats(w'))
+</pre>
+<p>Here <c>rats</c> is used to display the solution as rational numbers (which they are) rather than the usual decimal approximation.</p>
+
+<p>Having computed the weights as above, we can integrate any function f on [-1, 1] simply by executing
+<c>f(x)*w</c>, which is the dot product of a vector with function values with the vector of weights. Try this for the exponential function.</p></solution>  
+</example>
+
+<p>Although one can get rules of arbitrarily high order in this way, the gain in practice does not justify the increasing complexity. (Try computing the 9-point rule, for example). It turns out that using many equally spaced points on an interval is generally a bad idea. We need a smarter way of choosing the points, which we will start working on next time.</p> 
+</section>
+ 
+
+
+<exercises xml:id="exercises-simpson-newton-cotes">
+    <title>Homework</title>
+
+    <exercise number="1">
+        <statement>
+<p> Sometimes one needs an <q>open-ended</q> version of Newton-Cotes rules, which does not use the values of the function at the endpoints (because the function may not be defined at the endpoints). Find the coefficients in the integration rule  
+<me>
+\int_{-1}^1 f(x)\,dx \approx w_1 f(-1/2) + w_2 f(0) + w_3 f(1/2)
+</me>
+so that the rule is precise for $x^0$, $x^1$, and $x^2$. (You can use Matlab for solving the system of equations for the weights.)  
+</p>
+</statement></exercise>
+
+
+<exercise number="2">
+        <statement>
+<p> Apply the integration rule derived in the previous exercise to <m>\int_{-1}^1 (1-x^2)^{-1/4}\,dx</m>. 
+How close is the result to the actual value of the integral (you can find it, for example, with WolframAlpha)? 
+</p>
+</statement></exercise>
+
+<exercise number="3">
+        <statement>
+<p> In a loop over <c>n=2:10</c>, do the following. First, compute the weights for <m>n</m>-point Newton-Cotes rule (of the standard type, as in <xref ref="example-find-cotes-weights" />). Then use this rule to approximate <m>\int_{-1}^1 e^x\,dx</m>. After the loop ends you should have 9 approximations to this integral. Show how their accuracy changes with <m>n</m> by plotting the logarithm of absolute value of the difference between the integral and approximation, as a function of <m>n</m>.</p>
+</statement></exercise>
+
+
+
+</exercises> 
+
+</chapter>
+
