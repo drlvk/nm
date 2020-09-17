@@ -72,6 +72,7 @@ along with MathBook XML.  If not, see <http://www.gnu.org/licenses/>.
             <title>Numerical Calculus</title>
             <xi:include href="./numerical_differentiation.xml" />
             <xi:include href="./trapezoid_midpoint.xml" />
+            <xi:include href="./simpson_newton_cotes.xml" />
         </part>
 
         <part xml:id="part-data">
