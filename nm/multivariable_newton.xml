@@ -250,7 +250,7 @@ To save time,  use Matlab: define an anonymous function like <c>J = @(x,y,z) [..
 
     <exercise number="3">
         <statement>
-<p>Let <m>V = 36 + 2a</m>, <m>A = 72 + 3a</m>, and <m>D = 7 + a/5</m> where <m>a</m> is the digit of your SUID. Write a Matlab script which uses  Newton's method to find the dimensions of a rectangular box with volume <m>V</m>, surface area <m>A</m>, and space diagonal <m>D</m>. The computations in Problem 1 will be helpful, because a box with dimensions <m>x, y, z</m> has volume <m>xyz</m>, surface area <m>2(xy+yz+xz)</m>, and space diagonal <m>\sqrt{x^2+y^2+z^2}</m>. </p>
+<p>Let <m>V = 36 + 2a</m>, <m>A = 72 + 3a</m>, and <m>D = 7 + a/5</m> where <m>a</m> is the first digit of your SUID. Write a Matlab script which uses  Newton's method to find the dimensions of a rectangular box with volume <m>V</m>, surface area <m>A</m>, and space diagonal <m>D</m>. The computations in Problem 1 will be helpful, because a box with dimensions <m>x, y, z</m> has volume <m>xyz</m>, surface area <m>2(xy+yz+xz)</m>, and space diagonal <m>\sqrt{x^2+y^2+z^2}</m>. </p>
 </statement>
 </exercise>
  
