@@ -10,7 +10,7 @@
     </introduction>
 
 <section xml:id="section-simpson-rule">
-<title>Simpson's Rule</title>
+<title>Simpson's rule</title>
 
 <p>Consider the trapezoidal rule on the interval <m>[-1,1]</m> with <m>n=2</m>. It has <m>h=1</m>, so 
 <men xml:id="eq-trap1">
