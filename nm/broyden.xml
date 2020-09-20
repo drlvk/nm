@@ -88,10 +88,10 @@ To simplify notation, let <m>\mathbf h = \mathbf x_1 - \mathbf x_0</m> and <m>\m
 <men xml:id="eq-B1-equation">B_1 \mathbf w = \mathbf h</men></p>
 
 <question><title>Why would not an outer product work here?</title>
-<statement><p>We already know how to find a matrix that satisfies <xref ref="eq-B1-equation" />, by taking an outer product multiplied by a scalar (<xref ref="eq-construct-M" />). But this would be a bad, illogical choice for <m>B_1</m>. Why?</p></statement>  
+<statement><p>We already know how to find a matrix that satisfies <xref ref="eq-B1-equation" />, by taking an outer product multiplied by a scalar <xref ref="eq-construct-M" />. But this would be a bad, illogical choice for <m>B_1</m>. Why?</p></statement>  
 </question>
 
-<p>We want <m>B_1</m> to have some similarity to <m>B_0</m> in the hope that the process of improving guesses<m>B_0, B_1, \dots</m> will converge to something, rather than just jump around. We want to improve the previous guess, not replace it entirely. So, let <m>B_1 = (I + M)B_0 = B_0 + MB_0</m> where <m>M</m> can be constructed from an outer product as in <xref ref="eq-construct-M" />. Namely, we want
+<p>We want <m>B_1</m> to have some similarity to <m>B_0</m> in the hope that the process of improving guesses <m>B_0, B_1, \dots</m> will converge to something, rather than just jump around. We want to improve the previous guess, not replace it entirely. So, let <m>B_1 = (I + M)B_0 = B_0 + MB_0</m> where <m>M</m> can be constructed from an outer product as in <xref ref="eq-construct-M" />. Namely, we want
 <me> B_0 \mathbf w + M B_0 \mathbf w = \mathbf h</me>
 so 
 <me>  M B_0 \mathbf w = \mathbf h - B_0 \mathbf w </me>

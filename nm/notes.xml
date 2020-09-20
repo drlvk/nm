@@ -73,6 +73,7 @@ along with MathBook XML.  If not, see <http://www.gnu.org/licenses/>.
             <xi:include href="./numerical_differentiation.xml" />
             <xi:include href="./trapezoid_midpoint.xml" />
             <xi:include href="./simpson_newton_cotes.xml" />
+            <xi:include href="./legendre_laguerre.xml" /> 
         </part>
 
         <part xml:id="part-data">

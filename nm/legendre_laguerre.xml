@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<chapter xml:id="chapter-legendre-laguerre" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+<title>Legendre polynomials and Laguerre polynomials</title>
+
+
+    <introduction>
+        <p>In order to design better integration rules than Newton-Cotes rules found so far, we need more mathematical tools. This chapter introduces two families of <term>orthogonal polynomials</term>, which appear in many areas of mathematics. The roots of these polynomials will later be shown to be optimal points of evaluation for integration rules. 
+      </p>
+    </introduction>
+
+<section xml:id="section-legendre-motivation">
+
+<p>What is the most accurate approximation to <m>\int_{-1}^1 f(x)\,dx</m> using two points of evaluations? So far we saw the trapezoidal rule, which is <m>\int_{-1}^1 f(x)\,dx\approx f(-1)+f(1)</m>. For example, if <m>f(x)=e^x</m> we have <m>\int_{-1}^1 f(x)\,dx = 2.3504</m> while <m>f(-1)+f(1) = 3.0862</m>, so the rule makes a significant error, overestimating the integral by <m>0.7358</m>. The concavity of the function is responsible for this error.</p> 
+
+<p>It turns out there is a much more accurate two-point integration rule: 
+  <me>\int_{-1}^1 f(x)\,dx\approx f(-1/\sqrt{3}) + f(1/\sqrt{3}) </me>
+For the exponential function it gives <m>2.3427</m>, the error of only 0.0077. This is about 100 times more accurate than the trapezoidal rule, with the same number of function evaluations. </p>
+
+<p>Where does <m>1/\sqrt{3}</m> come from? It will take some time to develop a general theory leading to this choice, but a quick way to justify it is to consider small powers of <m>x</m>: 
+<ul>
+  <li>If <m>f(x)=x^0</m>, then <m>\int_{-1}^1 x^0\,dx = 2 = f(x_1)+f(x_2)</m> holds for any choice of points <m>x_1, x_2</m></li>
+  <li>If <m>f(x)=x^1</m>, then <m>\int_{-1}^1 x^1\,dx = 0 = f(x_1)+f(x_2)</m> holds whenever the points are symmetric about 0, meaning that <m>x_2=-x_1</m>.</li>
+  <li>If <m>f(x)=x^2</m>, then <m>\int_{-1}^1 x^2\,dx = 2/3</m> and <m>f(x_1)+f(x_2) = 2x_1^2</m>. The two things are equal when <m>x_1=1/\sqrt{3}</m>.</li>
+</ul>
+As a bonus, the rule is also accurate for <m>f(x)=x^3</m>, by virtue of symmetry, so its order of accuracy is 4. </p>
+
+<p>There is a general method of choosing evaluation points <m>x_1,\dots,x_n</m> in an optimal way: they will be the roots of some special <m>n</m>-th degree polynomial. This method is called Gaussian integration and it is built into TI-83 calculators and many software packages, including Matlab (<c>quadgk</c> command). But before we get to actual integration, we have to study the orthogonal polynomials themselves.  The process of using them for integration will be covered in next chapter. </p>
+</section>
+
+<section xml:id="section-legendre-polynomials">
+<title>Legendre polynomials</title>
+
+<p>The idea of orthogonality can be taken from linear algebra and applied to functions. Two 
+functions <m>f</m> and <m>g</m> are orthogonal  on an interval <m>[a,b]</m> if their <em>inner product</em> <m>\int_a^b f(x)g(x)\,dx</m> is zero: <m>\int_a^b f(x)g(x)\,dx =0</m>. For example, <m>1</m> and <m>x</m> are orthogonal on <m>[-1,1]</m>. And <m>x^2</m> is orthogonal to <m>x</m> on this interval, but it is not orthogonal to <m>1</m>. Is there a second-degree polynomial that is orthogonal to <em>both</em> <m>1</m> and <m>x</m>? Yes, there is: <m>p(x) = x^2-1/3</m> (check this).</p> 
+
+<p>This process continues indefinitely: for every positive integer <m>n</m> we can find a polynomial of degree <m>n</m>, say <m>P_n</m>, which is  orthogonal to all polynomials of degrees up to <m>n-1</m>, by the Gram-Schmidt algorithm. The roots of  this polynomial <m>P_n</m>  turn out to be contained in the interval <m>[a, b]</m>. These roots will shown to be useful as the evaluation/sample points. </p>  
+
+<p>In the above process, the polynomials <m>P_n</m> are determined up to a multiplicative constant. It is convenient to normalize them by requiring <m>P_n(1)=1</m>. This makes <m>P_n</m> the unique <m>n</m>-th degree polynomial such that <m>\int_{-1}^1 x^kP_n(x)\,dx = 0</m> for <m>k =0, 1, \dots, n-1</m>, and <m>P_n(1)=1</m>. Note that <m>\int_{-1}^1 Q(x)P_n(x)\,dx = 0</m> for every polynomial <m>Q</m> with degree
+<m>\deg Q&lt; n</m>.</p> 
+
+<p>The polynomials <m>P_n</m> are called <term>Legendre polynomials</term>, and they come up in a number of contexts. They originated in physics: in a 1782 paper by Legendre, he used them to expand the electrostatic potential into a power series. A practical way to compute Legendre polynomials is the recursive formula
+<men xml:id="eq-legendre-recursion">
+P_{n+1}(x) = \frac{(2n+1) xP_n(x) -  nP_{n-1}(x)}{n+1}
+</men>
+which can be used to compute all these polynomials starting with <m>P_0(x)=1</m> and <m>P_1(x)=x</m>. 
+</p>
+
+<example><title>Using the recursive formula for Legendre polynomials</title>
+<statement><p>Using the formula <xref ref="eq-legendre-recursion" />, find the polynomials <m>P_n</m> for <m>n=2, 3, 4</m>. What are their roots? </p></statement></example>
+
+<question><title>Properties of Legendre polynomials</title>
+<p>What patterns in the polynomials <m>P_n</m> do you observe on the basis of the examples computed above?</p></question>
+</section>
+
+
+<section xml:id="section-laguerre-polynomials">
+<title>Laguerre polynomials</title>
+
+<p>In an earlier homework we found that finding integrals of the form <m>\int_0^\infty f(x)\,dx</m> is hard: we had to pick some large upper limit <m>b</m> (mostly by guessing) to replace the infinite upper limit. Otherwise, there was no way to choose evaluation points by placing them at equal distances throughout the interval.</p> 
+
+<p>But now we have a way of choosing evaluation points differently, as roots of orthogonal polynomials. 
+So we can try to integrate on an infinite interval by using orthogonal polynomials on such an interval.</p> 
+<p>However, on an infinite interval we cannot define the inner product of polynomials in the sense of the integral <m>\int_0^\infty fg</m>, the integral will diverge. Instead we define dot product as <m>\int_0^\infty f(x)g(x)e^{-x}\,dx</m>, introducing a <term>weight</term> <m>e^{-x}</m> which allows the integral to converge. This way we can build orthogonal polynomials: for example, <m>1</m> and <m>1-x</m> are orthogonal (check). </p>
+
+<p>The <term>Laguerre polynomial</term> of degree <m>n</m>, denoted <m>L_n</m>, is the unique <m>n</m>-th degree polynomial such that <m>\int_0^\infty x^k L_n(x)e^{-x}\,dx = 0</m> for <m>k =0, 1, \dots, n-1</m>, and <m>L_n(0)=1</m>. Note that <m>\int_0^\infty Q(x)P_n(x)e^{-x}\,dx = 0</m> for every polynomial <m>Q</m> with degree <m>\deg Q&lt; n</m>.</p> 
+
+<p>Similarly to Legendre polynomials, the Laguerre polynomials have a recursive  formula:
+<men xml:id="eq-laguerre-recursion">
+L_{n+1}(x) = \frac{(2n+1-x) L_n(x) - n L_{n-1}(x)}{n+1}
+</men>
+which can be used to compute them starting with <m>L_0(x)=1</m> and <m>L_1(x)=1-x</m>.</p>
+
+<example><title>Using the recursive formula for Laguerre polynomials</title>
+<statement><p>Using the formula <xref ref="eq-laguerre-recursion" />, find the polynomials <m>L_n</m> for <m>n=2, 3</m>. What are their roots? </p></statement></example>
+
+<question><title>Properties of Laguerre polynomials</title>
+<p>What patterns in the polynomials <m>L_n</m> do you observe on the basis of the examples computed above?</p></question>
+</section>
+
+
+<section xml:id="examples-legendre-laguerre">
+
+<title>Examples and questions</title>  
+
+<p> These are additional examples for reviewing the topic we have covered. When reading each example, try to find your own solution before clicking <q>Answer</q>. There are also questions for reviewing the concepts of this section. </p>
+
+<example xml:id="example-computation-legendre-coefficients">
+   <title> Computing and plotting Legendre polynomials</title>
+<statement><p> Recursively find the coefficients and roots of Legendre polynomials of degrees up to 10. Plot all of them on the interval <m>[-1, 1]</m>. The polynomials should be represented as vectors of coefficients, for example <c>q = [1 0]</c> represents <m>q(x) = 1x+0 = x</m>. Once the coefficients are computed, one can use <c>polyval(q, x)</c> to evaluate the polynomial at every point of vector <c>x</c>, so that, for example, <c>plot(x, polyval(q, x))</c> can be used to plot it.</p></statement>
+<answer><p>We have to start with <c>[1]</c> and <c>[1 0]</c> which represent <m>1</m> and <m>x</m>. Once a vector of coefficients <c>q</c> exists, one can use concatenation <c>[q 0]</c> to shift the coefficients to the left, representing multiplication by <m>x</m>.</p>
+<pre>
+p = [1];
+q = [1 0];
+x = linspace(-1, 1, 1000);
+hold on
+plot(x, polyval(p, x), x, polyval(q, x));
+
+for n = 1:9
+    r = ((2*n+1)*[q 0] - n*[0 0 p])/(n+1);
+    p = q;
+    q = r;
+    disp(r);
+    plot(x, polyval(r, x))
+end
+hold off
+</pre>
+<p>The loop runs up to <m>n=9</m> because the polynomial being computed has degree <m>m+1</m>. 
+In the loop, <c>q</c> is a polynomial of degree <m>n</m> and <c>p</c> is a polynomial of degree <m>n - 1</m>. Concatenation <c>[0 0 p]</c> adds zero terms to the latter polynomial; this does not change it mathematically but makes it possible to do vector addition of coefficients.</p>
+</answer></example>
+
+
+<example xml:id="example-computation-legendre-roots">
+   <title> The roots of Legendre polynomials</title>
+<statement><p> Adapt the code in <xref ref="example-computation-legendre-coefficients" /> to find and plot the roots of Legendre polynomials of degrees 2 through 10.</p> </statement>
+<answer> <p>The command <c>roots</c> can be used to find the roots. A convenient way to plot them so that one can tell the difference between different degrees is to use the y-coordinate for the degree.</p>
+<pre>
+p = [1];
+q = [1 0];
+x = linspace(-1, 1, 1000);
+hold on
+for n = 1:10
+    r = ((2*n+1)*[q 0] - n*[0 0 p])/(n+1);
+    p = q;
+    q = r;
+    plot(roots(r), n+1, 'b*');
+end
+hold off
+</pre>
+</answer></example>
+
+<question><title>Patterns in the roots of Legendre polynomials</title>
+<p>What patterns do you observe in the roots found in <xref ref="example-computation-legendre-roots" />?
+</p></question>
+
+</section>
+
+
+<exercises xml:id="exercises-legendre-laguerre">
+    <title>Homework</title>
+
+    <exercise number="1">
+        <statement>
+<p> Adapt <xref ref="example-computation-legendre-coefficients" /> to Laguerre polynomials. That is, compute and plot Laguerre polynomials up to degree 10. Use <m>[0, 5]</m> as an interval for plotting since we cannot plot on <m>[0, \infty)</m>. Also, comment on some pattern you observe in their behavior. </p>
+</statement></exercise>
+
+    <exercise number="2">
+        <statement>
+<p> Adapt <xref ref="example-computation-legendre-roots" /> to Laguerre polynomials. That is, compute and plot the roots of Laguerre polynomials of degrees 2 to 10. Also, comment on some pattern you observe in their behavior.</p>
+</statement></exercise>
+ 
+</exercises>
+
+</chapter>
