@@ -74,6 +74,7 @@ along with MathBook XML.  If not, see <http://www.gnu.org/licenses/>.
             <xi:include href="./trapezoid_midpoint.xml" />
             <xi:include href="./simpson_newton_cotes.xml" />
             <xi:include href="./legendre_laguerre.xml" /> 
+            <xi:include href="./gaussian_integration.xml" /> 
         </part>
 
         <part xml:id="part-data">
