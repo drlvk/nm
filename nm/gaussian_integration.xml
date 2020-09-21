@@ -13,13 +13,12 @@
 <section xml:id="section-orthogonal-polynomials-recap">
 <title>Brief recap of orthogonal polynomials</title>
 
-<p>Last time we studied Legendre polynomials <m>P_n</m>  and Laguerre polynomials <m>L_n</m>. They have degree <m>n</m>, <m>n=0,1,2\dots</m> and their main property is orthogonality, which means different things for different families of orthogonal polynomials 
-<me>
-\int_{-1}^1 Q(x) P_n(x)\, dx = 0  \quad \text{if <m>Q</m> is a polynomial of degree <m>&lt;n</m>}
-</me>
-<me>
-\int_{0}^\infty  Q(x) L_n(x) e^{-x}\, dx = 0  \quad \text{if <m>Q</m> is a polynomial of degree <m>&lt;n</m>}
-</me></p>
+<p>Last time we studied Legendre polynomials <m>P_n</m>  and Laguerre polynomials <m>L_n</m>. They have degree <m>n</m>, <m>n=0,1,2\dots</m> and their main property is orthogonality, which means different things for different families of orthogonal polynomials.
+<ul> 
+<li><m>\int_{-1}^1 Q(x) P_n(x)\, dx = 0</m> where <m>P_n</m> is the Legendre polynomial of degree <m>n</m> and 
+<m>Q</m> is any polynomial of degree <m>&lt;n</m>.</li>
+<li><m>\int_{0}^\infty  Q(x) L_n(x) e^{-x}\, dx = 0</m> where <m>L_n</m> is the Laguerre polynomial of degree <m>n</m> and <m>Q</m> is any polynomial of degree <m>&lt;n</m>.</li>
+</ul></p>
 
 <p>A general fact about orthogonal polynomials is that all their roots are real and are contained in the interval over which they are orthogonal: <m>[-1, 1]</m> for Legendre polynomials and <m>[0, \infty)</m> for Laguerre polynomials.</p>
 
@@ -47,8 +46,8 @@ where the last step uses the fact that <m>F(x_k) =R(x_k)</m> by virtue of <m>P_n
 </me>
 </p>
 
-<p>It turns out the Gauss-Legendre integration rule has the best possible order of accuracy, being exact for all polynomials of degrees <m>\le n-1</m>. There is no integration rule (with <m>n</m> evaluation points) that is exact for all polynomials of degrees <m>\le 2n</m>. Indeed, suppose such a rule exists, with some 
-evaluation points <m>x_1, \dots, x_n</m>. Let <m>F(x) = (x-x_1)^2 \cdots (x-x_n)^2</m> which is a polynomial of degree <m>2n</m> since <m>F(x_k)=0</m> for every <m>k</m>, the evaluation rule will produce <m>0</m>, no matter what the weights. But <m>\int_{-1}^1 F(x)\,dx > 0</m> because <m>F > 0</m> in between the evaluation points.</p>
+<p>It turns out the Gauss-Legendre integration rule has the best possible order of accuracy. That is, there is no integration rule with <m>n</m> evaluation points that is exact for all polynomials of degrees <m>\le 2n</m>. Indeed, suppose such a rule exists, with some 
+evaluation points <m>x_1, \dots, x_n</m>. Let <m>F(x) = (x-x_1)^2 \cdots (x-x_n)^2</m> which is a polynomial of degree <m>2n</m>. Since <m>F(x_k)=0</m> for every <m>k</m>, the evaluation rule will produce <m>0</m>, no matter what the weights. But <m>\int_{-1}^1 F(x)\,dx > 0</m> because <m>F > 0</m> in between the evaluation points.</p>
 
 <p>Another nice feature of the integration rules based on orthogonal polynomials is that all weights <m>w_k</m> are positive (unlike in the Newton-Cotes rules, which may give negative weights to some points). To see why, consider the polynomial <m>G(x) = F(x)/(x-x_k)^2</m> where <m>F</m> is as in the previous paragraph. Since <m>(x-x_k)^2</m> cancels out, <m>G</m> is a polynomial of degree <m>2n-2</m>. Therefore, the integration rule is exact for it: 
 <me>
@@ -70,7 +69,7 @@ This means that if we wan to calculate, for example, <m>\int_0^\infty 1/(x^3+4)\
 <p>Apart from the presence of the weight function <m>e^{-x}</m>, the rest goes as in <xref ref="section-gauss-legendre" />. Let <m>x_1,\dots, x_n</m> be the roots of Laguerre polynomial <m>L_n</m>. Then solve a linear system for the weights <m>w_1,\dots, w_n</m> so that the rule 
 <m>\int_{0}^\infty f(x) e^{-x}\,dx \approx \sum_{k=1}^n w_k f(x_k)</m> is exact for <m>f(x)=x^p</m> with <m>p=0,\dots,n-1</m>.  This choice and the orthogonality property make the rule exact when <m>f</m> is a polynomial of degree less than <m>2n</m>.</p> 
 
-<p>One difference is the right hand side of the system which we use to solve for the weights <m>w_k</m>. For Gauss-Legendre integration we have <m>\int_{-1}^1 x^p\,dx = (1-(-1)^{p+1})/(p+1)</m> there. For Gauss-Leguerre integration we have <m>\int_{0}^\infty x^p e^{-x}\,dx</m> which takes a but more work. Integration by parts helps:
+<p>One difference is the right hand side of the system which we use to solve for the weights <m>w_k</m>. For Gauss-Legendre integration we have <m>\int_{-1}^1 x^p\,dx = (1-(-1)^{p+1})/(p+1)</m> there. For Gauss-Laguerre integration we have <m>\int_{0}^\infty x^p e^{-x}\,dx</m> which takes a but more work. Integration by parts helps:
 <me>
 \int_{0}^\infty x^p e^{-x}\,dx -x^pe^{-x}\bigg|_{x=0}^{x\to\infty} - \int_{0}^\infty p x^{p-1} (-e^{-x})\,dx 
 = p \int_{0}^\infty x^{p-1} e^{-x}\,dx
@@ -150,7 +149,7 @@ disp(abs(approx-exact));
 
 <example xml:id="example-error-gauss-legendre">
 <title>Estimating the accuracy of the Gauss-Legendre integration</title>
-<statement><p>Suppose that <m>f</m> is a function on <m>[-1, 1]</m> and there exists a polynomial <m>p</m> of degree <m>9</m>such that <m>|f(x)-p(x)| \le 10^{-7}</m> for all <m>x\in [-1, 1]</m>. Estimate the error of the 5-point Gauss-Legendre rule applied to <m>f</m>.</p></statement>
+<statement><p>Suppose that <m>f</m> is a function on <m>[-1, 1]</m> and there exists a polynomial <m>p</m> of degree <m>9</m> such that <m>|f(x)-p(x)| \le 10^{-7}</m> for all <m>x\in [-1, 1]</m>. Estimate the error of the 5-point Gauss-Legendre rule applied to <m>f</m>.</p></statement>
 <answer><p> The integral triangle inequality yields
  <me>
  \left|\int_{-1}^1 f - \int_{-1}^1 p\right| \le \int_{-1}^1 |f-p| \le  2\cdot 10^{-7}
@@ -175,11 +174,11 @@ where the last step uses a remark at the end of <xref ref="section-gauss-legendr
 
     <exercise number="1">
         <statement>
-<p>Write a script which, when given an integer <m>n \ge 2</m>, finds and displays the Gauss-Laguerre evaluation points and weights. (Adapt the code in <xref ref="example-find-gauss-legendre-weights" />, similarly to exercises in <xref ref="exercises-legendre-laguerre" />.)</p> </statement></exercise>
+<p>Write a script which, when given an integer <m>n \ge 2</m>, finds and displays the Gauss-Laguerre evaluation points and weights. This can be done by adapting the code in <xref ref="example-find-gauss-legendre-weights" />, similarly to exercises in <xref ref="exercises-legendre-laguerre" />. Note that the right-hand side of a system for weights will involve factorials; in Matlab they can be computed with <c>factorial</c> function, for example <c>factorial(i-1)</c>.</p> </statement></exercise>
 
     <exercise number="2">
         <statement>
-<p> Apply the Gauss-Laguerre rule with <m>n=5</m> to the integral <m>\int_{0}^\infty \exp(-x^2)\,dx</m> whsoe exact value is <m>\sqrt{\pi}/2</m>. The script should display the approximation obtained, and the error (the absolute value of the difference between the approximate and exact values).</p> 
+<p> Apply the Gauss-Laguerre rule with <m>n=5</m> to the integral <m>\int_{0}^\infty \exp(-x^2)\,dx</m> whose exact value is <m>\sqrt{\pi}/2</m>. The script should display the approximation obtained, and the error (the absolute value of the difference between the approximate and exact values).</p> 
 </statement></exercise>
  
 </exercises>
