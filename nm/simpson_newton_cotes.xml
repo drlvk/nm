@@ -39,7 +39,11 @@ with the error of 0.1927.  The formula <xref ref="eq-simps1" /> produces
 </me>
 with the error of 0.0117. This is 16 times more accurate. This improvement was achieved by changing the 
 <term>weights</term> (coefficients) attached to the values <m>f(-1), f(0), f(1)</m>: for trapezoidal rule they are <m>1/2, 1, 1/2</m>, but the formula <xref ref="eq-simps1" /> uses the weights <m>1/3, 4/3, 1/3</m>. 
-The formula <xref ref="eq-simps1" /> is Simpson's rule (with <m>n=2</m> subintervals). </p>
+The formula <xref ref="eq-simps1" /> is Simpson's rule (with <m>n=2</m> subintervals) on the interval <m>[-1, 1]</m>. On a general interval <m>[a, b]</m> it becomes, via a change of variable, 
+<men xml:id="eq-simps1a">
+\int_{a}^{b} f(x)\,dx \approx \frac{b-a}{6} \left( f(a) + 4f((a+b)/2) + f(b))
+</men>
+Check that <xref ref="eq-simps1a" /> is consistent with <xref ref="eq-simps1" />: the midpoint gets greater weight than the endpoints by the factor of 4, and the sum of weights is <m>b-a</m>. </p>
  
 <p>Simpson's rule can be used with more subintervals, but their number <m>n</m> has to be even, since we are combining trapezoidal rule with <m>n</m> and <m>n/2</m> subintervals. With <m>h=(b-a)/n</m> we get 
 <men xml:id="eq-simps2">

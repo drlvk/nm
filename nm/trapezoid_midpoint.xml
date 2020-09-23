@@ -25,7 +25,7 @@ this interval. To begin with, recall that by definition, <m>\int_a^b f(x)\,dx</m
 <me>S = \sum_{k=1}^n f(s_k)(x_k-x_{k-1})</me>
 </li> 
 </ol>
-Therefore, our strategy of numeric integration consists of choosing subintervals and then choosing a point in each.</p>
+Therefore, a basic strategy of numeric integration consists of choosing subintervals and then choosing a point in each.</p>
 
 <p>The simplest choice of subintervals is to have subintervals of equal length, meaning each has length 
 <m>h=(b-a)/n</m>, which makes <m>x_k = a + kh</m>. We will eventually see that this choice is not as good as it seems, but it will do for now.</p>

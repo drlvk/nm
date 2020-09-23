@@ -249,10 +249,10 @@ to avoid the loss of significance when <m>x</m> is close to <m>0</m>. Evaluate b
 <pre>
 y = [1, 0.99, 0.96, 0.91, 0.85, 0.78, 0.7, 0.61, 0.53, 0.44, 0.37]
 </pre>
-<p>Write a script which plots this function together with its first derivative <m>f'</m> and its second derivative <m>f'</m>. Use symmetric difference formulas with <m>h=0.1</m>.</p>
+<p>Write a script which plots this function together with its first derivative <m>f'</m> and its second derivative <m>f''</m>. Use symmetric difference formulas with <m>h=0.1</m>.</p>
 </statement>
 
-<hint><p>Expressions like <c>y(3:end) - y(1:end-2)</c> will be useful. Note that while the values of <m>f</m> can be plotted against the given vector <c>x</c>, the derivatives need to be plotted against <c>x(2:end-1)</c> because the symmetric formulas do not apply at the endpoints.</p></hint></exercise>
+<hint><p>Expressions like <c>y(3:end) - y(1:end-2)</c> will be useful. Note that while the values of <m>f</m> can be plotted against the given vector <c>x</c>, the derivatives need to be plotted against <c>x(2:end-1)</c> because the symmetric formulas do not apply at the endpoints. Recall we can combine several functions in one plot command like <c>plot(x, y, xx, yy)</c>. </p></hint></exercise>
 
 </exercises> 
 

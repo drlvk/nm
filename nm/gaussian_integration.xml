@@ -22,7 +22,7 @@
 
 <p>A general fact about orthogonal polynomials is that all their roots are real and are contained in the interval over which they are orthogonal: <m>[-1, 1]</m> for Legendre polynomials and <m>[0, \infty)</m> for Laguerre polynomials.</p>
 
-<p>As an aside, there are many more important examples of orthogonal polynomials which we do not study, for example Hermite polynomials <m>H_n</m> which are orthogonal on the entire line <m>(-\infty, \infty)</m> with the weight <m>\exp(-x^2)</m>. The theory of orthogonal polynomials is a vast subject.</p>
+<p>As an aside, there are many other important families of orthogonal polynomials which we do not study, for example Hermite polynomials <m>H_n</m> which are orthogonal on the entire line <m>(-\infty, \infty)</m> with the weight <m>\exp(-x^2)</m>. The theory of orthogonal polynomials is a vast subject.</p>
 
 </section>
 
