@@ -6,7 +6,7 @@
 
 
     <introduction>
-        <p>It is important for a numerical integration algorithm to be able to adapt to the behavior of the function being integrated, by increasing the number of evaluation points as needed to achieve desired precision. This adaptive approach can be combined with any of the numerical integration methods studied so far: one can have adaptive forms of Simpson's rule, Gauss-Legendre rule, etc. We use Gauss-Legendre as an illustration. 
+        <p>It is important for a numerical integration algorithm to be able to adapt to the behavior of the function being integrated, by increasing the number of evaluation points as needed to achieve desired precision. This adaptive approach can be combined with any of the numerical integration methods studied so far: one can have adaptive forms of Simpson's rule, Gauss-Legendre rule, etc. 
       </p>
     </introduction>
 
@@ -21,11 +21,11 @@
 </men>
 where, as with all such estimates, the maximum of the absolute value of the derivative is taken over the interval of integration. But a high-order derivative may be difficult to find, and if found, difficult to estimate. And even if it is easy to find and estimate, the output of <xref ref="eq-simpson-error" /> may be too conservative or completely useless. </p> 
 
-<example xml:id="example-simpson-error-infinite">
+<example xml:id="example-simpson-error-estimate-poor">
   <title>Error of Simpson's method</title>
-<statement><p>Apply  Simpson's method with <m>n=2</m> to the integral <m>\int_1^{9} x^{3/2}\,dx</m>. Find the actual error of the method and compare it to the estimate <xref ref="eq-simpson-error" />.</p></statement>
-<answer><p>According to the formula <xref ref="eq-simps2" />, we have 
-<me> \int_1^9 x^{3/2}\,dx \approx \frac{9-1}{6} (1 + 4(5)^{3/2} + 9^{3/2}) \approx 96.9618</me>
+<statement><p>Apply Simpson's method with <m>n=2</m> to the integral <m>\int_1^{9} x^{3/2}\,dx</m>. Find the actual error of the method and compare it to the estimate <xref ref="eq-simpson-error" />.</p></statement>
+<answer><p>Here <m>f(x) = x^{3/2}</m> and <m>h=(9-1)/2 = 4</m>, so according to the formula <xref ref="eq-simps2" /> 
+<me> \int_1^9 x^{3/2}\,dx \approx \frac{h}{3} (f(1) + 4f(5) + f(9)) \approx 96.9618</me>
 The exact value of this integral is <m>\frac{2}{5}(9^{5/2} - 1) = 484/5 = 96.8</m>. So, the error is 
 <m>0.1618</m>, relatively small.</p>
 <p>To use the estimate <xref ref="eq-simpson-error" /> we need the fourth derivative of <m>f</m>, which is 
@@ -52,25 +52,78 @@ Indeed, <m>0.1618 \le 6.4</m> but we see that the error estimate does not give t
 <section xml:id="section-adaptive-integration-error-estimate">
 <title>Estimating error by using two step sizes</title>
 
-<p>A practical way to estimate the error of some method of integration is to use it twice with two different step sizes, and compare the results. </p>
+<p>A practical way to estimate the error of some method of integration is to use it twice with two different step sizes, and compare the results. Typically, one compares the computations with steps <m>h</m> and <m>h/2</m>. Say, the first computation resulted in <m>A_1</m> and the second, more accurate, in <m>A_2</m>. If the exact value is <m>E</m>, then we expect <m>|A_1-E|\approx 2^d|A_2-E|</m> where <m>d</m> is the order of accuracy of the method.
+By the triangle inequality, 
+<me>
+ |A_1-A_2| \ge |A_1-E| - |A_2-E| \approx (2^d-1) |A_2-E| 
+</me>
+which gives us an idea of the error involved in <m>A_2</m> (the more accurate approximation):
+<men xml:id="eq-error-estimate-comparison">
+|A_2-E| \lessapprox \frac{|A_1-A_2|}{2^d-1}  
+</men>
+where the symbol <m>\lessapprox</m> means the error is bounded by something like the right hand side. We do not assert this is an exact inequality, because the relation involving <m>2^d</m> is only approximate.
+</p>
 
-  Try Simpson with <m>h=1/4</m>. Get <m>0.40043</m> 
-This tells us what the error is. Moreover, we expect the first estimate to be <m>16</m> further from true value than the second. This leads to the idea that error is approximately <m>|s_1-s_2|/15</m>. (In general, <m>2^d-1</m> where
-<m>d</m> is the order of the method).  We get <m>0.00013</m> from this estimate: well, at least  with correct order of magnitude. Better than "infinity". Also, because this kind of error estimation does not require derivatives, it can be performed automatically. 
-
-The second weak point is that many functions are not nice like polynomials; they have sudden jumps and turns. This requires smaller step size around such features, but not elsewhere. 
-
-This leads to the idea of adaptive integration: choose partition points based on how the function behaves, i.e., how large the error is. Algorithm: 
-
-Start with an interval <m>[a,b]</m>, use the simple Simpson's rule for it. Then divide into two parts and use Simpson's rule on each. If the results are different, we keep dividing: this means \textit{recursion}.   
-
-We decide whether to subdivide <m>I</m> based on the estimate for the error on <m>I </m> stated above. I prefer to 
-enforce error bound relative to the size of <m>I</m>, e.g., <m>10^{-5}</m> times the size. This way, the total error over the original interval is controlled by <m>10^{-5}</m> times its size. 
- 
-
+<p>Let us return to <xref ref="example-simpson-error-estimate-poor" /> where Simpson's method with <m>h=4</m> was used to get an approximation <m>A_1 = 96.9618</m>. Reducing the step size to <m>h=2</m> we get a second approximation: 
+<me>
+  A_2 = \frac{2}{3}(f(1) + 4f(3) + 2f(5) + 4f(7) + f(9)) \approx 96.8176
+</me>
+Since Simpson's rule has order <m>d=4</m>, the error of second approximation can be estimated by <xref ref="eq-error-estimate-comparison" /> as follows: 
+<me>
+ |A_2-E| \lessapprox  \frac{|A_1-A_2|}{15}  = 0.0096
+</me>
+Recalling that the exact value is <m>E = 96.8</m>, we see that <m>|A_2-E| = 0.0176</m>. So our error estimate, while not rigorous, is much closer to reality than the theoretical estimate <xref ref="eq-simpson-error" />.</p> 
 </section>
 
+<section xml:id="section-adaptive-integration-bisection">
+<title>Recursive subdivision algorithm</title>
 
+<p>The previous section showed how the accuracy of integration can be automatically estimated. Next question is, what can be done when it is insufficient? Using more evaluation points is logical. But if the algorithm keeps the interval of integration <m>[a, b]</m> the same and just increases the number of points on that interval (e.g., in Simpson's rule), this is not the best way to adapt. Typically, the accuracy is poor because of insufficient smoothness or large derivative at some parts of the interval, while other parts are fine.</p> 
+
+<p>A better way to adapt is <term>recursive subdivision</term>. 
+<ol>
+  <li>Given an interval <m>[a, b]</m>, compute the integral over it and estimate the error. </li>
+  <li>If the error is small enough, return the result of computation.</li>
+  <li>If the error is too large, divide the interval into two halves <m>[a, c]</m> and <m>[c, b]</m> where 
+  <m>c = (a+b)/2</m>, and restart the process from step 1, for each half separately.</li>
+</ol>
+This process involves <term>recursion</term>, because at step 3 the function evaluating the integral has to call itself. Schematically it looks like this.</p>
+<pre>
+function I = adaptive(f, a, b)
+    I1 = % first computation
+    I2 = % second computation, more accurate
+    if abs(I1 - I2) % "small enough"
+        I = I2;
+    else 
+        c = (a+b)/2; 
+        I = adaptive(f, a, c) + adaptive(f, c, b);
+    end
+end
+</pre>
+
+<p>One has to carefully consider when the difference <c>abs(I1 - I2)</c> is <q>small enough</q>. One approach is to ask for small relative error, like <c>abs(I1 - I2) &lt; 1e-6 * abs(I2)</c>. However this risks infinite recursion for functions like <m>f(x) = \sqrt{x}</m> near <m>0</m>, which is both small and poorly behaved. No matter how small an interval <m>[0, \epsilon]</m> we use, dividing it further will result in a change that is not very small in relative terms. The process terminates with Matlab reporting: <q>Out of memory. The likely cause is an infinite recursion within the program.</q></p>
+
+<p>If one uses an absolute error bound like <c>abs(I1 - I2) &lt; 1e-6</c>, there is another issue. We do not know how many subintervals will be used in the process, so even if each of them contributes an error of less than <m>10^{-6}</m>, the total may be significantly higher. </p>
+
+<p>A third approach is to enforce enforce error bound <em>relative to the size of interval</em>, for example <c>abs(I1 - I2) &lt; 1e-6 * (b-a)</c>. This avoids the issue with functions that are problematic and small, such as 
+<m>f(x) = \sqrt{x}</m> near <m>0</m>. But it runs into the same issue with functions that are problematic and large, such as  <m>f(x) = 1/\sqrt{x}</m> near <m>0</m>. Here the integral is </p> 
+
+<p>A combination approach, such as <c>abs(I1 - I2) &lt; 1e-6 * (b-a) + 1e-9</c>, allows the process to stop if the difference became small relative to interval size or just very small in absolute terms. This allows the subdivision to end even for functions like <m>f(x) = 1/\sqrt{x}</m>.</p>    
+
+</section> 
+
+<section xml:id="section-adaptive-integration-rules">
+<title>Combining two rules</title>
+
+<p>What combination of two rules should we use for approximations <m>I_1</m> and <m>I_2</m>? These rules should be of different accuracy; for example, it would be a bad idea to use the left endpoint and right endpoint rules. Both of these are about equally imprecise, so they may give the same answer which is still wrong by some large amount.</p> 
+
+<p>One can use, for example, the trapezoidal rule (order 2) and Simpson's rule (order 4). This has an advantage in that of of three evaluation points in Simpson's rule, two are also in trapezoidal rule. So one can compute function values once, for example 
+<cd>y = f([a, (a+b)/2, b]);</cd>
+and obtain both trapezoidal and Simpson's rules from the vector <c>y</c>. This property of two rules being <em>nested</em> (evaluation points of one rule are contained in the other) is valuable for speeding up the computation.</p>
+
+<p>Since the Gauss integration rule is the most accurate of those we discussed, one may decide to use it for both <m>I_1</m> and <m>I_2</m>, just with different number of evaluation points, perhaps <m>n</m> and <m>2n</m>. A downside is that Gauss evaluation points are not nested. In practice, the Gauss rule is used for <m>I_1</m> and the Kronrod rule (also based on orthogonal polynomials, but beyond our scope) is used for <m>I_2</m>. The Kronrod rule is designed to include all of the points used by the Gauss rule, and some additional ones. A popular choice, e.g., in TI graphing calculators, is (G7, K15), meaning 7-point Gauss rule combined with 15-point Kronrod rule. For an illustration of adaptive integration in Python module SciPy, see <url href="https://calculus7.org/2018/10/27/numerical-integration-visualized/">this blog post</url>: it shows that Scipy uses (G10, K21) combination.</p>
+
+</section>
 
 
 <section xml:id="examples-adaptive-integration">
@@ -79,69 +132,38 @@ enforce error bound relative to the size of <m>I</m>, e.g., <m>10^{-5}</m> times
 
 <p> These are additional examples for reviewing the topic we have covered. When reading each example, try to find your own solution before clicking <q>Answer</q>. There are also questions for reviewing the concepts of this section. </p>
 
-<example xml:id="example-find-gauss-legendre-weights">
-  <title>Compute the Gauss-Legendre points and weights </title>
-<statement><p>For a given integer <m>n \ge 2</m>, find the Gauss-Legendre evaluation points and weights. </p>
+<example xml:id="example-implement-adaptive-gauss">
+  <title>Adaptive Gauss integration </title>
+<statement><p>Implement adaptive integration as in <xref ref="section-adaptive-integration-bisection" /> using the midpoint rule for <m>I_1</m> and Gauss rule with <m>n=2</m> for <m>I_2</m>. Test it on the integral
+<m>\int_0^9 x^{-1/2}\,dx = 6</m>.</p>
 </statement>
 
-<answer><p>Combine the code from <xref ref="example-computation-legendre-roots" /> (computation of Legendre roots) and <xref ref="example-find-cotes-weights" /> (computing the weights). This only requires some changes in variable names and in the orientation of vectors (row/column). </p>
+<answer><p>When implementing Gauss rules on a general interval <m>[a, b]</m>, it helps to introduce the 
+midpoint <m>c = (a+b)/2</m> and half-length <m>k = (b-a)/2</m>. This is because the rule was originally designed for <m>[-1, 1]</m> and the linear function from <m>[-1, 1]</m> to <m>[a, b]</m> is <m>kx+c</m>. The coefficient <m>k</m> will appear in the formulas due to the change of variable formula.</p>
 <pre>
-n = input('n = ');
-p = [1];
-q = [1 0];
-for m = 1:n-1
-    r = ((2*m+1)*[q 0] - m*[0 0 p])/(m+1);
-    p = q;
-    q = r;
+function adaptive_example()
+    f = @ (x) x.^(-1/2);
+    fprintf('The integral is %.6f\n', adaptive(f, 0, 9));
 end
-x = roots(r)';
-disp(x);    %  the evaluation points
-i = (1:n)'; 
-A = x.^(i-1);
-b = (1-(-1).^i)./i;
-w = A\b;
-disp(w');   %  the weights    
-</pre>
-</answer></example>
 
-<example xml:id="example-apply-gauss-legendre">
-  <title>Apply the Gauss-Legendre integration rule </title>
-<statement><p>For a given integer <m>n \ge 2</m>, apply the Gauss-Legendre rule to the integrals <m>\int_{-1}^1 e^x\,dx</m> and <m>\int_{-1}^1 (9x^2+1)^{-1}\,dx</m>. In each case, find the difference between the approximate and exact values.  </p>
-</statement>
-<answer><p>Not repeating the code from <xref ref="example-find-gauss-legendre-weights" />, assume it already ran and computed <c>x, w</c>. With <c>exp(x)*w</c> we get an approximation to the integral of <m>e^x</m>. And <c>f(x)*w</c> does the same for the second function, if we define it as <c>f = @(x) (9*x.^2+1).^(-1)</c>. </p>
-<pre>
-approx = exp(x)*w;
-exact = exp(1)-exp(-1);
-disp(abs(approx-exact));
-
-f = @(x) (9*x.^2+1).^(-1);
-approx = f(x)*w;
-exact = (2/3)*atan(3);
-disp(abs(approx-exact));
+function I = adaptive(f, a, b)
+    c = (a+b)/2;
+    k = (b-a)/2;
+    I1 = k*2*f(c);    % midpoint, same as Gauss n=1
+    I2 = k*(f(c - k/sqrt(3)) + f(c + k/sqrt(3)));  % Gauss n=2
+    if abs(I1 - I2) &lt; 1e-6 * (b-a) + 1e-9 
+        I = I2;
+    else
+        I = adaptive(f, a, c) + adaptive(f, c, b);
+    end
+end
 </pre>
-<p>The error is about <m>8.2\cdot 10^{-10}</m> for the first integral and about <m>0.058</m> for the second. Somehow, the rule is 100 million times more accurate for the first function than for the second, even though they are both perfectly smooth functions on the interval <m>[-1, 1]</m>. The reason for such a different behavior is that <m>e^x</m> is easy to approximate by polynomials while <m>(9x^2+1)^{-1}</m> is not so easy; it has to do with the Taylor series of these functions. This will come up again when we study approximation of functions.</p>
-</answer></example>
+<p>Note that the function is not defined at 0 which is an endpoints of the interval of integration. This would be a problem if we used, for example, trapezoidal or Simpson's rules. Not a problem for midpoint or Gauss rules. 
+By the way, the midpoint rule can be viewed as the Gauss rule with 1 point, because the degree 1 Legendre 
+polynomial is <m>P_1(x)=x</m>, with the zero at the middle of interval <m>[-1,1]</m></p></answer></example>  
   
-<p>One could theoretically derive an estimate for the error of Gauss-Legendre integration rule in terms of the derivative of <m>f</m> of order <m>2n</m>. But this is impractical, because useful estimates of, for example, 10th derivative, are rarely available. The following example approaches the error estimation from another point of view.</p>
-
-<example xml:id="example-error-gauss-legendre">
-<title>Estimating the accuracy of the Gauss-Legendre integration</title>
-<statement><p>Suppose that <m>f</m> is a function on <m>[-1, 1]</m> and there exists a polynomial <m>p</m> of degree <m>9</m> such that <m>|f(x)-p(x)| \le 10^{-7}</m> for all <m>x\in [-1, 1]</m>. Estimate the error of the 5-point Gauss-Legendre rule applied to <m>f</m>.</p></statement>
-<answer><p> The integral triangle inequality yields
- <me>
- \left|\int_{-1}^1 f - \int_{-1}^1 p\right| \le \int_{-1}^1 |f-p| \le  2\cdot 10^{-7}
-</me>
-Also by the triangle inequality, 
- <me>
- \left|\sum_k w_k f(x_k) - \sum_k w_k p(x_k)\right| \le \sum_k w_k |f(x_k)-p(x_k)| 
- \le  10^{-7} \sum_k w_k = 2\cdot 10^{-7}
-</me>
-where the last step uses a remark at the end of <xref ref="section-gauss-legendre" />. Finally, since the degree of <m>p</m> is <m>9 &lt; 2\cdot 5</m>, we have <m>\int_{-1}^1 p = \sum_k w_k p(x_k)</m>. Combining the above, we conclude that 
-<me>
-\left|\int_{-1}^1 f -\sum_k w_k f(x_k)\right| \le 4\cdot 10^{-7}
-</me>
-</p>
-<p> In general, the estimates above show that if <m>f</m> can be approximated within <m>\varepsilon</m> by some polynomial of degree <m>2n-1</m>, then the error of <m>n</m>-point Gauss-Legendre rule is at most <m>4\varepsilon</m>.</p></answer></example>
+<question><title>Gauss-Kronrod error estimate</title>
+<p>The current version of Wikipedia article <url href="https://en.wikipedia.org/wiki/Gauss%E2%80%93Kronrod_quadrature_formula">Gauss–Kronrod quadrature formula</url> says: <q>The integral is then estimated by the Kronrod rule K15 and the error can be estimated as |G7-K15|</q>. This estimate, while reasonable, is quite conservative: the actual error will be much less. Can you explain why?</p></question>
 
 </section>
 
@@ -149,14 +171,21 @@ where the last step uses a remark at the end of <xref ref="section-gauss-legendr
 <exercises xml:id="exercises-adaptive-integration">
     <title>Homework</title>
 
-    <exercise number="1">
+    <exercise number="1" xml:id="ex-simpson-1">
         <statement>
-<p>Write a script which, when given an integer <m>n \ge 2</m>, finds and displays the Gauss-Laguerre evaluation points and weights. This can be done by adapting the code in <xref ref="example-find-gauss-legendre-weights" />, similarly to exercises in <xref ref="exercises-legendre-laguerre" />. Note that the right-hand side of a system for weights will involve factorials; in Matlab they can be computed with <c>factorial</c> function, for example <c>factorial(i-1)</c>.</p> </statement></exercise>
+<p> Estimate the error of computing <m>\int_{0.1}^{1.1} \sqrt{x}\,dx</m> using Simpson's rule with <m>h=1/2</m>, according to the error bound <xref ref="eq-simpson-error" />.</p>
+</statement></exercise>
 
     <exercise number="2">
         <statement>
-<p> Apply the Gauss-Laguerre rule with <m>n=5</m> to the integral <m>\int_{0}^\infty \exp(-x^2)\,dx</m> whose exact value is <m>\sqrt{\pi}/2</m>. The script should display the approximation obtained, and the error (the absolute value of the difference between the approximate and exact values).</p> 
+<p> Calculate the actual error in <xref ref="ex-simpson-1" />, that is, the difference between what Simpson's rule gives and the exact value of the integral. Is the actual error similar in size to the error estimate found in <xref ref="ex-simpson-1" />?</p>
 </statement></exercise>
+
+    <exercise number="3">
+        <statement>
+<p> Rewrite the adaptive integration script in <xref ref="example-implement-adaptive-gauss" /> so that it uses trapezoidal and Simpson's rules for <m>I_1, I_2</m>, and test it on the integral <m>\int_0^4 x^{3/2}\,dx</m> to make sure it returns a correct result.</p>   
+</statement></exercise>
+
  
 </exercises>
 
