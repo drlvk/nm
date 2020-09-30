@@ -130,7 +130,7 @@ fprintf('Errors: Leftpoint %g, Rightpoint %g, Trapezoidal %g, Midpoint %g\n', er
 <example xml:id="example-error-midpoint-rule"><title>The error of midpoint rule</title>
 <statement><p>Using the process describe above, estimate the error of the midpoint rule.</p></statement>
 <solution><p> The midpoint rule is exact for <m>x^0</m> and <m>x^1</m>. But for <m>\int_0^h x^2\,dx</m> it predicts <m>\int_0^h x^2\,dx  = h^3/4</m>, while the true value is <m>h^3/3</m>. So we stop at <m>d=2</m> with 
-the error of <m>h^3/12</m>, which cam be written as <m>\dfrac{1}{24} \ 2! \ h^3</m>. Therefore, the constant factor in the error formula: is <m>C=1/24</m>. In conclusion, the error of the midpoint rule is at most
+the error of <m>h^3/12</m>, which can be written as <m>\dfrac{1}{24} \ 2! \ h^3</m>. Therefore, the constant factor in the error formula: is <m>C=1/24</m>. In conclusion, the error of the midpoint rule is at most
 <me>
 |\text{error}| \le \frac{1}{24}\max_{[a,b]} |f''|  (b-a) h^2
 </me>

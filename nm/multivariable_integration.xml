@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<chapter xml:id="chapter-multivariable-integration" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+<title>Multivariable integration</title>
+
+
+    <introduction>
+        <p>Numerical computation of multiple integrals presents new aspects: the shape of boundary, the exponential growth of evaluation points with dimension, and somewhat unexpected benefits of randomness in high-dimensional spaces.
+      </p>
+    </introduction>
+
+<section xml:id="section-integration-rectangle">
+<title>Double integrals over rectangles</title>
+
+<p>A rectangle <m>R = [a, b]\times [c, d]</m> is the easiest two-dimensional domain to integrate over: in Calculus we would compute <me>\iint_R f(x, y)\,dA = \int_a^b \int_c^d f(x, y)\,dy\,dx</me> Suppose we pick two integration rules: one for the interval <m>[a, b]</m>, say <m>\int_a^b g(x)\,dx \approx \sum_i w_i g(x_i)</m>, the other for interval 
+<m>[c, d]</m>, say <m>\int_c^d g(y)\,dy \approx \sum_j v_j g(y_j)</m>. The function <m>g</m> here is a placeholder; the rule consists of the choice of evaluation points and their weights. Note that the weights and points depend on the interval, so they will probably be different even if we use the same integration method for both variables. With this setup, the two-dimensional integration rule for this rectangle can be expressed as a double sum: 
+<men xml:id="eq-double-quad-gen">
+\iint_R f(x, y)\,dA =  \sum_i \sum_j w_i v_j f(x_i, y_j)
+</men>
+</p>
+
+<example xml:id="example-rectangle-simpson">
+  <title>Set up Simpson's rule over a rectangle</title>
+<statement><p>Write out explicitly the sum <xref ref="eq-double-quad-gen" /> for the integral of function <m>f</m> over the rectangle <m>R = [-2,2]\times [-1,1]</m> using the simple Simpson's rule in both variables.</p>
+</statement>
+
+<answer><p>In the <m>y</m> direction, the evaluation points are <m>-1, 0, 1</m> with the weights <m>1/3, 4/3, 1/3</m>. In the <m>x</m> direction, the evaluation points are <m>-2, 0, 2</m> with the weights <m>2/3, 8/3, 2/3</m>. 
+So the sum has 9 terms: 
+<me>
+\iint_R f(x, y)\,dA \approx 
+\frac{2}{9} (f(-2,-1) + 4f(0,-1) + f(2,-1) + 4f(-2,0) + 16f(0,0) + 4f(2,0) + f(-2,1) + 4f(0,1) + f(2,1))
+</me>
+</p></answer></example>
+
+<p>Given the large number of terms in double sum <xref ref="eq-double-quad-gen" />, we should try to organize such computations efficiently. The first thing to do is to evaluate the function on a rectangular grid formed by all <m>(x_i, y_j)</m> points. A useful Matlab command is <c>meshgrid</c>, which is used as 
+<cd>[X, Y] = meshgrid(x, y)</cd> where <c>x,y</c> are vectors with evaluation points. The output consists of two matrices <c>X, Y</c> which represent the rectangular grid: <c>X</c> has the x-coordinates of all the grid points, and <c>Y</c> has their y-coordinates. The reason this is useful is that <c>f(X, Y)</c> can now be used to evaluate the function on the entire grid at once (producing a matrix of its values), provided <m>f</m> is written so that it can handle matrix input. </p>
+
+<p>Having computed <c>V = f(X, Y)</c>, we need to combine it with weights and to get a single number at the end. Recall in one dimension we would do this as <c>f(x)*w</c> where <c>w</c> is a column vector of x-weights. We should still do this, but to also multiply and sum over the y-weights, we need <c>v*f(x)*w</c> where <c>v</c> is a row of vector of y-weights. </p>
+
+<example xml:id="example-rectangle-simpson-eval">
+  <title>Implement Simpson's rule over a rectangle</title>
+<statement><p>Write a Matlab script to integrate the function <m>f(x) = \sqrt{4+xy+y^3}</m> over the rectangle in <xref ref="example-rectangle-simpson" />, using the integration points and weights from that example. </p>
+</statement>
+
+<answer>
+<pre>
+x = [-2 0 2];
+y = [-1 0 1];
+w = (2/3)*[1 4 1];
+v = (1/3)*[1 4 1];
+
+f = @(x, y) sqrt(x.*y + y.^3 + 4);
+[X, Y] = meshgrid(x, y);
+disp(v*f(X, Y)*w')
+</pre>
+<p>The first four lines do not involve the function; they are setting the stage. The function is evaluated on the rectangular grid and its values are conveniently aggregated using matrix-vector multiplication. The result is 
+ 15.8859.  <url href="https://www.wolframalpha.com/input/?i=integrate+sqrt%28x*y+%2B+y%5E3+%2B4%29+from+x%3D-2+to+x%3D2+from+y%3D-1+to+y%3D1">WolframAlpha</url> gives 15.9219. </p>
+</answer></example>
+
+<p>The rectangular grid computation can also be used to quickly plot the function: <c>surf(X, Y, f(X, Y))</c> does this. </p>
+</section>
+
+<section xml:id="section-integration-general-2d">
+<title>Double integrals over general regions</title>
+
+<p>One way to evaluate <m>\iint_D f(x, y)\,dA</m> for a general region <m>D</m> is to define <m>f</m> to be <m>0</m> outside of <m>D</m>, and integrate this redefined function over some rectangle containing <m>D</m>. This approach is problematic because the redefined function will probably be discontinuous on the boundary of <m>D</m>, and discontinuities cause large errors in numerical integration rules. </p>
+
+<p>Instead, one can literally adopt the iterated integration approach from calculus courses: do integration in one variable at a time. Suppose the integration is done in <m>y</m> variable first (<q>vertical slicing</q>). Then the limits of the inner integral will be functions of <m>x</m>. These functions will need to be implemented in Matlab, and will be called in a loop.</p> 
+
+<example xml:id="example-rectangle-simpson-ellipse">
+  <title>Implement Simpson's rule over a non-rectangular region</title>
+<statement><p>Rewrite <xref ref="example-rectangle-simpson-eval" /> to integrate the same function over the interior of the ellipse inscribed in the rectangle <m>R = [-2,2]\times [-1,1]</m>. (The ellipse 
+with the equation <m>x^2/4 + y^2 = 1</m>.) Use composite Simpson's rule with <m>n=4</m> subintervals in both variables. </p>
+</statement>
+
+<answer><p>We need functions for top and bottom boundaries, according to the integral structure
+  <me>
+    \int_a^b \int_{\text{bottom}}^{\text{top}} f(x, y)\,dy\,dx
+  </me>
+In the x-variable, the points and weights are set once. But in the y-direction they are calculated within a loop, because different x-values produce different limits of integration for y. The vector <c>innerint</c> is used below to store the values of the inner integral.</p>
+<pre>
+f = @(x, y) sqrt(x.*y + y.^3 + 4);
+top = @(x) sqrt(1-x.^2/4);
+bottom = @(x) -sqrt(1-x.^2/4);
+a = -2;
+b = 2;
+
+n = 4;
+x = linspace(a, b, n+1);
+w = [1 4 2 4 1]*(b-a)/(3*n);
+innerint = zeros(size(x));
+
+for k = 1:numel(x)
+    c = bottom(x(k));
+    d = top(x(k));
+    y = linspace(c, d, n+1)';
+    v = [1 4 2 4 1]*(d-c)/(3*n);
+    innerint(k) = v*f(x(k), y);
+end
+    
+disp(innerint*w');  
+</pre>
+<p>The result is 11.8764, compared to the WolframAlpha output 12.5419. This is less accurate than what we got for rectangle. Note that all points with <m>x=\pm 2</m> are wasted because there is no interval to integrate over with respect to <m>y</m>. For this reason, open-ended rules such as Gaussian integration is preferable. Replacing the choice of <c>x, w</c> above with the 3-point Gaussian rule
+<cd>
+x = [-sqrt(3/5) 0 sqrt(3/5)]*(b-a)/2 + (a+b)/2;
+w = [5/9 8/9 5/9]*(b-a)/2;
+</cd>
+we get 12.7081, which is much more accurate.</p></answer></example>
+</section>
+
+<section xml:id="section-integration-monte-carlo">
+<title>High-dimensional integration: Monte-Carlo method</title>
+
+<p>Integration over a <m>d</m>-dimensional region with large <m>d</m> presents new challenges. One is setting up all the boundaries for multiple variables. Another is the number of evaluation points. If we use 
+<m>n</m> evaluation points for each of <m>d</m> variables, the total number of evaluations is <m>n^d</m> which  grows exponentially with dimension. It becomes crucial to not have large <m>n</m>, which is why Gaussian integration is often used.</p> 
+
+<p>There is an alternative: the Monte-Carlo integration method consists of picking evaluation points at random, from the uniform distribution over the region <m>D</m>. Averaging the computed values of <m>f</m>, we obtain an approximation to the average of <m>f</m> over <m>D</m>. To find the integral, multiply the average by the volume of <m>D</m>. </p>
+
+<p>In terms of probability theory, the random choice of <m>x</m> makes <m>f(x)</m> a <term>random variable</term>. This random variable has <term>mean value</term> <m>\mu</m> equal to the average of <m>f</m> over <m>D</m>. Its <term>variance</term> <m>\sigma^2</m> is the average of <m>(f-\mu)^2</m> over <m>D</m>. The Central Limit Theorem tells us that the mean of <m>N</m> independent samples is approximately normally distributed with mean <m>\mu</m> and variance <m>\sigma^2 / N</m>.  In particular, with probability about <m>99.7%</m> the sample mean is within three standard deviations of the mean, which means the error of Monte-Carlo method is very likely to be bounded by <m>3\sigma /\sqrt{N}</m>. On one hand, this tends to zero quite slowly. On another hand, the rate at which it tends to zero is independent of dimension <m>d</m>.</p>
+
+
+<example xml:id="example-monte-carlo-box">
+  <title>Implement the Monte-Carlo method over a high-dimensional cube</title>
+<statement><p>Integrate the function <m>f(\mathbf x) = \sqrt{1+|\mathbf x|^2}</m> over the 10-dimensional unit cube <m>[0, 1]^{10}</m> using the Monte-Carlo method.</p> 
+</statement>
+<answer>
+<pre>
+f = @(x) sqrt(1 + x*x');
+d = 10;
+N = 1e6;
+
+s = 0;
+for k = 1:N
+    s = s + f(rand(1, d));
+end
+disp(s/N)
+</pre>
+<p>The output is, of course, random, but usually it is about 2.069. If your computer handles a million samples
+(<c>N = 1e6</c>) easily, you may want to try <c>1e7</c>. It would be tedious to compute this integral  with WolframAlpha; just entering the limits would take long.</p>
+<p>The above code is not vectorized: it uses a loop to evaluate <m>f</m> at consecutive points. One could generate all these points at once with <c>rand(N, d)</c> and try to get all values of  <m>f</m> at once. But this requires coding <c>f</c> in such a way that it can consume a matrix and produce a vector of values, and this may be difficult.</p></answer></example>
+
+<remark xml:id="remark-normal-distribution"><title>Averaging over a sphere</title>
+<p>Monte-Carlo method can also be used to average a function over a <em>sphere</em> with the help of <term>normal distribution</term>. Namely, the commands
+<cd>
+x = randn(1, d);
+x = x/norm(x);
+</cd>
+generate a <m>d</m>-dimensional random vector of unit length, and such vectors are uniformly distributed over the unit sphere in <m>\mathbb R^d</m>. This works specifically for the normal distribution because of the following property of its probability density function <m>p</m>: the product <m>p(x_1)p(x_2)\dots p(x_d)</m> depends only on the norm of vector <m>\mathbf x</m>. Using this random vector in a loop, like in <xref ref="example-monte-carlo-box" />, we find an approximate value of the average of <m>f</m> over the sphere
+<m>\{\mathbf x\in \mathbb R^d\colon |\mathbf x|=1\}</m>.</p></remark>
+</section>
+ 
+
+
+<exercises xml:id="exercises-multivariable-integration">
+    <title>Homework</title>
+
+    <exercise number="1">
+        <statement>
+<p>Rewrite <xref ref="example-rectangle-simpson-ellipse" /> so that the number of subintervals <m>n</m> can be entered by the user. The input should be rejected with <c>error('n must be even')</c> if an odd number is entered. The command <c>mod(n, 2)</c> will be useful for checking this. The code producing the weights <c>w, v</c> will need to be generalized so that it works for general <m>n</m>. </p>
+<p>Try choosing <m>n</m> large enough so that the displayed integral value is <c>12.5419</c> (or at least within 0.0001 of this value). In a comment, state the value of <m>n</m> which achieved the above. How many evaluation points were used with this <m>n</m>? </p> </statement></exercise>
+
+    <exercise number="2">
+        <statement>
+<p> Use <xref ref="remark-normal-distribution" /> to find the averages of the following functions over the unit sphere in <m>\mathbb R^{10}</m>: 
+<ol label="(a)">
+  <li><m>f(\mathbf x) = x_1+\dots+x_{10}</m>, the sum of coordinates.</li>
+  <li><m>f(\mathbf x) = x_1^2</m>, the first coordinate squared.</li>
+  <li><m>f(\mathbf x) = (x_1+x_2+\dots+x_{10})^2</m>, the square of the sum of all coordinates.</li>
+</ol>
+The Matlab function <c>sum</c> will be useful.</p> 
+<p>The results should give a strong indication of what the exact values of these integrals are. Can you 
+explain why these integrals have these values? </p> 
+</statement></exercise>
+ 
+</exercises>
+
+</chapter>
