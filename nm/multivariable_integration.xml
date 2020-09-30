@@ -146,7 +146,7 @@ disp(s/N)
 x = randn(1, d);
 x = x/norm(x);
 </cd>
-generate a <m>d</m>-dimensional random vector of unit length, and such vectors are uniformly distributed over the unit sphere in <m>\mathbb R^d</m>. This works specifically for the normal distribution because of the following property of its probability density function <m>p</m>: the product <m>p(x_1)p(x_2)\dots p(x_d)</m> depends only on the norm of vector <m>\mathbf x</m>. Using this random vector in a loop, like in <xref ref="example-monte-carlo-box" />, we find an approximate value of the average of <m>f</m> over the sphere
+generate a <m>d</m>-dimensional random vector of unit length, and such vectors are uniformly distributed over the unit sphere in <m>\mathbb R^d</m>. This works specifically for the normal distribution because of the following property of its probability density function <m>p</m>: the product <m>p(x_1)p(x_2)\cdots p(x_d)</m> depends only on the norm of vector <m>\mathbf x</m>. Using this random vector in a loop, like in <xref ref="example-monte-carlo-box" />, we find an approximate value of the average of <m>f</m> over the sphere
 <m>\{\mathbf x\in \mathbb R^d\colon |\mathbf x|=1\}</m>.</p></remark>
 </section>
  
@@ -158,7 +158,7 @@ generate a <m>d</m>-dimensional random vector of unit length, and such vectors a
     <exercise number="1">
         <statement>
 <p>Rewrite <xref ref="example-rectangle-simpson-ellipse" /> so that the number of subintervals <m>n</m> can be entered by the user. The input should be rejected with <c>error('n must be even')</c> if an odd number is entered. The command <c>mod(n, 2)</c> will be useful for checking this. The code producing the weights <c>w, v</c> will need to be generalized so that it works for general <m>n</m>. </p>
-<p>Try choosing <m>n</m> large enough so that the displayed integral value is <c>12.5419</c> (or at least within 0.0001 of this value). In a comment, state the value of <m>n</m> which achieved the above. How many evaluation points were used with this <m>n</m>? </p> </statement></exercise>
+<p>Try choosing <m>n</m> large enough so that the displayed integral value is 12.5419 (or at least within 0.0001 of this value). In a comment, state the value of <m>n</m> which achieved the above. How many evaluation points were used with this <m>n</m>? </p> </statement></exercise>
 
     <exercise number="2">
         <statement>
