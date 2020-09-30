@@ -32,7 +32,7 @@
 
 <p>The <term>Gauss-Legendre integration rule</term> is to let the evaluation points <m>x_1,\dots, x_n</m> be the roots of <m>P_n</m> and then choose their weights <m>w_1,\dots, w_n</m> so that the rule <me>\int_{-1}^1 f(x)\,dx \approx \sum_{k=1}^n w_k f(x_k)</me> is exact for <m>f(x)=x^p</m>, <m>p=0,\dots,n-1</m>. The second part is not new; this is exactly what we did for Newton-Cotes rules. But with this specific choice of evaluation points, the integration rule is exact for all polynomials of degrees <m>\le 2n-1</m>, not just <m>\le n-1</m>. This means the Gauss-Legendre integration has order of accuracy <m>2n</m>: for example, it has order <m>14</m> if we use 7 points.</p>
 
-<p><em>Proof</em>. Given a polynomial <m>F</m> of degree <m>\le 2n-1</m>, use long division of polynomials to write it as <m>F = Q P_n +R</m> with <m>P</m> and <m>R</m> having degree <m>\le n-1</m> (why is this possible?). Plug this into the integral:
+<p><em>Proof</em>. Given a polynomial <m>F</m> of degree <m>\le 2n-1</m>, use long division of polynomials to write it as <m>F = Q P_n +R</m> with <m>Q</m> and <m>R</m> having degree <m>\le n-1</m> (why is this possible?). Plug this into the integral:
 <me>
 \int_{-1}^1 F(x)\,dx = \int_{-1}^1 (Q(x) P_n(x) +R(x))\,dx = \int_{-1}^1 R(x)\,dx 
 </me>
@@ -64,7 +64,7 @@ where the right hand side has just one term because <m>G(x_j)=0</m> for all indi
 <title>Gauss-Laguerre integration</title>
 
 <p>The Gauss-Laguerre integration rule is stated for integrals of the form <m>\int_0^\infty f(x)e^{-x}\,dx</m>.
-This means that if we wan to calculate, for example, <m>\int_0^\infty 1/(x^3+4)\,dx</m>, then the function to use is <m>f(x) = e^x/(x^3+4)</m>.</p> 
+This means that if we want to calculate, for example, <m>\int_0^\infty 1/(x^3+4)\,dx</m>, then the function to use is <m>f(x) = e^x/(x^3+4)</m>.</p> 
 
 <p>Apart from the presence of the weight function <m>e^{-x}</m>, the rest goes as in <xref ref="section-gauss-legendre" />. Let <m>x_1,\dots, x_n</m> be the roots of Laguerre polynomial <m>L_n</m>. Then solve a linear system for the weights <m>w_1,\dots, w_n</m> so that the rule 
 <m>\int_{0}^\infty f(x) e^{-x}\,dx \approx \sum_{k=1}^n w_k f(x_k)</m> is exact for <m>f(x)=x^p</m> with <m>p=0,\dots,n-1</m>.  This choice and the orthogonality property make the rule exact when <m>f</m> is a polynomial of degree less than <m>2n</m>.</p> 
