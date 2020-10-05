@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<chapter xml:id="chapter-ode-euler" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+<title>Differential equations: Euler's method and its relatives</title>
+
+
+    <introduction>
+        <p>Ordinary differential equations (the subject of MAT 414 and MAT 485) involve at least one unknown function of one variable, as well as its derivatives. Differential equations model a process evolving in time. While there are symbolic solutions for some kinds of linear differential equations, the nonlinear equations usually require a numerical solution.  
+      </p>
+    </introduction>
+
+<section xml:id="section-ode-intro">
+<title>Ordinary differential equations</title>
+
+<p>Suppose that <m>y</m> is an unknown function of variable <m>t</m>, with the property that <m>y'(t) = 6t</m> for all <m>t</m>. This qualifies as a differential equation, although a very simple one: since the right hand side is explicit, integration with respect to <m>t</m> tells us <m>y(t) = 3t^2 + C</m> where <m>C</m> is some undetermined constant. If we also know the value of <m>y</m> at some point (an <term>initial condition</term>), then <m>C</m> can be determined.
+So, indefinite integration (finding antiderivatives) is a special case of solving differential equations.
+</p>
+
+<p>Suppose that <m>y</m> satisfies <m>y'(t) = 6y(t)</m> for all <m>t</m>. This is a more typical example of a differential equation. We cannot find <m>y</m> by integrating the right hand side because it is unknown. The solutions of this equation are <m>y(t) = C e^{6t}</m> where <m>C</m> is again an undetermined constant.</p> 
+
+<p>Usually the argument of unknown function is omitted, so the above equation would be written as <m>y'=6y</m>. Higher order derivatives may appear, for example <m>y'' + 6y' - t^2 y = \cos t</m>. Despite the appearance of terms like <m>t^2</m>, this differential equation is considered to be <term>linear</term>, because the unknown function and its derivative enter it linearly. The simplest equation of a <term>nonlinear</term> differential equation is <m>y' = y^2</m>.</p>  
+
+<p>A <term>system</term> of differential equations involves <m>n</m> equations with <m>n</m> unknown functions, for example 
+<md>
+<mrow>y_1' \amp = 3y_1 + y_2 + t</mrow>
+<mrow>y_2' \amp = t \sin(y_1)\cos(y_2) </mrow>
+</md>
+This is usually considered as a single equation with an unknown vector-valued function <m>\mathbf y</m>: 
+<me>
+\mathbf y' = \mathbf f(t, \mathbf y) \quad \text{where } 
+\mathbf f(t, \mathbf y) = \begin{pmatrix} 3y_1 + y_2 + t \\ t \sin(y_1)\cos(y_2) \end{pmatrix}
+</me>
+An equation (or system of equations) involving higher derivatives can be rewritten as a system that involves only the first derivatives. The trick is to consider <m>y'</m> as another unknown function, say <m>z</m>, and add the relation <m>y' = z</m> to the system. For example, <m>y'' + 6y' - t^2 y = \cos t</m> becomes the system 
+<md>
+<mrow>y' \amp = z</mrow>
+<mrow>z' \amp =  - 6z + t^2 y + \cos t </mrow>
+</md>
+Or in vector form, letting <m>\mathbf y = \begin{pmatrix} y \\ z \end{pmatrix}</m>:  
+<men xml:id="eq-ode-system-ex1">
+  \mathbf y' = \begin{pmatrix} y_2 \\ -6 y_2 + t^2 y_1 + \cos t \end{pmatrix}
+</men>
+</p>
+
+<p>We will not need theoretical methods of solving differential equations, but you should be able to rewrite an equation/system of higher order as a first-order system such as <xref ref="eq-ode-system-ex1" />. </p> 
+
+<p>A terminological remark: all of the above are called <em>ordinary</em> differential equations (ODE) because there is only one independent variable, <m>t</m>. With more than one independent variable such equations involve partial derivatives and are called <em>partial</em> differential equations (PDE). We will not consider PDE in this course.</p>
+
+</section>
+ 
+<section xml:id="section-euler-method">
+<title>Euler's method</title>
+
+<p>To solve an ODE numerically, we <q>discretize</q> it: instead of variable <m>t</m> varying continuously over some interval, we choose step size <m>h</m> and work with <m>t_0</m>, <m>t_1=t_0+h</m>, <m>t_2=t_1+h</m>, and so on. (An adaptive method will change the step size <m>h</m> based on the outcome of computation; more on this later.) We try to find approximate  values of <m>y</m> at the points <m>t_k</m>, starting with <m>y(t_0)= y_0</m> which is known (initial condition). The idea of Euler's method is geometric: draw the line segment starting at 
+<m>(t_0,y_0)</m> with the slope <m>f(t_0,y_0)</m>. When it reaches the abscissa <m>t_1</m>, we have new point 
+<m>(t_1,y_1)</m>. Then process is repeated. In a formula, it is expressed as
+<men xml:id="eq-euler-method"> 
+  y_{k+1} = y_k + h f(t_k, y_k)
+</men>
+</p>
+
+<example xml:id="example-implement-euler">
+  <title>Implement Euler's method</title>
+<statement><p>Implement Euler's method to solve the differential equation <m> y'=-ty</m> with initial condition <m>y(0)=1</m>. Plot the result on the interval <m>[0, 3]</m> and compare it with the exact solution, which is <m>y(t) = \exp(-t^2/2)</m>. Try different step sizes: 0.3, 0.1, 0.01. </p>
+<p>Repeat the above for <m> y'= ty</m>, where the exact solution is <m>y(t) = \exp(t^2)</m>. </p>
+</statement>
+
+<answer><pre>
+f = @(t, y) -t*y;   % or without -
+h = 0.3;   %  or 0.1, 0.01 
+t = 0:h:3;
+y0 = 1;
+y = y0*ones(size(t));
+
+for k = 1:numel(t)-1
+    y(k+1) = y(k) + h*f(t(k), y(k));
+end
+
+exact = exp(-t.^2 /2);   % or without -
+plot(t, y, t, exact)
+legend('Euler', 'exact')
+</pre></answer></example>
+
+<p>As <xref ref="example-implement-euler" /> shows, a weakness of Euler's method is its tendency to fall behind the solution when the solution is increasing and concave up, or decreasing and concave down. The reason is that it uses the rate of change from point <m>t_k</m> for the entire interval <m>[t_k, t_{k+1}]</m>. When applied to an ODE of the form <m>y'=f(t)</m>, Euler's method becomes the left endpoint method of integration. So it is not very accurate.</p>
+</section>
+
+ 
+<section xml:id="section-ode-order-accuracy">
+<title>Estimating the accuracy of numeric ODE methods</title>
+
+<p>Evaluating the accuracy of ODE solution methods is a more complex issue because they involve approximate computations based on the results of previous other approximate computations. A convenient model problem to use is <m>y'=y</m> with <m>y(0)=1</m>. Its exact solution at  <m>x= h</m> is <m>e^h = 1+h+h^2/2+h^3/6+\dots</m>. The  approximate solution <m>y_1</m> at <m>x= h</m> will be some other expression. The difference <m>|e^h - y_1|</m>
+gives us the <term>local error</term> of the method (for one step). The cumulative error can be estimated by multiplying the local error by the necessary number of steps to cover an interval <m>[a, b]</m>, which is <m>(b-a)/h</m>. </p>
+
+<p>Euler's method has <m>y_1 = 1 + h</m>, hence <m>|e^h - y_1| = h^2/2 + \dots</m>, the local error is of second order. The cumulative error is of order <m>1</m>. This is consistent with what we know about left endpoint method of integration.</p> 
+
+<p>The above does not capture the entire picture. Although errors might accumulate, they do not always do that. When solving an equation like <m>y' = -ry</m> (exponential decay) we get <m>y_k = (1-rh)^k y_0</m>. As long as <m>h \lt 2/r</m>, we have <m>|1-rh| \lt 1</m> and so the approximate solution decays exponentially as it should. But if <m>h \gt 2/r</m>,  the solution grows in magnitude instead of decreasing. This leads to the subject of <em>stability</em> of numerical ODE methods, which is beyond our scope.</p>
+</section>
+
+<section xml:id="section-ode-euler-improved">
+<title>Improving Euler's method</title>
+
+<p>By analogy with Trapezoidal rule for numerical integration, one can try to improve the accuracy by using the average of both endpoints of an interval. That is, we would like to write 
+<me>
+y_{k+1} = y_k + h\frac{f(t_k,y_k)+f(t_{k+1},y_{k+1})}{2} 
+</me>
+However, this means we need to know <m>y_{k+1}</m> in order to find <m>y_{k+1}</m>. So we first make a prediction for <m>y_{k+1}</m> and then use it to compute <m>y_{k+1}</m> again, more accurately.  Namely, we use the original Euler's method to compute <q>predictor</q>
+<men xml:id="eq-ode-predictor">
+\tilde y_{k+1}=y_k + h f (t_k,y_k)
+</men>
+and then compute the <q>corrector</q> 
+<men xml:id="eq-ode-corrector">
+y_{k+1} = y_k + h\frac{f(t_k,y_k)+f(t_{k+1},\tilde y_{k+1})}{2} 
+</men>
+This is one of many <term>predictor-corrector</term> methods for solving ODE. This particular method goes by various names (modified Euler method, improved Euler method); I prefer to call it the trapezoidal method, because this name describes the logic of <xref ref="eq-ode-corrector" />. </p>
+
+
+<example xml:id="example-implement-trapezoidal-ode">
+  <title>Implement trapezoidal method for ODE</title>
+<statement><p>Modify <xref ref="example-implement-euler" /> to use the trapezoidal method.</p>
+</statement>
+
+<answer><pre>
+f = @(t, y) -t*y;   % or without -
+h = 0.3;   %  or 0.1, 0.01 
+t = 0:h:3;
+y0 = 1;
+y = y0*ones(size(t));
+
+for k = 1:numel(t)-1
+    pred = y(k) + h*f(t(k), y(k));
+    y(k+1) = y(k) + h/2*(f(t(k), y(k)) + f(t(k+1), pred));
+end
+
+exact = exp(-t.^2 /2);   % or without -
+plot(t, y, t, exact)
+legend('trapezoid', 'exact')
+</pre></answer></example>
+
+<p>Theoretical analysis of accuracy confirms the above observation that trapezoidal method is much more accurate. 
+For the model equation <m>y'=y</m> it gives <m>y_1 = 1+ h(1+1+h)/2 = 1+h+h^2/2</m>, which matches exact solution <m>e^h = 1+h+h^2/2+h^3/3</m> up to <m>h^3</m> term. Therefore, the cumulative error is of order <m>h^2</m>.</p> 
+
+<p>A close relative is <term>midpoint method</term>. In it the trapezoidal corrector <xref ref="eq-ode-corrector" /> is replaced by 
+<men xml:id="eq-ode-corrector-midpoint">
+y_{k+1} = y_k + hf((t_k+t_{k+1})/2, (y_k + \tilde y_{k+1})/2)
+</men>
+where <m> \tilde y_{k+1}</m> is computed as in <xref ref="eq-ode-predictor" />.
+</p>
+
+<p>It is not so easy to improve accuracy further. There is a family of higher-order ODE solution methods (Runge-Kutta methods) of which the 4th order method is most popular; it involves several predictor-corrector steps. As with adaptive integration, one can compare the results of two methods of different orders in order to decide if the step size <m>h</m> should be reduced. This is what Matlab's ODE solvers do; for example, 
+<c>ode45</c> is a solver that combines a 4th order method with a 5th order method. We will use it later.</p> 
+</section>
+
+<section xml:id="section-ode-systems">
+<title>Solving systems of differential equations</title>
+
+<p>Conceptually, any of the above methods can be directly applied to systems of <m>m</m> differential equations, just by interpreting <m>y</m> as a vector function <m>\mathbf y</m>. The notation becomes awkward: now <m>y_2</m> refer to the second component of <m>\mathbf y</m>, while the value <m>\mathbf y(t_2)</m> might be denoted <m>\mathbf y_2</m>. There are also a few changes in Matlab notation regarding <c>y</c>: it will now be a matrix, where rows correspond to components and columns correspond to points of evaluation. The right-hand side function <c>f</c> should return a column vector of the same dimesion <m>m</m>. </p>
+
+<example xml:id="example-implement-trapezoidal-ode-system">
+  <title>Implement trapezoidal method for ODE system</title>
+<statement><p>Solve the system 
+<md>
+<mrow>y_1' \amp = t - 3y_2</mrow>
+<mrow>y_2' \amp = 2y_1</mrow>
+</md>
+with initial condition <m>y(0) = \begin{pmatrix}1 \\ 0\end{pmatrix}</m>, 
+on the interval <m>[0, 10]</m> using the trapezoidal method with the step <m>h=0.01</m>. Plot the solution.</p>
+</statement>
+<answer><pre>
+f = @(t, y) [t-3*y(2); 2*y(1)]; 
+h = 0.01; 
+t = 0:h:10;
+y0 = [1; 0];
+y = y0*ones(size(t));
+ 
+for k = 1:numel(t)-1
+    pred = y(:, k) + h*f(t(k), y(:, k));
+    y(:, k+1) = y(:, k) + h/2*(f(t(k), y(:, k)) + f(t(k+1), pred));
+end
+
+plot(t, y)
+</pre>
+<p>The most visible difference is the notation <c>y(:, k)</c> which takes the entire <m>k</m>th column of the matrix <c>y</c>. Its mathematical meaning is the approximation to <m>\mathbf y(t_k)</m>. The initial condition <c>y0</c> is a column vector, which makes the computation <c>y = y0*ones(size(t));</c> an outer product: it creates a matrix in which every column is equal to <c>y0</c>. This is convenient because we need the first column to be equal, and the other columns will be rewritten anyway.</p></answer></example>
+
+<p>The plot displayed by <xref ref="example-implement-trapezoidal-ode-system" />  is a <term>time series plot</term> in which one axis represents the independent variable (usually time) and the other axis shows the components of <m>\mathbf y</m>. The other option we have is to make a <term>phase plot</term> in which each component of <m>\mathbf y</m> gets its own axis, and there is no time axis. This is achieved with
+<cd>
+plot(y(1,:), y(2,:))
+</cd>
+The phase plot  may be preferable when the system does not involve time directly (an <term>autonomous system</term>). Try both kinds of plots for the autonomous system 
+<cd>
+  f = @(t, y) [y(2)-y(2)^3; 2*y(1)];
+</cd>
+</p></section>
+
+<exercises xml:id="exercises-ode-euler">
+    <title>Homework</title>
+
+    <exercise number="1">
+        <statement>
+<p>(Theoretical) Show that the midpoint ODE method, described by <xref ref="eq-ode-corrector-midpoint" />, has the same order of accuracy as the trapezoidal ODE method: its cumulative error is proportional to <m>h^2</m>.</p>
+</statement></exercise>
+
+    <exercise number="2">
+        <statement>
+<p>(Theoretical) Rewrite the second-order equation <m>y'' + yy' - ty^3 = e^{-t}</m> as a system of two first-order equations.</p>
+</statement></exercise>
+
+    <exercise number="3">
+        <statement>
+<p> Use the midpoint method with step size <m>h=0.01</m> to solve the autonomous system 
+<md>
+<mrow>y_1' \amp = y_2</mrow>
+<mrow>y_2' \amp = -y_1 - y_2^3</mrow>
+</md>
+with initial condition <m>y(0) = \begin{pmatrix}1 \\ 1\end{pmatrix}</m> on the interval <m>[0, 50]</m>. 
+Display both time series plot and phase plot side by side, for example
+<cd>
+subplot(1, 2, 1)
+plot(t, y)
+subplot(1, 2, 2)
+plot(y(1,:), y(2,:))
+</cd>
+How would you describe the long-term behaviour of this solution?</p>
+</statement></exercise>
+ 
+</exercises>
+
+</chapter>
