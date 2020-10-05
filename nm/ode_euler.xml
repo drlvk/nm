@@ -88,7 +88,9 @@ legend('Euler', 'exact')
 <section xml:id="section-ode-order-accuracy">
 <title>Estimating the accuracy of numeric ODE methods</title>
 
-<p>Evaluating the accuracy of ODE solution methods is a more complex issue because they involve approximate computations based on the results of previous other approximate computations. A convenient model problem to use is <m>y'=y</m> with <m>y(0)=1</m>. Its exact solution at  <m>x= h</m> is <m>e^h = 1+h+h^2/2+h^3/6+\dots</m>. The  approximate solution <m>y_1</m> at <m>x= h</m> will be some other expression. The difference <m>|e^h - y_1|</m>
+<p>Evaluating the accuracy of ODE solution methods is a more complex issue because they involve approximate computations based on the results of previous other approximate computations. A convenient model problem to use is <m>y'=y</m> with <m>y(0)=1</m>. Its exact solution at  <m>x= h</m> is 
+<me>e^h = \sum_{n=0}^\infty \frac{h^n}{n!} =  1+h+h^2/2+h^3/6+\cdots</me> 
+The  approximate solution <m>y_1</m> at <m>x= h</m> will be some other expression. The difference <m>|e^h - y_1|</m>
 gives us the <term>local error</term> of the method (for one step). The cumulative error can be estimated by multiplying the local error by the necessary number of steps to cover an interval <m>[a, b]</m>, which is <m>(b-a)/h</m>. </p>
 
 <p>Euler's method has <m>y_1 = 1 + h</m>, hence <m>|e^h - y_1| = h^2/2 + \dots</m>, the local error is of second order. The cumulative error is of order <m>1</m>. This is consistent with what we know about left endpoint method of integration.</p> 
