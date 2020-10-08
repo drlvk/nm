@@ -78,6 +78,7 @@ along with MathBook XML.  If not, see <http://www.gnu.org/licenses/>.
             <xi:include href="./adaptive_integration.xml" />
             <xi:include href="./multivariable_integration.xml" />
             <xi:include href="./ode_euler.xml" />
+            <xi:include href="./ode_modeling.xml" />
         </part>
 
         <part xml:id="part-data">

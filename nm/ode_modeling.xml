@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<chapter xml:id="chapter-ode-modeling" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+<title>Modeling with differential equations</title>
+
+
+    <introduction>
+        <p>Systems of differential equations are among the main tools of mathematical modeling, which can be informally described as the process of matching real-world phenomena with mathematical structures. Useful models allow us to make predictions and recommendations for future actions based on mathematical methods, including numerical methods.
+      </p>
+    </introduction>
+
+<section xml:id="section-ode-epidemiology">
+<title>Models of an epidemic</title>
+
+<p>A basic model of epidemic divides the population into three groups: susceptible <m>S</m> (able to be infected), infected <m>I</m>, and removed <m>R</m> (not able to be infected). Often group <m>R</m> is called <q>recovered</q> but it also contains deceased and vaccinated. One can modify the model in various ways: include a separate group for deceased, allow for a possibility of reinfection, etc. The sum <m>S+I+R</m> remains constant in time, because other demographic factors such as births do not substantially change the picture of an epidemic. </p>
+
+<p>It is convenient to express <m>S, I, R</m> as a proportion of total population. This means these quantities are between <m>0</m> and <m>1</m> and their sum is <m>1</m>. An important assumption of the model is that the rate of infection is proportional to the product <m>SI</m>. This is based on the simplifying idea that any two people in the population are equally likely to meet and transmit the disease, and since <m>SI</m> is the number of all susceptible-infected pairings, the number of transmissions will be proportional to it. This is not too far from reality when <q>population</q> means, for example, student population on some campus (pre-COVID). When modeling the population of a country, one needs to consider the effects of geography. </p>
+
+<p>Thus, the rate of new infections is <m>\beta SI</m> where <m>\beta</m> is the coefficient of proportionality that depends on how contagious the disease is and what preventive measures are taken by the population. At the same time, the rate of new recoveries can be reasonably assumed to be <m>\gamma I</m>, proportional to the number of currently infected. So we have the system
+<mdn xml:id="eq-SIR-1">
+<mrow>S' \amp = - \beta SI</mrow>
+<mrow>I' \amp = \beta SI - \gamma I</mrow>
+<mrow>R' \amp = \gamma I</mrow>
+</mdn>
+with some initial conditions <m>(S_0, I_0, R_0)</m> where typically <m>R_0=0</m> and <m>I_0</m> is small.
+The constants <m>\beta,\gamma</m> are the <term>parameters</term> of this system. Their values have a major impact on the long-term behavior of solutions; yet these values are very difficult to estimate in practice (especially <m>\beta</m>). One might try to estimate them by studying a small-scale outbreak closely and fitting a model to the observed counts of infected and recovered people. </p>
+
+<p>We could solve the system <xref ref="eq-SIR-1" /> numerically using the methods of <xref ref="chapter-ode-euler" /> but to keep the focus on the modeling aspect, we use Matlab's solver <c>ode45</c>. It is typically used as
+<cd>
+[t, y] = ode45(rhs, [a, b], y0);  
+</cd>
+where <c>rhs</c> is the right hand side of ODE system such as <xref ref="eq-SIR-1" />,  <c>[a, b]</c> is the interval on which solution must be found, and <c>y_0</c> is the initial condition at the left endpoint of that interval (<c>ode45</c> allows it to be either a column vector or a row vector.) Note that <c>rhs</c> must take two variables in this order: <c>rhs = @(t, y) ...</c> even if the system does not involve time (is autonomous). The solver returns a vectors of t-values and a vector or matrix of y-values. It is a matrix if we solve a system; in this case <c>y(:,1)</c> approximates the first unknown function, <c>y(:,2)</c> the second, and so on. The time series of the solution is obtained with <c>plot(t, y)</c>. </p>
+
+<example xml:id="example-SIR-1">
+  <title>Implement SIR model</title>
+<statement><p>Use <c>ode45</c> to solve the equations <xref ref="eq-SIR-1" /> on the interval <m>[0, 100]</m> with 
+<m>\beta = 0.3</m>, <m>\gamma = 0.2</m>, and <m>\mathbf y_0 = (0.99, 0.01, 0)</m> (a column vector).</p>
+</statement>
+<answer><pre>
+beta = 0.3;
+gamma = 0.2;
+y0 = [0.99; 0.01; 0];
+rhs = @(t, y) [-beta*y(1)*y(2); beta*y(1)*y(2) - gamma*y(2); gamma*y(2)];
+[t, y] = ode45(rhs, [0, 100], y0);
+plot(t, y, 'LineWidth', 3)
+legend('Suscepted', 'Infected', 'Recovered')
+</pre>
+<p>In this scenario a part of the population (less then half) escapes the infection because the epidemic ends on its own after the transmission rate drops. Try varying the coefficients <m>\beta, \gamma</m> and observe the effect.</p></answer></example> 
+
+<p>In reality, <m>\beta</m> is not necessarily constant in time. Let us introduce seasonality into the model by making <m>\beta</m> a periodic function of <m>t</m>, for example  
+<cd>
+beta = @(t) 0.3 + 0.2*cos(0.2*t);
+</cd>
+which is a periodic function that varies between <m>0.1</m> and <m>0.5</m>. Try this out (note that <c>beta</c> should be replaced by <c>beta(t)</c> in the formula for <c>rhs</c>). </p> 
+</section>
+ 
+<section xml:id="section-ode-predator-prey">
+<title>Predator-prey models</title>
+
+<p>A traditional example of predator-prey relation is foxes and rabbits (in SU neighborhood, it could be hawks and squirrels instead). The Lotka-Volterra model of this relationship involves four positive parameters <m>a, b, c, d</m>: 
+<mdn xml-id="eq-LV-1">
+<mrow>R' \amp = a R - b RF </mrow>
+<mrow>F' \amp =-c F + d RF </mrow>
+</mdn>
+The first equation indicates that without foxes, rabbit population would grow at a constant relative rate. As in SIR model, the number of interactions is proportional to the product <m>RF</m>. Each interaction has a chance of reducing the number of rabbits. These interactions also contribute to the growth of foxes but not necessarily at the same rate (an eaten rabbit does not mean there is now an extra fox; we are not modeling a zombie apocalipse). Finally, the minus sign in <m>-cF</m> ensures that without rabbits, foxes die out. </p>
+
+<example xml:id="example-LV-1">
+  <title>Implement Lotka-Volterra model</title>
+<statement><p>Use <c>ode45</c> to solve the equations <xref ref="eq-LV-1" /> on the interval <m>[0, 100]</m> with </p>
+<pre>
+a = 0.1;
+b = 0.004;
+c = 0.2;
+d = 0.001;
+y0 = [100; 30];
+</pre>
+</statement>
+<answer><p>To the code lines written above, we only have to add</p>
+<pre>
+rhs = @(t, y) [a*y(1) - b*y(1)*y(2); -c*y(2) + d*y(1)*y(2)];
+[t, y] = ode45(rhs, [0, 100], y0);
+plot(t, y, 'LineWidth', 3)
+legend('Rabbits', 'Foxes')
+</pre>
+<p>Observing the periodicity of the solution, one may want to summarize it with a phase plot in addition to time-series plot: 
+<cd>
+figure()
+plot(y(:,1), y(:,2), 'LineWidth', 3)
+xlabel('Rabbits')
+ylabel('Foxes')
+</cd>
+</p>
+</answer></example> 
+
+<p>The Lotka-Volterra model has two <term>equilibrium points</term>: <m>(0,0)</m> and <m>(c/d, a/b)</m>, meaning that a solution with either of these initial conditions stays constant. The former is mutual extinction, the latter is stable coexistence. But since the solution is periodic, it does not converge to either equilibrium.</p>
+
+</section>
+
+
+
+<section xml:id="examples-ode-modeling">
+
+<title>Examples and questions</title>  
+
+<p> These are additional examples for reviewing the topic we have covered. When reading each example, try to find your own solution before clicking <q>Answer</q>. There are also questions for reviewing the concepts of this section. </p>
+ 
+<example xml:id="section-ode-LV-capacity">
+<title>A natural limit of the growth of prey</title>
+<statement> <p>The original Lotka-Volterra model assumes that on their own, rabbit population would grow exponentially: <m>R'  = a R</m> leads to <m>R(t) = R_0e^{at}</m>. But in reality, population is constrained by available resources (food and habitat). Modify the equation by replacing <m>aR</m> with <m>aR(1-R/K)</m> where <m>K</m> is the <term>carrying capacity</term> of the population. Adjust the parameters to 
+<cd>
+d = 0.003;
+K = 200;  
+</cd> 
+and solve the system on the interval <m>[0, 500]</m>.</p></statement></example>
+
+<question><title>Vaccination</title>
+<p>How could one model the introduction of a vaccine during an epidemic?</p>
+</question> 
+
+</section>
+
+<exercises xml:id="exercises-ode-euler">
+    <title>Homework</title>
+
+    <exercise number="1">
+        <statement>
+<p>(Theoretical) Expand the Lotka-Volterra model <xref ref="eq-LV-1" /> to include a second kind of predator, wolves <m>W</m>, which eats both rabbits and foxes. Note that the rate at which wolves eat rabbits would be different from the rate at which they eat foxes. </p>
+</statement></exercise>
+
+    <exercise number="2">
+        <statement>
+<p>(Theoretical) The SIR model assumes that any two individuals are equally likely to <q>mix</q>, i.e., to meet and potentially transmit the disease. Modify the model to account for different groups within a population (for example, on-campus and off-campus students).  This means having two groups of susceptible individuals: 
+<m>S_1</m> and <m>S_2</m>, and two groups of infected ones: <m>I_1</m> and <m>I_2</m>. The recovered/removed ones can be all in one group <m>R</m> since their interactions do not matter. Since there should be more interaction within each group than between the two groups, the products <m>S_1I_1</m> and <m>S_2I_2</m> should have larger coefficients in the system than <m>S_1I_2</m> and <m>S_2I_1</m>. </p>
+</statement></exercise>
+
+    <exercise number="3">
+        <statement>
+<p>Choose one of the two models you constructed in the previous exercises, and implement it in Matlab. Try to choose the coefficients and initial conditions so that the change of size of each group is visible on the plot (meaning the plot does not just show a horizontal line). </p>
+</statement></exercise>
+ 
+</exercises>
+
+</chapter>
