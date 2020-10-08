@@ -154,9 +154,10 @@ Try them out with <c>rand(1, 5)</c>, <c>randi([2 7], 1, 5)</c>, and <c>randn(1, 
 x = randn(1, d);
 x = x/norm(x);
 </cd>
-Note that <c>x = randn(1, d)/norm(randn(1, d))</c> would not do the job, because each use of <c>randn</c> leads to a new random vector. Using this random unit vector in a loop, like in <xref ref="example-monte-carlo-box" />, we can find an approximate value of the average of a function <m>f</m> over the unit sphere
-<m>\{\mathbf x\in \mathbb R^d\colon |\mathbf x|=1\}</m>.</p>
-<p>This method works specifically for the normal distribution because of the following property of its probability density function <m>p</m>: the product <m>p(x_1)p(x_2)\cdots p(x_d)</m> depends only on the norm of vector <m>\mathbf x</m>.</p></remark>
+Note that <c>x = randn(1, d)/norm(randn(1, d))</c> would not do the job, because each use of <c>randn</c> leads to a new random vector. </p> 
+
+<p>Using this random unit vector in a loop, like in <xref ref="example-monte-carlo-box" />, we can find an approximate value of the average of a function <m>f</m> over the unit sphere
+<m>\{\mathbf x\in \mathbb R^d\colon |\mathbf x|=1\}</m>. This method works specifically for the normal distribution because of the following property of its probability density function <m>p</m>: the product <m>p(x_1)p(x_2)\cdots p(x_d)</m> depends only on the norm of vector <m>\mathbf x</m>.</p></remark>
 </section>
  
 
