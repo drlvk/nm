@@ -60,8 +60,8 @@ which is a periodic function that varies between <m>0.1</m> and <m>0.5</m>. Try 
 
 <p>A traditional example of predator-prey relation is foxes and rabbits (in SU neighborhood, it could be hawks and squirrels instead). The Lotka-Volterra model of this relationship involves four positive parameters <m>a, b, c, d</m>: 
 <mdn>
-<mrow xml-id="eq-LV-R">R' \amp = a R - b RF </mrow>
-<mrow xml-id="eq-LV-F">F' \amp =-c F + d RF </mrow>
+<mrow xml:id="eq-LV-R">R' \amp = a R - b RF </mrow>
+<mrow xml:id="eq-LV-F">F' \amp =-c F + d RF </mrow>
 </mdn>
 The first equation indicates that without foxes, rabbit population would grow at a constant relative rate. As in SIR model, the number of interactions is proportional to the product <m>RF</m>. Each interaction has a chance of reducing the number of rabbits. These interactions also contribute to the growth of foxes but not necessarily at the same rate (an eaten rabbit does not mean there is now an extra fox; we are not modeling a zombie apocalipse). Finally, the minus sign in <m>-cF</m> ensures that without rabbits, foxes die out. </p>
 
