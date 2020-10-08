@@ -18,11 +18,12 @@
 <p>It is convenient to express <m>S, I, R</m> as a proportion of total population. This means these quantities are between <m>0</m> and <m>1</m> and their sum is <m>1</m>. An important assumption of the model is that the rate of infection is proportional to the product <m>SI</m>. This is based on the simplifying idea that any two people in the population are equally likely to meet and transmit the disease, and since <m>SI</m> is the number of all susceptible-infected pairings, the number of transmissions will be proportional to it. This is not too far from reality when <q>population</q> means, for example, student population on some campus (pre-COVID). When modeling the population of a country, one needs to consider the effects of geography. </p>
 
 <p>Thus, the rate of new infections is <m>\beta SI</m> where <m>\beta</m> is the coefficient of proportionality that depends on how contagious the disease is and what preventive measures are taken by the population. At the same time, the rate of new recoveries can be reasonably assumed to be <m>\gamma I</m>, proportional to the number of currently infected. So we have the system
-<mdn xml:id="eq-SIR-1">
-<mrow>S' \amp = - \beta SI</mrow>
-<mrow>I' \amp = \beta SI - \gamma I</mrow>
-<mrow>R' \amp = \gamma I</mrow>
-</mdn>
+<men xml:id="eq-SIR-1">
+\begin{align}S' &amp; = - \beta SI \\
+I' &amp; = \beta SI - \gamma I \\
+R' &amp; = \gamma I 
+\end{align}
+</men>
 with some initial conditions <m>(S_0, I_0, R_0)</m> where typically <m>R_0=0</m> and <m>I_0</m> is small.
 The constants <m>\beta,\gamma</m> are the <term>parameters</term> of this system. Their values have a major impact on the long-term behavior of solutions; yet these values are very difficult to estimate in practice (especially <m>\beta</m>). One might try to estimate them by studying a small-scale outbreak closely and fitting a model to the observed counts of infected and recovered people. </p>
 
@@ -59,10 +60,10 @@ which is a periodic function that varies between <m>0.1</m> and <m>0.5</m>. Try 
 <title>Predator-prey models</title>
 
 <p>A traditional example of predator-prey relation is foxes and rabbits (in SU neighborhood, it could be hawks and squirrels instead). The Lotka-Volterra model of this relationship involves four positive parameters <m>a, b, c, d</m>: 
-<mdn xml-id="eq-LV-1">
-<mrow>R' \amp = a R - b RF </mrow>
-<mrow>F' \amp =-c F + d RF </mrow>
-</mdn>
+<men xml-id="eq-LV-1">
+\begin{align}R' &amp; = a R - b RF \\
+F' &amp; =-c F + d RF \\
+\end{align}</men>
 The first equation indicates that without foxes, rabbit population would grow at a constant relative rate. As in SIR model, the number of interactions is proportional to the product <m>RF</m>. Each interaction has a chance of reducing the number of rabbits. These interactions also contribute to the growth of foxes but not necessarily at the same rate (an eaten rabbit does not mean there is now an extra fox; we are not modeling a zombie apocalipse). Finally, the minus sign in <m>-cF</m> ensures that without rabbits, foxes die out. </p>
 
 <example xml:id="example-LV-1">
