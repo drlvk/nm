@@ -141,13 +141,22 @@ disp(s/N)
 <p>The above code is not vectorized: it uses a loop to evaluate <m>f</m> at consecutive points. One could generate all these points at once with <c>rand(N, d)</c> and try to get all values of  <m>f</m> at once. But this requires coding <c>f</c> in such a way that it can consume a matrix and produce a vector of values, and this may be difficult.</p></answer></example>
 
 <remark xml:id="remark-normal-distribution"><title>Averaging over a sphere</title>
-<p>Monte-Carlo method can also be used to average a function over a <em>sphere</em> with the help of <term>normal distribution</term>. Namely, the commands
+<p>Monte-Carlo method can also be used to average a function over a <em>sphere</em> with the help of <term>normal distribution</term>.  Here is a brief summary of random number generators in Matlab: 
+<ul>
+  <li> <c>rand(m, n)</c> generates an <m>m\times n</m> matrix of random real numbers taken from the uniform distribution on the interval <m>[0, 1]</m>.</li>
+  <li> <c>randi([A B], m, n)</c> generates an <m>m\times n</m> matrix of random <em>integer</em> numbers taken from the discrete uniform distribution on the finite set <m>A, A+1, \dots, B</m>.</li>
+  <li> <c>randn(m, n)</c> generates an <m>m\times n</m> matrix of random real numbers taken from the <url href="https://en.wikipedia.org/wiki/Normal_distribution">standard normal distribution</url> on the real line.</li>
+</ul>
+Try them out with <c>rand(1, 5)</c>, <c>randi([2 7], 1, 5)</c>, and <c>randn(1, 5)</c> to observe the differences in output.</p>
+
+<p>One of the distinguishing features of the normal distribution is the following: if one generates a random <m>d</m>-dimensional vector <m>\mathbf x</m> by taking each component <m>x_1, \dots, x_d</m> independently from the normal distribution, the vector <m>\mathbf x</m> is equally likely to point in any given direction. More precisely, the unit vectors <m> \mathbf x / |\mathbf x|</m> are uniformly distributed over the unit sphere. With Matlab, this process amounts to the computations
 <cd>
 x = randn(1, d);
 x = x/norm(x);
 </cd>
-generate a <m>d</m>-dimensional random vector of unit length, and such vectors are uniformly distributed over the unit sphere in <m>\mathbb R^d</m>. This works specifically for the normal distribution because of the following property of its probability density function <m>p</m>: the product <m>p(x_1)p(x_2)\cdots p(x_d)</m> depends only on the norm of vector <m>\mathbf x</m>. Using this random vector in a loop, like in <xref ref="example-monte-carlo-box" />, we find an approximate value of the average of <m>f</m> over the sphere
-<m>\{\mathbf x\in \mathbb R^d\colon |\mathbf x|=1\}</m>.</p></remark>
+Note that <c>x = randn(1, d)/norm(randn(1, d))</c> would not do the job, because each use of <c>randn</c> leads to a new random vector. Using this random unit vector in a loop, like in <xref ref="example-monte-carlo-box" />, we can find an approximate value of the average of a function <m>f</m> over the unit sphere
+<m>\{\mathbf x\in \mathbb R^d\colon |\mathbf x|=1\}</m>.</p>
+<p>This method works specifically for the normal distribution because of the following property of its probability density function <m>p</m>: the product <m>p(x_1)p(x_2)\cdots p(x_d)</m> depends only on the norm of vector <m>\mathbf x</m>.</p></remark>
 </section>
  
 

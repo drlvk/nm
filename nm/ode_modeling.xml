@@ -105,7 +105,7 @@ ylabel('Foxes')
 
 <p> These are additional examples for reviewing the topic we have covered. When reading each example, try to find your own solution before clicking <q>Answer</q>. There are also questions for reviewing the concepts of this section. </p>
  
-<example xml:id="section-ode-LV-capacity">
+<example xml:id="example-ode-LV-capacity">
 <title>A natural limit of the growth of prey</title>
 <statement> <p>The original Lotka-Volterra model assumes that on their own, rabbit population would grow exponentially: <m>R'  = a R</m> leads to <m>R(t) = R_0e^{at}</m>. But in reality, population is constrained by available resources (food and habitat). Modify the equation <xref ref="eq-LV-R" /> by replacing <m>aR</m> with <m>aR(1-R/K)</m> where <m>K</m> is the <term>carrying capacity</term> of the population. Adjust the parameters to 
 <cd>
