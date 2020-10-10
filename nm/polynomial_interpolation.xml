@@ -150,7 +150,7 @@ c_3(x-x_2)(x-x_1) + c_2(x-x_1) + c_1 =   (c_3 (x-x_{2}) + c_2) (x-x_1) + c_1
 Thus: begin with constant function <m>c_n</m>, then in the loop multiply by <m>(x-x_k)</m> and add <m>c_k</m>, where <m>k</m> goes from <m>n-1</m> to <m>1</m>. 
 <cd>
 p = c(n)*ones(size(t));
-for k=n:-1:1
+for k=n-1:-1:1
     p = p.*(t-x(k)) + c(k);
 end
 </cd>
