@@ -65,10 +65,11 @@ The advantage of <xref ref="eq-lagrange-poly-barycentric" /> over the original f
 <example xml:id="example-lagrange-polynomial">
   <title>Plot the Lagrange polynomial through 10 points</title>
 <statement><p>Plot the Lagrange polynomial each of the following data sets:
-<ul label="(a)">
+<ol label="(a)">
  <li>the points <m>(k, \sin k)</m>, <m>k=1, \dots, 10</m>;</li>
  <li>the points with <m>x_k</m> as above, and <m>y_k</m> chosen randomly from the standard normal distribution.
- </li></ul> 
+ </li>
+ </ol> 
 </p>
 </statement>
 
