@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<chapter xml:id="chapter-polynomial-interpolation" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+<title>Polynomial Interpolation</title>
+
+
+    <introduction>
+        <p>The main goal of this part of the course is to find some reasonable function that matches the given data points, perhaps approximately. Such a function may be used for making predictions about the future, or to fill the gaps between the data points (for example, estimate the population in a year when there was no census). It can also be used for numerical calculus: integration or differentiation.</p>
+        <p>Polynomials are the simplest nonlinear functions, so when we look for a simple function that could fit our data, it is natural to reach for polynomials. It turns out polynomials are not as simple as they appear at first.
+      </p>
+    </introduction>
+
+
+<section xml:id="section-monomial-basis">
+<title>Interpolation in the monomial basis</title>
+
+<p>Given <m>n</m> data points <m>(x_k, y_k)</m> with <m>k=1, \dots, n</m>, where all <m>x_k</m> are different, we are looking for a polynomial <m>p</m> of degree <m> \lt n</m> such that <m>p(x_k) = y_k</m> for  <m>k=1, \dots, n</m>. 
+A straightforward way is to do this is to write <m>p(x) = \sum_{j=0}^{n-1} c_j x^j</m> and solve a linear system for <m>c_j</m>; it has <m>n</m> equations with <m>n</m> unknowns. But this process is both slow and numerically fragile; the matrix of the linear system is likely to be ill-conditioned. And even if we could find the coefficients of monomials <m>x_j</m> easily, we do not necessarily want to, for the following reason. </p>  
+
+<p>We are used to seeing polynomials written in terms of the <term>monomial basis</term> <m>x^0, x^1, \dots, x^d</m>, that is, as a linear combination of the monomials. But this basis is ill-suited for numerical computations away from the point <m>x=0</m>. For example, consider the simple polynomial <m>p(x) = (x-7)^{15}</m>. If we expand it in the monomial basis and then try to compute its values on the interval <m>[6, 8]</m>, the result will be disappointing. In the code below, <c>c</c> is a vector of coefficients; the ellipsis notation allows it to by split between lines for readability. </p>
+<pre>
+c = [1, -105, 5145, -156065, 3277365, -50471421, 588833245, -5299499205, ...
+    37096494435, -201969803035, 848273172747, -2699051004195, 6297785676455, ...
+    -10173346092735, 10173346092735, -4747561509943];
+d = 15;
+x = linspace(6, 8, 1000);
+p = zeros(size(x));
+for k=1:d+1
+    p = p + c(k)*x.^(d+1-k);
+end
+subplot(1, 2, 1)
+plot(x, p)
+subplot(1, 2, 2)
+plot(x, (x-7).^15)  
+</pre>
+<p>There is a catastrophic loss of significance here. If one uses <c>p = polyval(c, x)</c>, the result is not much better, even though this command tries to avoid the loss of significance. Expanding this polynomial in the monomial basis is numerically unwise.</p> 
+</section>
+
+<section xml:id="section-lagrange-polynomial">
+<title>Lagrange interpolating polynomial</title>
+
+<p>Thinking of the set of all polynomials of degree less than <m>n</m> is a vector space of dimension <m>n</m>, we should realize this space may have a better basis for our task than <m>x^0, x^1, \dots, x^{n-1}</m>. Given interpolation data <m>(x_k, y_k)</m> with <m>k=1, \dots, n</m>, we can construct one such basis as follows. 
+The <term>Lagrange basis polynomials</term> are  
+<men xml:id="eq-lagrange-basis">
+\ell_k (x) = \prod_{j\ne k} \frac{x-x_j}{x_k-x_j} 
+</men>
+They are constructed so that <m>\ell_k(x_j)=0</m> when <m>j\ne k</m> and <m>\ell_k(x_k)=1</m>. Consequently, in this basis the interpolation problem is solved with the Lagrange interpolating polynomial 
+<men xml:id="eq-lagrange-poly">
+  p(x) = \sum_{k=1}^n y_k\ell_k(x) 
+</men>
+which obviously satisfies <m>p(x_k)=y_k</m>. The coefficients of interpolating polynomial in this basis are just the given <m>y</m>-values.</p> 
+
+<p>For the sake of efficiency and numerical stability, the evaluation of <m>p</m> can be arranged as follows. Since the denominators in <xref ref="eq-lagrange-basis" /> do not involve <m>x</m>, they can be computed in advance. Specifically, we compute <q>barycentric weights</q>
+<men xml:id="eq-barycentric-weights">
+w_k = \left(\prod_{j\ne k} (x_k-x_j)\right)^{-1} 
+</men>
+and then the polynomial <m>p</m> can be computed as the quotient of two rational functions:
+<men xml:id="eq-lagrange-poly-barycentric">
+  p(x) = \frac{\sum_{k=1}^n y_k w_k(x-x_k)^{-1}}{ \sum_{k=1}^n w_k (x-x_k)^{-1} } 
+</men>
+The advantage of <xref ref="eq-lagrange-poly-barycentric" /> over the original form is that we avoid a large number of multiplications involving <m>(x-x_j)</m> for every point <m>x</m>. A slight disadvantage is that one cannot plug in <m>x=x_k</m> into <xref ref="eq-lagrange-poly-barycentric" />, but we know that <m>p(x_k)=y_k</m> anyway.</p>
+
+
+<example xml:id="example-lagrange-polynomial">
+  <title>Plot the Lagrange polynomial through 10 points</title>
+<statement><p>Plot the Lagrange polynomial for the following data: (a) 
+  the points <m>(k, \sin k)</m>, <m>k=1, \dots, 10</m>; (b) the points with <m>x_k</m> as above, but <m>y_k</m> chosen randomly from the standard normal distribution. </p>
+</statement>
+
+<answer><pre>
+n = 10;
+x = 1:n;
+y = sin(x);  % or y = randn(1, n);
+w = ones(1, n);
+for k = 1:n
+    for j = 1:n
+        if j ~= k
+            w(k) = w(k)/(x(k)-x(j));
+        end
+    end
+end
+
+p = @(t) (y.*w*(t - x').^(-1)) ./ (w*(t - x').^(-1));
+t = linspace(min(x)-0.1, max(x)+0.1, 1000);
+plot(x, y, 'r*', t, p(t))
+</pre>
+<p>The double loop computes the weights <c>w</c> which do not involve the argument of the interpolating polynomial <c>p</c>. This argument is called <c>t</c> because <c>x</c> is already used for the data points. The interval for plotting is chosen to contain the given x-values with a small margin on both sides: this helps both visualization and evaluation, because we avoid plugging in <m>t = x_1, x_n</m>. The barycentric evaluation of the polynomial is vectorized. When <c>t</c> is a scalar, <c>t - x'</c> is a column vector. Taking reciprocals element-wise gives another column vector. Dot-product with <c>w</c> or <c>y.*w</c> implements the sums such as <m>\sum_{k=1}^n w_k/(t-x_k)</m>.</p>
+<p>How does <c>p</c> accept a row vector as <c>t</c>? The expression <c>t - x'</c> is the difference of a row vector and a column vector; in Matlab this creates a matrix where <m>(i, j)</m> entry is <m>t_j - x_i</m>. Subsequent operations proceed as above, and the result is a row vector of values <m>p(t)</m>. </p>
+ </answer></example>
+
+</section>
+
+ 
+<section xml:id="section-newton-polynomial">
+<title>Newton interpolating polynomial</title>
+
+<p>Newton  polynomial is a third way of constructing an interpolating polynomial of degree <m>\lt n</m> through <m>n</m> given points. It is still the same polynomial, since there is only one such polynomial. But the method is different because, yet again, we use a different basis. The Newton basis is somewhere between monomial basis and Lagrange basis, in the following sense. Let <m>\mathbf c</m> be the vector of coefficients of interpolating polynomial in some basis; these coefficients are obtained from a linear system <m>A\mathbf c=\mathbf y</m> where the square matrix <m>A</m> depends on the basis. 
+<ul>
+  <li>For the monomial basis, the matrix <m>A</m> is dense and often ill-conditioned (it has entries <m>x_j^{i-1}</m> and is known as the <url href="https://en.wikipedia.org/wiki/Vandermonde_matrix">Vandermonde matrix</url>.</li>
+  <li>For the Lagrange basis, the matrix <m>A</m> is the identity matrix, so the coefficients <m>c_k</m> are simply the given values <m>y_k</m>.</li>
+  <li>For the Newton basis, the matrix <m>A</m> is <em>triangular</em>. This means there is some work to be done to obtain <m>\mathbf c</m> from <m>\mathbf y</m> but it is straightforward.</li>
+</ul>
+The <term>Newton polynomial basis</term> consists of 
+<md>
+<mrow>\phi_1(x) \amp = 1</mrow>
+<mrow>\phi_2(x) \amp = x-x_1</mrow>
+<mrow>\phi_3(x) \amp = (x-x_1)(x-x_2)</mrow>
+<mrow>\phi_4(x) \amp = (x-x_1)(x-x_2)(x-x_3)</mrow>
+</md>
+and so on. An advantage of Newton polynomial is that it is easier to evaluate than Lagrange polynomial. Also, we will see that adding a new data point is very easy to handle because the computation processes one step at a time. A key fact is that <m>\phi_j(x_k) = 0</m> when <m>k \lt j</m>.</p> 
+
+<p>We are looking for <m>c_1, \dots, c_n</m> such that the polynomial <m>p = c_1\phi_1 + \cdots + c_n\phi_n</m> has <m>p(x_k)=y_k</m>. 
+<ul>
+<li> At <m>x=x_1</m> only <m>\phi_1</m> is nonzero, so we must have <m>c_1=y_1</m> </li>
+<li> At <m>x=x_2</m> only <m>\phi_1,\phi_2</m> are nonzero, so <m>c_1 + c_2 (x-x_1) = y_2</m>. We can solve this for <m>c_2</m>.</li>
+<li> At <m>x=x_3</m> only <m>\phi_1,\phi_2,\phi_3</m> are nonzero, so <m> c_1 + c_2 (x-x_1)+c_3 (x-x_1)(x-x_2) = y_3</m>. We can solve this for <m>c_3</m>. And so on.</li>
+</ul> 
+The process of solving for <m>c_k </m> can be  described algorithmically, in terms of getting the vector <m>c</m> from the vector <m>y</m>. Indeed, we are trying to match two sides of 
+<men xml:id="eq-newton-coeffs">
+y(x) = c_1 + c_2(x-x_1) + c_3 (x-x_1)(x-x_2) + c_4 (x-x_1)(x-x_2)(x-x_3) + \cdots 
+</men>
+As noted above, <m>c_1 = y_1</m>. Next, subtract <m>c_1</m> from both sides of <xref ref="eq-newton-coeffs" />and divide them by <m>x-x_1</m>:  
+<men xml:id="eq-newton-coeffs-2">
+\frac{y(x)-c_1}{x-x_1} =  c_2 + c_3  (x-x_2) + c_4  (x-x_2)(x-x_3) +\cdots
+</men>
+The coefficient <m>c_2</m> is the value of the left hand side at <m>x=x_2</m>. In Matlab terms, it's the second entry of the array of y-values after we applied the subtract-and-divide process to it.</p> 
+
+<p>This repeats: we start with <c>c=y</c> and repeat the subtract-and-divide step to turn its term into the coefficients of the Newton polynomial. 
+<cd>
+c = y;
+for k=2:n
+    c(k:n) = (c(k:n)-c(k-1))./(x(k:n)-x(k-1))
+end
+</cd>
+At the end of the loop, the vector <c>c</c> contains the coefficients of Newton polynomial. </p> 
+
+<p>Evaluation of Newton's polynomial is done in a similar way, with repeated multiply-and-add process, using
+one coefficient at a time. Indeed, since 
+<me>
+c_3(x-x_2)(x-x_1) + c_2(x-x_1) + c_1 =   (c_3 (x-x_{2}) + c_2) (x-x_1) + c_1 
+</me>
+(and similarly for higher degrees), the evaluation of <c>p(t)</c> goes as is: 
+
+Thus: begin with constant function <m>c_n</m>, then in the loop multiply by <m>(x-x_k)</m> and add <m>c_k</m>, where <m>k</m> goes from <m>n-1</m> to <m>1</m>. 
+<cd>
+p = c(n)*ones(size(t));
+for k=n:-1:1
+    p = p.*(t-x(k)) + c(k);
+end
+</cd>
+While being simpler than barycentric evaluation <xref ref="eq-lagrange-poly-barycentric" /> of the Lagrange polynomial, the evaluation of Newton polynomial does not fit into an anonymous function because it uses a loop.</p>
+
+<example xml:id="example-newton-polynomial">
+  <title>Plot the Newton polynomial through 11 points</title>
+<statement><p>(a) Plot the Newton polynomial for the points <m>(k, \arctan k)</m>, <m>k=-5, \dots, 5</m>; (b) repeat with 5 replaced by 8. </p>
+</statement>
+
+<answer><pre>
+x = -5:5;
+n = numel(x);
+y = atan(x); 
+
+c = y;
+for k=2:n
+    c(k:n) = (c(k:n)-c(k-1))./(x(k:n)-x(k-1));
+end
+
+t = linspace(min(x)-0.1, max(x)+0.1, 1000);
+p = c(n)*ones(size(t));
+for k=n-1:-1:1
+    p = p.*(t-x(k)) + c(k);
+end
+plot(x, y, 'r*', t, p)
+</pre>
+</answer></example>
+
+</section>
+ 
+
+
+<exercises xml:id="exercises-polynomial-interpolation">
+    <title>Homework</title>
+
+    <exercise number="1">
+        <statement>
+<p> (Theoretical) Write down explicitly the Newton polynomial that interpolates the points 
+  <m>(-1, u)</m>, <m>(0, v)</m>, <m>(1, w)</m>. Its coefficients <m>c_1, c_2, c_3</m> will depend on <m>u, v, w</m>.</p> 
+</statement></exercise>
+  
+<exercise number="2">
+        <statement>
+<p> (Theoretical) Integrate the polynomial found in the previous exercise over the interval <m>[-1, 1]</m>. (It is easier to integrate its general form <m>c_1 + c_2(x+1) + c_3(x+1)x</m> first and then plug in the formulas for coefficients.) Explain how this is related to Simpson's integration rule.</p> 
+</statement></exercise>
+
+
+    <exercise number="3">
+        <statement>
+<p> Use either Lagrange method or Newton method to interpolate the points <m>(k, \cos k)</m>, where <m>k=1, \dots, 15</m>. Then do the same with the points <m>(k, \cos 2k)</m>, where <m>k=1, \dots, 15</m>. Plot both side by side using <c>subplot</c>. Do you observe a difference in the quality of interpolating curves? </p> 
+</statement></exercise>
+ 
+</exercises>
+
+</chapter>
