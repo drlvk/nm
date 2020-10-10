@@ -53,7 +53,7 @@ which obviously satisfies <m>p(x_k)=y_k</m>. The coefficients of interpolating p
 
 <p>For the sake of efficiency and numerical stability, the evaluation of <m>p</m> can be arranged as follows. Since the denominators in <xref ref="eq-lagrange-basis" /> do not involve <m>x</m>, they can be computed in advance. Specifically, we compute <q>barycentric weights</q>
 <men xml:id="eq-barycentric-weights">
-w_k = \left(\prod_{j\ne k} (x_k-x_j)\right)^{-1} 
+w_k = \prod_{j\ne k} (x_k-x_j)^{-1} 
 </men>
 and then the polynomial <m>p</m> can be computed as the quotient of two rational functions:
 <men xml:id="eq-lagrange-poly-barycentric">
