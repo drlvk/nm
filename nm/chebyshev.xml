@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<chapter xml:id="chapter-chebyshev" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+<title>Chebyshev Polynomials and Interpolation</title>
+
+
+    <introduction>
+        <p>We previously encountered Legendre and Laguerre polynomials. 
+          Chebyshev polynomials are another family of orthogonal polynomials which is useful in numerical methods, especially for interpolation. One of their attractive features is that there is a simple explicit formula for their roots and extrema, in contrast to the other orthogonal polynomials that we studied. These polynomials are important tools for interpolation and approximation of functions. 
+      </p>
+    </introduction>
+
+<section xml:id="section-error-polynomial-interpolation">
+<title>Estimating the error of polynomial interpolation</title>
+
+<p>One of the uses of polynomial interpolation (<xref ref="chapter-polynomial-interpolation" />) is to approximate a possible complicated function <m>y = f(x)</m> by a polynomial, interpolating the values of the function at some points <m>x_1, \dots, x_n</m>. Indeed, this is what we tried in <xref ref="exercises-polynomial-interpolation-3" /> for the functions <m>f(x)=\cos x</m> and <m>f(x)=\cos 2x</m>, with mixed success. The following theorem is a first step toward understanding what is going on. </p>
+
+<p>Suppose a polynomial <m>p</m> of degree less than <m>n</m> interpolates a smooth function <m>f</m> at some points <m>x_1, \dots, x_n</m> of an interval <m>[a, b]</m>. Then for each <m>x\in [a, b]</m> there exists a point <m>\xi \in [a, b]</m> such that
+<men xml:id="eq-error-polynomial-interpolation">
+  f(x) - p(x) = \frac{f^{(n)}(\xi)}{n!} \prod_{k=1}^n (x-x_k)
+</men>
+where <m>f^{(n)}</m> is the <m>n</m>th derivative of <m>f</m>.  </p>  
+
+<p>The above theorem is easier to prove than one might expect. If <m>x</m> is one of interpolation points, then both sides of <xref ref="eq-error-polynomial-interpolation" /> are equal to 0. Suppose <m>x</m> is not equal to any interpolation point. Then we can let 
+<me>
+  A = \frac{f(x) - p(x)}{ \prod_{k=1}^n (x-x_k) }
+</me>
+so that <m>f(x) -p(x) - A \prod_{k=1}^n (x-x_k) = 0</m>.  Consider the function 
+<men xml:id="eq-proof-poly-interp-error">
+  g(t) = f(t) -p(t) - A \prod_{k=1}^n (t-x_k)
+</men>
+and notice that it has at least <m>n+1</m> roots on the interval <m>[a, b]</m>, namely <m>x, x_1, x_2, \dots, x_n</m>. Between any two roots of <m>g</m> there is a root of <m>g'</m>: this is 
+<url href="https://xkcd.com/2042/">Rolle's theorem</url>. Therefore, <m>g'</m> has at least <m>n</m> roots on the interval <m>[a, b]</m>. Repeat this argument: <m>g''</m> has at least <m>n-1</m> roots, <ellipsis/> ,
+<m>g^{(n)}</m> has at least 1 root. Call this root <m>\xi</m> and notice that according to <xref ref="eq-proof-poly-interp-error" />,
+<me> g^{(n)}(\xi) =  f^{(n)}(\xi) - 0 - A n!</me>
+hence  <m>A = f^{(n)}(\xi) / n!</m>, completing the proof of <xref ref="eq-error-polynomial-interpolation" />.</p> 
+<p>What guidance can we extract from <xref ref="eq-error-polynomial-interpolation" />? To minimize the interpolation error, we want the product 
+<men xml:id="eq-product-interp-points">
+\prod_{k=1}^n (x-x_k)
+</men> 
+to be small on the interval <m>[a, b]</m>. If the points <m>x_1, \dots, x_n</m> are equally spaced, the product <xref ref="eq-product-interp-points" /> can become large toward the endpoints, as the following Matlab example shows for 11 points on the interval <m>[0, 7]</m>.</p> 
+
+<example xml:id="example-product-plot">
+  <title>Plot the product with equally spaced roots</title>
+<statement><p>Plot the product <xref ref="eq-product-interp-points" /> for 11 equally spaced points on the interval <m>[0, 7]</m>.</p></statement> 
+<answer><pre>
+a = 0;
+b = 7;
+n = 11;
+x = linspace(a, b, n);     % interpolation points x1, ..., xn.
+t = linspace(a, b, 1000);  % points for plotting
+plot(t, prod(t - x'))
+</pre>  
+</answer></example>
+
+<p>Using larger <m>n</m> in <xref ref="example-product-plot" /> would only make things worse. This indicates that polynomial interpolation at a large number of <em>equally spaced</em> points is unadvisable. As it was with numerical integration, a smarter choice of points <m>x_1, \dots, x_n</m> is possible, and once again it is provided by the roots of certain orthogonal polynomials. </p>
+</section>
+
+<section xml:id="section-chebyshev-polynomials-interpolation">
+<title>Chebyshev polynomials and interpolation</title> 
+
+<p>In <xref ref="chapter-legendre-laguerre" /> we studied Legendre polynomials <m>P_n</m> which are orthogonal on the interval <m>[-1, 1]</m> in the sense that <m>\int_{-1}^1 P_n(x)P_k(x)\,dx = 0</m> when <m>n\ne k</m>. We also use Laguerre polynomials <m>L_n</m> which are orthogonal on <m>[0, \infty)</m> with the weight function <m>e^{-x}</m>, meaning that <m>\int_{-1}^1 L_n(x)L_k(x)\,e^{-x}\,dx = 0</m> when <m>n\ne k</m>. The <term>Chebyshev polynomials</term> <m>T_n</m> are orthogonal on the interval <m>[-1, 1]</m> with the weight function <m>1/\sqrt{1-x^2}</m>, meaning that 
+<me>\int_{-1}^1 T_n(x)T_k(x)\,\frac{dx}{\sqrt{1-x^2}} = 0 \quad \text{when }n\ne k</me>
+As for other families of orthogonal polynomials, we have a recursive formula for Chebyshev polynomials: 
+starting with <m>T_0(x)=1</m> and <m>T_1(x) =x</m> we can compute the rest as 
+<men xml:id="eq-chebyshev-recursion">
+T_{n+1}(x) = 2xT_n(x) -  T_{n-1}(x)
+</men>
+The recursion is simpler than for <m>P_n</m> or <m>L_n</m>: there is no division, so all polynomials <m>T_n</m> have integer coefficients. 
+</p>
+
+
+<example xml:id="example-computation-chebyshev-coefficients">
+   <title> Plot Chebyshev polynomials <m>T_n</m> </title>
+<statement><p> Recursively find the coefficients of Chebyshev polynomials <m>T_n</m> for <m>n\le 6</m>. Plot all of them on the interval <m>[-1, 1]</m>. </p></statement>
+<answer><p>This is a straightforward modification of <xref ref="example-computation-legendre-coefficients" />. </p>
+<pre>
+p = [1];
+q = [1 0];
+x = linspace(-1, 1, 1000);
+hold on
+plot(x, polyval(p, x), x, polyval(q, x));
+
+for n = 1:5
+    r = 2*[q 0] - [0 0 p];
+    p = q;
+    q = r;
+    plot(x, polyval(r, x))
+end
+hold off
+</pre>
+</answer></example>
+
+<p><xref ref="example-computation-chebyshev-coefficients" /> indicates that Chebyshev polynomials oscillate between <m>-1</m> and <m>1</m> on the interval <m>[-1, 1]</m>. The following remarkable identity confirms this observation: 
+<men xml:id="eq-chebyshev-cosine">
+  T_n(\cos\theta) = \cos (n\theta)   
+</men>
+for all <m>\theta\in\mathbb R</m>. The proof is by induction. Base of induction is <m>n=0, 1</m>: for <m>T_0(x)=1</m> and <m>T_1(x)=x</m> the validity of <xref ref="eq-chebyshev-cosine" /> is obvious. For the inductive step, assume <xref ref="eq-chebyshev-cosine" /> holds for <m>T_0, \dots, T_n</m> and use <xref ref="eq-chebyshev-recursion" />:
+<me>
+T_{n+1}(\cos theta) = 2\cos \theta \cos (n\theta)  - \cos ((n-1)\theta) = \cos ((n+1)\theta)
+</me>
+where the second step involves the identity <m>2\cos \alpha \cos\beta = \cos (\alpha-\beta) + \cos(\alpha+\beta)</m>. </p>
+
+<p>The right hand side of <xref ref="eq-chebyshev-cosine" /> is zero when <m>n\theta</m> is an odd multiple of <m>\pi/2</m>, hence <m>\theta = (2k-1)\frac{\pi}{2n}</m>. Plugging <m>k=1, \dots, n</m> we find that 
+<men xml:id="eq-chebyshev-roots">
+  T_n(x) = 0  \quad \text{when } x = \cos \left((2k-1)\frac{\pi}{2n}\right), \ k=1, \dots, n
+</men>
+and since the polynomial <m>T_n</m> can have at most <m>n</m> real roots, these are all of its roots. They are easy to visualize: draw a semi-circle with interval <m>[a, b]</m> as diameter, divide it into <m>n</m> equal arcs, and project the <em>midpoint</em> of each arc back to the interval.   </p>
+
+<figure xml:id="chebroots1-png"><image source="images/chebroots1.png" /> <caption>Chebyshev points of the first kind</caption></figure>
+
+<p> The recursive formula shows that the leading coefficient of <m>T_n</m> is <m>2^{n-1}</m>. Therefore, 
+<me>
+  T_n(x) = 2^{n-1}\prod_{k=1}^n (x-x_k)
+</me>
+where <m>x_1, \dots, x_n</m> are the roots <xref ref="eq-chebyshev-roots" />. It follows that the absolute value of the product <m>\prod_{k=1}^n (x-x_k)</m> is bounded by <m>2^{1-n}</m>, which is as small as one can get for any choice of <m>n</m> points on the interval <m>[-1, 1]</m>. This suggests that Chebyshev points should work well for polynomial interpolation, and they do. Let us re-do <xref ref="example-lagrange-polynomial" /> with random data to illustrate this. </p> 
+
+
+<example xml:id="example-lagrange-polynomial-chebyshev">
+  <title>Plot the Lagrange polynomial through 10 Chebyshev points</title>
+<statement><p>Let <m>x_1, \dots, x_{10}</m> be the roots of <m>T_{10}</m>. Choose <m>y_k</m> randomly from the standard normal distribution, and draw the interpolating polynomial through the points <m>(x_k, y_k)</m>. </p>
+</statement>
+
+<answer><p>The only change to <xref ref="example-lagrange-polynomial" /> is replacing the x-coordinates. </p>
+<pre>
+n = 10;
+x = cos((2*(1:n)-1)*pi/(2*n)); 
+y = randn(1, n);
+w = ones(1, n);
+for k = 1:n
+    for j = 1:n
+        if j ~= k
+            w(k) = w(k)/(x(k)-x(j));
+        end
+    end
+end
+
+p = @(t) (y.*w*(t - x').^(-1)) ./ (w*(t - x').^(-1));
+t = linspace(min(x)-0.01, max(x)+0.01, 1000);
+plot(x, y, 'r*', t, p(t))
+</pre>
+</answer></example> 
+
+<p>Running the code <xref ref="example-lagrange-polynomial-chebyshev" /> several times, we see that the interpolating polynomial behaves very reasonably, without unnatural oscillations that come from interpolating at equally spaced points. </p>
+
+</section> 
+
+
+<section xml:id="section-chebyshev-extreme-points">
+<title>Chebyshev extreme points</title> 
+
+<p><xref ref="chebroots1-png" /> involves the <em>midpoints</em> of equal arcs, which should remind us of the Midpoint Rule. There is a parallel  <q>trapezoidal</q> story, in which we consider the <em>endpoints</em> of all these arcs and give half the weight to the smallest and largest. </p>
+
+<figure xml:id="cheb-points-2-png"><image source="images/chebpoints2.png" /> <caption>Chebyshev  of the second kind</caption></figure>
+
+<p>These projections are called <q>Chebyshev extreme points</q> or <q>Chebyshev points of the second kind</q>. Their explicit  form is slightly simpler: 
+<men xml:id="eq-chebyshev-extrema">
+  x_k = \cos(\pi k/n) \quad \text{where }k=0, 1, \dots. n
+</men> 
+In Matlab one could write 
+<cd>
+x = cos(linspace(0, pi, n+1));
+</cd> 
+While the midpoint projections (Chebyshev points of the first kind) are the <em>roots</em> of polynomials 
+<m>T_n</m>, the points <xref ref="eq-chebyshev-extrema" /> are the <em>extreme points</em> of <m>T_n</m>. Indeed, the identity <xref ref="eq-chebyshev-cosine" /> says that <m>T_n</m> attains extreme values <m>\pm 1</m> when <m>\cos (n\theta) = \pm 1</m>, hence <m>\theta = \pi k/n</m>, hence <m>x = \cos(\pi k/n)</m>.  </p>
+
+<p>An advantage of using Chebyshev extreme points <xref ref="eq-chebyshev-extrema" /> as the points of interpolation is that one does not need to compute the weights like we did in <xref ref="example-lagrange-polynomial-chebyshev" />. For this specific choice, the weights 
+in the barycentric formula <xref ref="eq-lagrange-poly-barycentric" /> are simply
+<men xml:id="eq-weights-chebyshev">
+w_k = (-1)^k   \quad \text{(divide the first and last by 2)}
+</men>
+This means that the barycentric formula for interpolation can be written as 
+<men xml:id="eq-chebyshev-interp-extreme">
+  p(x) = \frac{\sum'_{0\le k\le n} y_k (-1)^k (x-x_k)^{-1}}{ \sum'_{0\le k\le n} (-1)^k (x-x_k)^{-1} } 
+</men>
+where primes over sums mean the terms with <m>k=0, n</m> should be divided by 2 (the <q>trapezoidal</q> adjustment). Also, the formula <xref ref="eq-chebyshev-interp-extreme" /> works just as well on an arbitrary intervals <m>[a, b]</m>, where the Chebyshev extreme points are 
+<me>
+ x_k = \frac{b-a}{2}  \cos(\pi k/n) + \frac{a+b}{2}
+</me>
+Note that the function <p>p</p> is in fact a polynomial of degree <m>n</m>, even if the formula does not look like it. The straightforward way of expressing a polynomial of high degree, as a sum of powers with constant coefficients, is likely to cause numerical issues, while the barycentric formula is numerically stable. </p>
+
+
+<example xml:id="example-chebyshev-extreme-interpolation">
+  <title>Interpolate through Chebyshev extreme points</title>
+<statement><p>Use the formula <xref ref="eq-chebyshev-interp-extreme" /> to interpolate a few functions such as 
+<ul>
+  <li> <m>f(x) = 1/(x^2+1)</m> on <m>[-5, 5]</m> </li>
+  <li> <m>f(x) = \tan^{-1} x</m> on <m>[-7, 11]</m> </li>
+  <li> <m>f(x) = \cos(2x)</m> on <m>[1, 15]</m></li>
+  <li> <m>f(x) = \sin(x^2)</m> on <m>[0, 5]</m></li>
+  <li> <m>f(x) = \operatorname{sign} x</m> on <m>[-1, 1]</m></li>
+</ul>
+by a polynomial of degree <m>n=20</m> (or another degree if you prefer). </p></statement>
+<answer><pre>
+f = @(x) 1./(x.^2+1);  % or another f 
+n = 20;   % or another n 
+a = -5;   % or another a
+b = 5;    % or another b
+
+x = cos(linspace(0, pi, n+1)) * (b-a)/2 + (a+b)/2; 
+y = f(x);
+w = (-1).^(0:n);
+w(1) = w(1)/2;
+w(end) = w(end)/2;
+
+p = @(t) (y.*w*(t - x').^(-1)) ./ (w*(t - x').^(-1));
+t = linspace(a-0.01, b+0.01, 1000);
+plot(x, y, 'r*', t, f(t), 'k', t, p(t), 'b', 'LineWidth', 2)
+</pre>
+<p>The plot includes the points of interpolation as red asterisks, the original function is a black curve, and the interpolating polynomial as a blue curve. Often the blue curve follows the black one so precisely that it covers it completely. </p> 
+  </answer></example>
+
+</section>
+
+<exercises xml:id="exercises-chebyshev">
+    <title>Homework</title>
+
+    <exercise number="1">
+        <statement>
+<p> (Theoretical) Write down explicitly the Newton polynomial that interpolates the points 
+  <m>(-1, u)</m>, <m>(0, v)</m>, <m>(1, w)</m>. Its coefficients <m>c_1, c_2, c_3</m> will depend on <m>u, v, w</m>.</p> 
+</statement></exercise>
+  
+<exercise number="2">
+        <statement>
+<p> (Theoretical) Integrate the polynomial found in the previous exercise over the interval <m>[-1, 1]</m>. (It is easier to integrate its general form <m>c_1 + c_2(x+1) + c_3(x+1)x</m> first and then plug in the formulas for coefficients.) Explain how this is related to Simpson's integration rule.</p> 
+</statement></exercise>
+
+
+    <exercise number="3">
+        <statement>
+<p> Use either Lagrange method or Newton method to interpolate the points <m>(k, \cos k)</m>, where <m>k=1, \dots, 15</m>. Then do the same with the points <m>(k, \cos 2k)</m>, where <m>k=1, \dots, 15</m>. Plot both side by side using <c>subplot</c>. Do you observe a difference in the quality of interpolating curves? </p> 
+</statement></exercise>
+ 
+</exercises>
+
+</chapter>
