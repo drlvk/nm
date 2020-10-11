@@ -31,7 +31,7 @@ so that <m>f(x) -p(x) - A \prod_{k=1}^n (x-x_k) = 0</m>.  Consider the function
   g(t) = f(t) -p(t) - A \prod_{k=1}^n (t-x_k)
 </men>
 and notice that it has at least <m>n+1</m> roots on the interval <m>[a, b]</m>, namely <m>x, x_1, x_2, \dots, x_n</m>. Between any two roots of <m>g</m> there is a root of <m>g'</m>: this is 
-<url href="https://xkcd.com/2042/">Rolle's theorem</url>. Therefore, <m>g'</m> has at least <m>n</m> roots on the interval <m>[a, b]</m>. Repeat this argument: <m>g''</m> has at least <m>n-1</m> roots, <ellipsis/> ,
+<url href="https://imgs.xkcd.com/comics/rolles_theorem.png">Rolle's theorem</url>. Therefore, <m>g'</m> has at least <m>n</m> roots on the interval <m>[a, b]</m>. Repeat this argument: <m>g''</m> has at least <m>n-1</m> roots, <ellipsis/> ,
 <m>g^{(n)}</m> has at least 1 root. Call this root <m>\xi</m> and notice that according to <xref ref="eq-proof-poly-interp-error" />,
 <me> g^{(n)}(\xi) =  f^{(n)}(\xi) - 0 - A n!</me>
 hence  <m>A = f^{(n)}(\xi) / n!</m>, completing the proof of <xref ref="eq-error-polynomial-interpolation" />.</p> 
@@ -154,9 +154,9 @@ plot(x, y, 'r*', t, p(t))
 
 <figure xml:id="cheb-points-2-png"><image source="images/chebpoints2.png" /> <caption>Chebyshev  of the second kind</caption></figure>
 
-<p>These projections are called <q>Chebyshev extreme points</q> or <q>Chebyshev points of the second kind</q>. Their explicit  form is slightly simpler: 
+<p>These projections are called <q>Chebyshev extreme points</q> or <q>Chebyshev points of the second kind</q>. Explicitly, they are 
 <men xml:id="eq-chebyshev-extrema">
-  x_k = \cos(\pi k/n) \quad \text{where }k=0, 1, \dots. n
+  x_k = \cos(\pi k/n) \quad \text{where } k=0, 1, \dots, n
 </men> 
 In Matlab one could write 
 <cd>
@@ -165,16 +165,16 @@ x = cos(linspace(0, pi, n+1));
 While the midpoint projections (Chebyshev points of the first kind) are the <em>roots</em> of polynomials 
 <m>T_n</m>, the points <xref ref="eq-chebyshev-extrema" /> are the <em>extreme points</em> of <m>T_n</m>. Indeed, the identity <xref ref="eq-chebyshev-cosine" /> says that <m>T_n</m> attains extreme values <m>\pm 1</m> when <m>\cos (n\theta) = \pm 1</m>, hence <m>\theta = \pi k/n</m>, hence <m>x = \cos(\pi k/n)</m>.  </p>
 
-<p>An advantage of using Chebyshev extreme points <xref ref="eq-chebyshev-extrema" /> as the points of interpolation is that one does not need to compute the weights like we did in <xref ref="example-lagrange-polynomial-chebyshev" />. For this specific choice, the weights 
+<p>An advantage of using Chebyshev extreme points <xref ref="eq-chebyshev-extrema" /> as the points of interpolation is that one does not need to compute the weights like we did in <xref ref="example-lagrange-polynomial-chebyshev" />. For this specific choice of points, the weights 
 in the barycentric formula <xref ref="eq-lagrange-poly-barycentric" /> are simply
 <men xml:id="eq-weights-chebyshev">
-w_k = (-1)^k   \quad \text{(divide the first and last by 2)}
+w_k = (-1)^k   \quad \text{except } w_0=1/2, w_n = (-1)^n/2
 </men>
 This means that the barycentric formula for interpolation can be written as 
 <men xml:id="eq-chebyshev-interp-extreme">
   p(x) = \frac{\sum'_{0\le k\le n} y_k (-1)^k (x-x_k)^{-1}}{ \sum'_{0\le k\le n} (-1)^k (x-x_k)^{-1} } 
 </men>
-where primes over sums mean the terms with <m>k=0, n</m> should be divided by 2 (the <q>trapezoidal</q> adjustment). Also, the formula <xref ref="eq-chebyshev-interp-extreme" /> works just as well on an arbitrary intervals <m>[a, b]</m>, where the Chebyshev extreme points are 
+where primes over sums mean the terms with <m>k=0, n</m> should be divided by 2 (the <q>trapezoidal</q> adjustment). Formula <xref ref="eq-chebyshev-interp-extreme" /> works for an arbitrary interval <m>[a, b]</m>, where the Chebyshev extreme points are 
 <me>
  x_k = \frac{b-a}{2}  \cos(\pi k/n) + \frac{a+b}{2}
 </me>
@@ -218,19 +218,41 @@ plot(x, y, 'r*', t, f(t), 'k', t, p(t), 'b', 'LineWidth', 2)
 
     <exercise number="1">
         <statement>
-<p> (Theoretical) Write down explicitly the Newton polynomial that interpolates the points 
-  <m>(-1, u)</m>, <m>(0, v)</m>, <m>(1, w)</m>. Its coefficients <m>c_1, c_2, c_3</m> will depend on <m>u, v, w</m>.</p> 
+<p> (Theoretical) The <em>Chebyshev polynomials of the second kind</em> <m>U_n</m> can be defined as follows:
+<m>U_0(x) = 1</m>, <m>U_1(x) = 2x</m>, and after that,
+<men xml:id="eq-chebyshev-recursion-U">
+U_{n+1}(x) = 2xU_n(x) -  U_{n-1}(x)
+</men> 
+(This is the same recursive formula as for <m>T_n</m>, but it produces different polynomials because <m>U_1</m> is different from <m>T_1</m>.) Prove that 
+<men xml:id="eq-chebyshev-cosine-U">
+U_{n}(\cos\theta)\sin \theta = \sin ((n+1)\theta))
+</men> 
+for all <m>n</m> and all <m>\theta</m>. </p>
+<p>Hint: follow the proof of <xref ref="eq-chebyshev-cosine"/>.</p>
 </statement></exercise>
   
 <exercise number="2">
         <statement>
-<p> (Theoretical) Integrate the polynomial found in the previous exercise over the interval <m>[-1, 1]</m>. (It is easier to integrate its general form <m>c_1 + c_2(x+1) + c_3(x+1)x</m> first and then plug in the formulas for coefficients.) Explain how this is related to Simpson's integration rule.</p> 
+<p> (Theoretical) Use <xref ref="eq-chebyshev-cosine-U" /> to prove that the Chebyshev extreme points <m>x_k = \cos(\pi k/n)</m> with <m>k=1, \dots, n-1</m> are the roots of polynomial <m>U_{n-1}</m>.</p> 
+<p> (This is where the name <q>Chebyshev points of the second kind</q> comes form.)</p>
 </statement></exercise>
 
 
     <exercise number="3">
         <statement>
-<p> Use either Lagrange method or Newton method to interpolate the points <m>(k, \cos k)</m>, where <m>k=1, \dots, 15</m>. Then do the same with the points <m>(k, \cos 2k)</m>, where <m>k=1, \dots, 15</m>. Plot both side by side using <c>subplot</c>. Do you observe a difference in the quality of interpolating curves? </p> 
+<p> Suppose we want to draw a smooth <em>parametric curve</em> through 10 given points on xy-plane. The points are represented by vectors of their x- and y-coordinates: 
+<cd>
+X = [1 3 5 6 4 1 0 1 3 5];
+Y = [1 0 0 2 4 4 6 9 9 7];
+</cd>
+The command <c>plot(X, Y)</c> can join these points by line segments, but that does not make a smooth curve. Adapt <xref ref="example-chebyshev-extreme-interpolation" />  to this situation as follows: 
+<ul>
+  <li>Your script should create two interpolating polynomials on the interval <m>[-1, 1]</m>, one computed from the values <c>X</c> and the other from the values <c>Y</c>.</li>
+  <li>For convenience, the parameter interval <m>[a, b]</m> should be <m>[-1, 1]</m>. This means that at the end of the script, the curve through the given points can be displayed with 
+  <cd>t = linspace(-1, 1, 1000);
+plot(X, Y, 'r*',  px(t), py(t), 'b')</cd></li>
+</ul>   
+It should be a smooth S-shaped curve. </p> 
 </statement></exercise>
  
 </exercises>

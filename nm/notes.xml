@@ -84,6 +84,7 @@ along with MathBook XML.  If not, see <http://www.gnu.org/licenses/>.
         <part xml:id="part-data">
             <title>Modeling Data</title>
             <xi:include href="./polynomial_interpolation.xml" />
+            <xi:include href="./chebyshev.xml" />            
         </part>
 
         <part xml:id="part-optimization">

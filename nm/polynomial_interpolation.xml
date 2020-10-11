@@ -87,7 +87,7 @@ for k = 1:n
 end
 
 p = @(t) (y.*w*(t - x').^(-1)) ./ (w*(t - x').^(-1));
-t = linspace(min(x)-0.1, max(x)+0.1, 1000);
+t = linspace(min(x)-0.01, max(x)+0.01, 1000);
 plot(x, y, 'r*', t, p(t))
 </pre>
 <p>The double loop computes the weights <c>w</c> which do not involve the argument of the interpolating polynomial <c>p</c>. This argument is called <c>t</c> because <c>x</c> is already used for the data points. The interval for plotting is chosen to contain the given x-values with a small margin on both sides: this helps both visualization and evaluation, because we avoid plugging in <m>t = x_1, x_n</m>. The barycentric evaluation of the polynomial is vectorized. When <c>t</c> is a scalar, <c>t - x'</c> is a column vector. Taking reciprocals element-wise gives another column vector. Dot-product with <c>w</c> or <c>y.*w</c> implements the sums such as <m>\sum_{k=1}^n w_k/(t-x_k)</m>.</p>
@@ -171,7 +171,7 @@ for k=2:n
     c(k:n) = (c(k:n)-c(k-1))./(x(k:n)-x(k-1));
 end
 
-t = linspace(min(x)-0.1, max(x)+0.1, 1000);
+t = linspace(min(x)-0.01, max(x)+0.01, 1000);
 p = c(n)*ones(size(t));
 for k=n-1:-1:1
     p = p.*(t-x(k)) + c(k);
@@ -187,19 +187,19 @@ plot(x, y, 'r*', t, p)
 <exercises xml:id="exercises-polynomial-interpolation">
     <title>Homework</title>
 
-    <exercise number="1">
+    <exercise number="1" xml:id="exercises-polynomial-interpolation-1">
         <statement>
 <p> (Theoretical) Write down explicitly the Newton polynomial that interpolates the points 
   <m>(-1, u)</m>, <m>(0, v)</m>, <m>(1, w)</m>. Its coefficients <m>c_1, c_2, c_3</m> will depend on <m>u, v, w</m>.</p> 
 </statement></exercise>
   
-<exercise number="2">
+<exercise number="2" xml:id="exercises-polynomial-interpolation-2">
         <statement>
-<p> (Theoretical) Integrate the polynomial found in the previous exercise over the interval <m>[-1, 1]</m>. (It is easier to integrate its general form <m>c_1 + c_2(x+1) + c_3(x+1)x</m> first and then plug in the formulas for coefficients.) Explain how this is related to Simpson's integration rule.</p> 
+<p> (Theoretical) Integrate the polynomial found in <xref ref="exercises-polynomial-interpolation-1" /> over the interval <m>[-1, 1]</m>. (It is easier to integrate its general form <m>c_1 + c_2(x+1) + c_3(x+1)x</m> first and then plug in the formulas for coefficients.) Explain how this is related to Simpson's integration rule.</p> 
 </statement></exercise>
 
 
-    <exercise number="3">
+    <exercise number="3" xml:id="exercises-polynomial-interpolation-3">
         <statement>
 <p> Use either Lagrange method or Newton method to interpolate the points <m>(k, \cos k)</m>, where <m>k=1, \dots, 15</m>. Then do the same with the points <m>(k, \cos 2k)</m>, where <m>k=1, \dots, 15</m>. Plot both side by side using <c>subplot</c>. Do you observe a difference in the quality of interpolating curves? </p> 
 </statement></exercise>
