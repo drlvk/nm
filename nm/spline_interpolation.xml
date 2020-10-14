@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<chapter xml:id="chapter-spline-interpolation" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+<title>Spline Interpolation</title>
+
+
+    <introduction>
+        <p>Splines are piecewise defined functions where the pieces are polynomials, usually of low degree (3 is most popular degree). Although it is sometimes possible to efficiently use high-degree polynomial for interpolation (with Chebyshev points and barycentric evaluation), spline interpolation is often simpler and preferable, especially as it does not require special choice of interpolation points and has simple evaluation.
+      </p>
+    </introduction>
+
+
+<section xml:id="section-piecewise-linear-interpolation">
+<title>Piecewise linear interpolation</title>
+
+<p>The current version of <url href="https://www.syracuse.edu/covid-dashboard/">SU COVID dashboard</url> uses <em>piecewise linear interpolation</em>. Geometrically this concept is clear: connect the points by straight lines, which is also what Matlab's <c>plot</c> does.</p>
+
+<figure xml:id="dashboard-pl-png"><image source="images/dashboard_pl.png" /> <caption>Piecewise linear interpolation</caption></figure>
+
+<p>Formally, piecewise linear interpolation means that given some points 
+<m>a=x_1 \lt x_2 \lt \cdots x_n = b</m> on an interval <m>[a, b]</m> and corresponding y-values 
+<m>y_1, \dots, y_n</m>, we define a function <m>S\colon [a, b]\to \mathbb R</m> by the piecewise formula
+<men xml:id="eq-pl-interpolant">
+S(x) = y_k + \frac{y_{k+1}-y_k}{x_{k+1} - x_{k}} (x - x_k),\quad  x_{k}\le x\le x_{k+1}
+</men>
+where the right hand side is a linear function through two points <m>(x_{k}, y_k)</m> and <m>(x_{k+1}, y_{k+1})</m>. So, instead of <m>1</m> interpolating polynomial of degree <m>n-1</m> we use <m>n-1</m> polynomials of degree <m>1</m>. The function <m>S</m> is a spline of degree 1 meaning it is a piecewise function where the pieces are polynomials of degree 1. </p>
+
+<p>A more abstract approach to the construction of degree 1 spline is as follows: 
+<ul>
+<li>We have <m>n-1</m> subintervals between <m>n</m> data points.</li>
+<li>On each subinterval we choose a degree 1 polynomial; this means we have <m>2(n-1)</m> coefficients to choose.</li>
+<li>But we want to spline to be continuous, so the values at each interior data point from the left and from the right must match. There are <m>n-2</m> interior data points, so the continuity imposes <m>n-2</m> equations.</li>
+<li>Finally, the spline must pass through each of <m>n</m> data points. This adds <m>n</m> equations.</li>
+<li>The total is <m>n-2+n=2n-2</m> equations with <m>2(n-1) = 2n-2</m> unknowns, so we expect (and get) a unique solution.</li>
+</ul></p>
+
+<p>There are infinitely many ways to connect given data points. The function <xref ref="eq-pl-interpolant" /> does so by a curve of minimal length, meaning that the graph of <m>S</m> is the shortest curve passing through the given data points. This is a reasonable way of connecting the points, but not necessarily the best or most natural way. The corners at the data points do not look natural. The piecewise linear graph does not give much insight into the rate of change of the function because it treats the rate as constant on each interval. For example, given the function values
+<cd>
+x = 1:5;
+y = [8 5.5 5.3333 5.75 6.4];
+</cd>
+what is the derivative of the function at <m>x = 2</m>? Differentiating the piecewise linear interpolant gives some information but not much. Another question one might ask is: where is the minimum of this function?  The minimum of piecewise linear interpolant is exactly at <m>x=3</m> but we understand the actual function probably has its minimum between <m>2</m> and <m>3</m>. </p>
+
+</section>
+ 
+<section xml:id="section-cubic-splines">
+<title>Cubic splines</title> 
+ 
+<p>A cubic spline is a function <m>S</m> that is piecewise a degree 3 polynomial, and such that <m>S, S', S''</m> are continuous (have the same value from both sides at the points where pieces meet). In our context of fitting to data points <m>(x_k, y_k)</m>, <m>k=1, \dots, n</m>, it is natural to have each cubic polynomial defined on <m>[x_{k}, x_{k+1}]</m>. The continuity of first and second derivatives means that the graph of a cubic spline has no corners of sudden changes of curvature, it flows quite naturally. Compare the plots below, for the same data set.</p>
+
+
+<figure xml:id="pl-example-png"><image source="images/pl_example.png" /> <caption>Piecewise linear interpolation</caption></figure>
+
+<figure xml:id="interpol-example-png"><image source="images/interpol_example.png" /> <caption>Interpolating polynomial</caption></figure>
+
+<figure xml:id="spline-example-png"><image source="images/spline_example.png" /> <caption>Cubic spline</caption></figure>
+
+
+<p>Let us count unknowns and equations involved in the constructio of a cubic spline.
+<ul>
+<li>We have <m>n-1</m> subintervals between <m>n</m> data points.</li>
+<li>On each subinterval we choose a degree 3 polynomial; this means we have <m>4(n-1)</m> coefficients to choose. </li>
+<li>In order for <m>S, S', S''</m> to be continuous at each of <m>n-2</m> interior data points, there are <m>3(n-2)</m> equations to satisfy.</li>
+<li>The spline must pass through each of <m>n</m> data points. This adds <m>n</m> equations.</li>
+<li>The total is <m>3(n-2)+n=4n-6</m> equations with <m>4(n-1)=4n-4</m> unknowns, so need two more equations to make the solution unique.</li>
+</ul>
+</p>
+
+<p>When discussing spline coefficients, it should be noted they are not necessarily the coefficients of powers of <m>x</m>. It is more natural and numerically safer to represent the spline on each subinterval <m>[x_k, x_{k+1}]</m> in terms of the powers of <m>(x-x_k)</m>. That is, 
+<men xml:id="eq-piece-spline">
+  S(x) = A_k(x-x_k)^3 + B_k(x-x_k)^2 + C_k(x-x_k) + D_k
+</men> 
+where the coefficients <m>a_k, b_k, c_k, d_k</m> are to be determined. Of course, <m>D_k=y_k</m> but to find the rest one needs to solve a linear system.</p> 
+
+<p>Here are three different ways to add two more equations to the linear system for coefficients; they result in three different kinds of cubic splines: 
+<ul>
+  <li>Require <m>S''(a) = 0 = S''(b)</m>. This is a <q>natural spline</q>.</li>
+  <li>Require <m>S'(a) = p</m> and  <m>S'(b)=q</m> for some values <p>p, q</p>. This is a <q>clamped spline</q>.</li>
+  <li>Require <m>S'''</m> to be continuous at <m>x_2</m> and at <m>x_{n-1}</m>. This is a <q>not-a-knot spline</q>.</li> 
+</ul></p> 
+
+<p>This terminology needs some explanation. The word <url href="https://en.wikipedia.org/wiki/Flat_spline">spline</url> used to refer to a long thin strip of flexible material (e.g., metal) which, if constrained at several points, assumes the shape of a smooth curve passing through these points. Unlike an elastic band which minimizes its length (creating a piecewise linear shape), the spline minimizes its <em>bending energy</em>. A mathematical idealization of the bending energy of a curve <m>y=f(x)</m> is the integral <m>\int_a^b f''(x)^2\,dx</m>. It can be shown that among <em>all functions</em> (of whatever form) that satisfy the constraints <m>f(x_k)=y_k</m>, the <q>natural spline</q> has the smallest value of <m>\int_a^b f''(x)^2\,dx</m>. This attractive mathematical property earned it the <q>natural</q> name... but upon further reflection, the boundary conditions <m>S''(a) = 0 = S''(b)</m> are actually not that natural. If we are interpolating some smooth function <m>y=f(x)</m>, there is no reason to assume that <m>f''</m> happens to be <m>0</m> at the endpoints.</p>
+
+<p>Clamped splines refer to holding the ends of the metal strip with a <url href="https://en.wikipedia.org/wiki/Clamp_(tool)">clamp</url>, which restricts not only its position but also the angle. This spline is useful for for modeling a problem with boundary conditions on the derivative.</p>  
+
+<p>The <em>knots</em> of a spline are the transition points where it turns from one polynomial to another. These are often, but not always, the points <m>x_k</m> from the given data. Requiring <m>S'''</m> to be continuous at <m>x_2</m> implies we have the same polynomial on both intervals <m>[x_1, x_2]</m> and <m>[x_2, x_3]</m> (why?), and therefore <m>x_2</m> is <em>not a knot</em> for this spline. Same for <m>x_{n-1}</m>. The not-a-knot condition is the standard choice when we do not have any reason to impose other conditions. </p> 
+
+
+<question><title>Is this a cubic spline</title>
+<p>Is the following function a spline? Why or why not? 
+<me>f(x)=\begin{cases} 1+x-x^3, &amp; 0\le x\le 1,\\  
+x,\quad &amp; 1\le x\le 2\end{cases}</me>
+</p></question>
+
+<example xml:id="example-find-missing-piece"><title>Complete the formula for a natural spline</title>
+<statement><p>Complete the formula 
+<me>S(x)=\begin{cases} 1+x-x^3, &amp; 0\le x\le 1,\\  
+\dots &amp; 1\le x\le 2\end{cases}</me>
+given that it describes a natural spline on <m>[0, 2]</m>.</p></statement>
+<answer><p>The continuity of <m>S, S', S''</m> implies that the difference of two polynomials used on both sides of <m>x=1</m> must be a constant multiple of <m>(x-1)^3</m>.  Therefore, the second polynomial must be of the form <m>1+x-x^3+c(x-1)^3</m>. Using the natural spline  condition <m>S''(2)=0</m> we can find <m>c=2</m>. Thus,
+ <me>S(x)=\begin{cases} 1+x-x^3,\quad &amp; 0\le x\le 1,\\  
+1+x-x^3 + 2(x-1)^3 \quad &amp; 1\le x\le 2\end{cases}</me>
+</p></answer></example>
+</section> 
+
+<section xml:id="section-using-cubic-splines">
+<title>Using cubic splines</title> 
+
+<p>We do not go into the process of finding the coefficients of a cubic spline: it involves solving a linear system with only a few nonzero diagonals. In Matlab, the command <c>spline</c> computes a knot-a-knot spline from given data, for example
+<cd>
+x = 1:7;
+y = [1 3 2 4 4 1 5];
+s = spline(x, y);
+disp(s.coefs)
+</cd>
+Each row of the output contains the coefficients A, B, C, D of cubic polynomial <xref ref="eq-piece-spline" />
+which is used on the interval <m>[x_{k}, x_{k+1}]</m>. We could use these coefficients to evaluate the spline, but Matlab can do this automatically with <c>ppval</c> (meaning <q>Piecewise Polynomial VALues</q>). Specifically, <c>ppval(s, t)</c> evaluates the spline at a value (or vector of values) <c>t</c>. Thus,
+<cd>
+t = linspace(1, 7, 1000);
+plot(t, ppval(s, t))
+</cd>
+plots the spline computed above.</p> 
+
+<p>There is also an option to combine construction and evaluation of a spline into the same command <c>spline</c>, by feeding <c>t</c> as a third argument. That is, <c>spline(x, y, t)</c> constructs a spline from <c>x, y</c> and immediately evaluates it at <c>t</c>. For example: 
+<cd>
+t = linspace(1, 7, 1000);
+plot(t, spline(x, y, t))
+</cd>
+We can also plot it with the original data points marked: 
+<cd>
+plot(t, spline(x, y, t), x, y, 'r*')
+</cd>
+</p> 
+
+<p>How else could we use the spline data? The formula <xref ref="eq-piece-spline" /> shows that <m>S'(x_k) = C_k</m>, which is the entry of the 3rd column of matrix <c>s.coefs</c>. Try <c>s.coefs(:, 3)'</c> and compare the values with the slope of the spline at the data points. This is another approach to <em>numerical differentiation</em>, different from what we did in <xref ref="chapter-numerical-differentiation" />: given discrete data, fit a spline to it and differentiate the spline.</p>     
+
+<p>Looking at the coefficients, we can also find the critical points of a spline, answering the question raised at the end of <xref ref="section-piecewise-linear-interpolation" />. Indeed, we have <m>A, B, C, D</m> coefficients of a cubic polynomial, so its derivative is a quadratic polynomial with coefficients <m>3A, 2B, C</m>. We can find its roots with <c>roots</c> but one must be careful to check if a root indeed falls into the subinterval on which this polynomial is used. </p>
+
+<example xml:id="example-critical-points-spline"><title>Complete the formula for a natural spline</title>
+<statement><p>Find and plot the critical points of the spline constructed from the data</p>
+<pre>
+x = 1:7;
+y = [1 3 2 4 4 1 5];
+</pre>
+</statement>
+<answer><p>Since the number of critical points is not known in advance, we can gather them by appending each new critical point to the vector <c>critpts</c>. To qualify for inclusion, a root of derivative of the cubic polynomial used on <m>[x_k, x_{k+1}]</m> must be real and must lie within this interval. </p>
+<pre>
+x = 1:7;
+y = [1 3 2 4 4 1 5];
+s = spline(x, y);
+critpts = [];
+for k=1:numel(x)-1
+    r = roots([3 2 1].*s.coefs(k, 1:3));
+    for j = 1:numel(r)
+        if isreal(r(j)) &amp;&amp; r(j) &gt;= 0 &amp;&amp; r(j) &lt;= x(k+1)-x(k)
+            critpts = [critpts, x(k)+r(j)];
+        end
+    end
+end
+t = linspace(min(x), max(x), 1000);
+plot(t, ppval(s, t), critpts, ppval(s, critpts), 'k*')
+</pre>
+<p>The script uses <c>ppval</c> since the spline <c>s</c> is already constructed; calling <c>spline(x, y, ...)</c> repeatedly with the same <c>x, y</c> seems wasteful.</p>
+</answer></example>
+
+</section>
+
+<exercises xml:id="exercises-spline-interpolation">
+    <title>Homework</title>
+
+    <exercise number="1">
+        <statement>
+<p> (Theoretical) Complete the following formula for a clamped spline with boundary conditions <m>S'(0) = -1</m> and <m>S'(3) = 6</m>:
+<me>S(x)=\begin{cases} \dots, &amp; 0\le x\le 1,\\  
+5 - 2x + x^3, &amp; 1\le x\le 2,\\  
+\dots &amp; 2\le x\le 3\end{cases}</me>
+</p> 
+</statement></exercise>
+  
+<exercise number="2">
+        <statement>
+<p> Adapt <xref ref="example-critical-points-spline" /> to find and plot the <em>inflection points</em> of the same cubic spline (these are the points where the second derivative is zero.)</p> 
+</statement></exercise>
+
+ 
+</exercises>
+
+</chapter>
+
+  

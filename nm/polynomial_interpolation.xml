@@ -88,7 +88,7 @@ end
 
 p = @(t) (y.*w*(t - x').^(-1)) ./ (w*(t - x').^(-1));
 t = linspace(min(x)-0.01, max(x)+0.01, 1000);
-plot(x, y, 'r*', t, p(t))
+plot(t, p(t), x, y, 'r*')
 </pre>
 <p>The double loop computes the weights <c>w</c> which do not involve the argument of the interpolating polynomial <c>p</c>. This argument is called <c>t</c> because <c>x</c> is already used for the data points. The interval for plotting is chosen to contain the given x-values with a small margin on both sides: this helps both visualization and evaluation, because we avoid plugging in <m>t = x_1, x_n</m>. The barycentric evaluation of the polynomial is vectorized. When <c>t</c> is a scalar, <c>t - x'</c> is a column vector. Taking reciprocals element-wise gives another column vector. Dot-product with <c>w</c> or <c>y.*w</c> implements the sums such as <m>\sum_{k=1}^n w_k/(t-x_k)</m>.</p>
 <p>How does <c>p</c> accept a row vector as <c>t</c>? The expression <c>t - x'</c> is the difference of a row vector and a column vector; in Matlab this creates a matrix where <m>(i, j)</m> entry is <m>t_j - x_i</m>. Subsequent operations proceed as above, and the result is a row vector of values <m>p(t)</m>. </p>
@@ -176,7 +176,7 @@ p = c(n)*ones(size(t));
 for k=n-1:-1:1
     p = p.*(t-x(k)) + c(k);
 end
-plot(x, y, 'r*', t, p)
+plot(t, p, x, y, 'r*')
 </pre>
 </answer></example>
 
