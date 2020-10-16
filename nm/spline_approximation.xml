@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<chapter xml:id="chapter-spline-approximation" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+<title>Spline Approximation</title>
+
+
+    <introduction>
+        <p>One reason to interpolate the data is to obtain a function that approximates it. Since the data values are not necessarily exact, it is not always important to match them precisely. In this chapter we use a simple approximation device to build splines that approximate the data without interpolating it. The process has some attractive features which both spline interpolation and polynomial interpolation lack. 
+      </p>
+    </introduction>
+
+
+<section xml:id="section-drawbacks-spline-interpolation">
+<title>Weak points of spline interpolation</title>
+
+<p>Looking closely at <xref ref="dashboard-spline-png" /> we can notice that the blue curve is not quite an increasing function: there is a small interval in which it decreases. This is not really logical since the curve follows the data (cumulative number of recovered cases) which cannot decrease. A smaller example is below.</p>
+<pre>
+x = 1:6;
+y = [0 0 1 1 2 2];
+t = linspace(1, 6, 1000);
+plot(t, spline(x, y, t), x, y, 'r*')
+</pre>
+<p>So, cubic splines <em>do not preserve monotonicity</em> (while piecewise linear interpolation does). Note that SU COVID dashboard later replaced splines with piecewise linear functions, which are monotone when the data values are monotone.</p>
+
+<p>Another issue is that spline interpolation may produce <em>negative values from positive data</em>. </p>
+<pre>
+x = 1:6;
+y = [9 9 1 1 9 9];
+disp(spline(x, y, 3.5))
+</pre>
+<p>The result is <m>-0.4</m>. This becomes a serious issue if the quantity being interpolated cannot in principle be negative (mass, density, number of people) and if the way in which the data is used relies on it not being negative (maybe one takes square root or plots the data on logarithmic scale). </p>
+
+<p>Note again that this is something that piecewise linear interpolation would not do. A piecewise linear function through points with <m>y_k > 0</m> stays positive. </p> 
+</section>
+
+<section xml:id="section-b-splines">
+<title>Hat functions and B-splines</title>
+
+<p>We look for a way to smoothly model the data while avoiding the issues in <xref ref="section-drawbacks-spline-interpolation" />. To simplify the computations, assume the x-values are equally spaced, which means that after shifting and scaling we can assume <m>x_k=k</m> for <m>k=1, \dots, n</m>. Then the linear interpolation can be expressed as the sum 
+<men xml:id="eq-hat-function">
+L(x) = \sum_{k}=1^n y_k H(x-k)
+</men>
+where <m>H(x) = \max(0, 1-|x|)</m> is a function whose graph is a triangle with base <m>[-1,1]</m>. Functions like <m>H</m> are sometimes called the <q>hat functions</q> based on the appearance of the graph. An important feature of the functions <m>H(x-k)</m> is that they add up to <m>1</m> everywhere on the interval <m>[1, n]</m> (why?); this ensures that interpolation of constant values <m>y_1=\cdots =y_n=1</m> produces a constant function.
+</p> 
+
+<p>As we know, piecewise linear interpolation lacks smoothness, and this is seen in the angular shape of the hat function <xref ref="eq-hat-function" />. We would like to replace it with something of similar shape but smooth.
+Here is a piecewise cubic function which does the job. 
+<men xml:id="eq-cubic-cardinal-spline">
+B(t) = \frac16 \max(0,2-|t|)^3 - \frac23 \max(0,1-|t|)^3
+</men>
+Its graph on <m>[-3, 3]</m> is shown below, with the hat function <m>H</m> for comparison. In technical terms, both <m>H</m> and <m>B</m> are <q>cardinal B-splines</q> of degrees 1 and 3, respectively. </p>
+
+<figure xml:id="B-spline-png"><image source="images/B_spline.png" /> <caption>Cardinal B-splines of degrees 1 and 3</caption></figure>
+
+<question><title>Smoothness of cardinal B-spline</title>
+<p>Despite the presence of absolute value and <m>\max</m>, both potential sources of non-smoothness, the function <xref ref="eq-cubic-cardinal-spline" /> is differentiable and even twice differentiable, with continuous <m>B''</m>. (This qualifies it as a cubic spline.) Why is this so? </p> </question>
+
+<p>Before considering how the smooth bump function <xref ref="eq-cubic-cardinal-spline" /> was constructed, let us try using it. One is the straightforward approach: replace <m>H</m> with <m>B</m> in the formula <xref ref="eq-hat-function" />, obtaining a cubic spline 
+<men xml:id="eq-approximating-cubic-spline">
+S(x) = \sum_{k=1}^n y_k B(x-k)
+</men>
+The first thing to notice is that the spline <m>S</m> <em>does not interpolate the data</em>. Indeed, 
+from <xref ref="eq-cubic-cardinal-spline" /> we have <m>B(0)=2/3</m> and <m>B(\pm 1)=1/6</m>, which implies that 
+<men xml:id="eq-values-of-approx-spline">
+S(x_k) = \frac{y_{k-1} + 4y_k + y_{k+1}}{6}
+</men> 
+which is a Simpson-style averaging of neighboring <m>y</m>-values. It may be disappointing not to have 
+<m>S(x_k)=y_k</m> but on the other hand, averaging raw data values within some moving window is a standard approach to eliminating noise and short-term fluctuations.</p> 
+
+<p>It is also possible to derive an interpolating spline as a linear combination of bumps <m>B(x-k)</m>, by solving a simple linear system. Indeed, we can find the coefficients <m>c_1, \dots, c_n</m> such that 
+<me>
+\sum_{k=1}^n c_k B(x-k) = y_k,\quad k=1,\dots, n 
+</me>
+by solving the system <m>Ac=y</m> where <m>A</m> is the <em>tridiagonal</em> matrix
+<me>
+A = \frac{1}{6} \begin{pmatrix} 
+4 &amp; 1 &amp; 0 &amp; \cdots &amp; 0  \\
+1 &amp; 4 &amp; 1 &amp; \cdots &amp; 0  \\
+0 &amp; 1 &amp; 4 &amp; \cdots &amp; 0  \\
+\vdots &amp; \vdots &amp; \vdots &amp; \vdots &amp; \vdots 
+\end{pmatrix}
+</me>
+But this brings back the kind of splines in <xref ref="chapter-spline-interpolation" /> with the deficiencies noted earlier, so we do not pursue this approach further.</p>
+
+<p>As written, the formula <xref ref="eq-approximating-cubic-spline" /> has an issue at the boundary, where instead of averages <xref ref="eq-values-of-approx-spline" /> we get 
+<men xml:id="eq-B-boundary-issue">
+S(x_1)= \frac{4y_1 + y_{2}}{6},\quad S(x_n) = \frac{y_{n-1} + 4y_n }{6}
+</men>
+because there is no <m>y_0</m> or <m>y_{n+1}</m>. This is an issue because, for example, with constant values <m>y_k=1</m> we get <m>S(x_1)=5/6=S(x_n)</m>, failing monotonicity. To fix the boundary behavior, we should extend the sum <xref ref="eq-approximating-cubic-spline" /> with two more terms: 
+<men xml:id="eq-approximating-cubic-spline-2">
+S(x) = \sum_{k=0}^{n+1} y_k B(x-k),\quad y_0=y_1, \ y_{n+1} = y_n
+</men>
+This is typical when computing with values on a grid: sometimes our formulas refer to out-of-grid points, and instead of just ignoring such terms we should somehow extrapolate the known values outside of the grid. </p>
+
+<example xml:id="example-approximating-spline">
+  <title> Implement the approximating cubic spline</title> 
+<statement><p>Use the examples from <xref ref="section-drawbacks-spline-interpolation" /> to demonstrate that the spline formula <xref ref="eq-approximating-cubic-spline-2" /> preserves monotonicity and positivity. </p></statement>
+<answer><pre>
+B = @(t) (1/6)*max(0, 2-abs(t)).^3 - (2/3)*max(0, 1-abs(t)).^3;
+x = 1:6;
+y = [0 0 1 1 2 2];
+xe = [x(1)-1, x, x(end)+1];
+ye = [y(1), y, y(end)];
+
+t = linspace(min(x), max(x), 1000);
+S = ye*B(t - xe');
+plot(t, S, x, y, 'r*')
+</pre>
+<p>As discussed above, the x-y values are extended by two points to the left and right; this is what the vectors 
+<c>xe</c> and <c>ye</c> represent. After that, the spline is evaluating in a single vectorized computation.
+The plot shows a smoothly increasing function. Trying this again with <c>y = [9 9 1 1 9 9]</c> we get a smooth positive function. </p></answer> </example> 
+
+</section> 
+
+  <section xml:id="section-construct-cardinal-splines">
+<title>Construction of cardinal B-splines</title> 
+
+<p>The formula <xref ref="eq-cubic-cardinal-spline" /> deserves some explanation. The idea is to start with the linear interpolant (degree 1 spline) <m>S_1=L</m> defined by <xref ref="eq-hat-function" /> and repeatedly smoothen it by moving averages: 
+<men xml:id="eq-integral-B2">
+S_2(x) = \int_{x-1/2}^{x+1/2} S_1(t)\,dt
+</men>
+<men xml:id="eq-integral-B3">
+S_3(x) = \int_{x-1/2}^{x+1/2} S_2(t)\,dt
+</men>
+and so on. The fundamental theorem of calculus shows that <m>S_2'(x) = S_1(x+1/2)-S_1(x-1/2)</m>, in particular <m>S_2</m> has continuous first derivative. Similarly, <m>S_3'(x) = S_2(x+1/2)-S_2(x-1/2)</m>, so 
+<m>S_3''(x) = S_2'(x+1/2)-S_2'(x-1/2)</m> is continuous as well.</p> 
+
+<p>The function <m>S_3</m> defined by <xref ref="eq-integral-B3" /> is the approximating cubic spline discussed above, while <m>S_2</m> is a quadratic spline. But these integral formulas should be simplified for practical use. By linearity of integrals, 
+<me>
+S_2(x) = \sum_{k}=1^n y_k  \int_{x-1/2}^{x+1/2} H(t)\,dt
+</me>
+where the integral can be evaluated explicitly: it is a cardinal B-spline of degree 2, which can be written out
+<me>
+\int_{x-1/2}^{x+1/2} H(t)\,dt = \begin{cases} 
+0 &amp; x \le -3/2 \\
+(x+3/2)^2 /2 &amp; -3/2 \le x \le -1/2 \\
+3/4 - x^2 &amp; -1/2 \le x \le 1/2 \\
+(x-3/2)^2 /2 &amp; 1/2 \le x \le 3/2 \\
+0 &amp; x \ge 3/2 
+\end{cases} 
+</me>
+Quadratic B-splines are awkward to use because of the fractional transition points above, which do not align with grid points. Averaging again by <xref ref="eq-integral-B3" /> improves the situation and leads, after very boring computations, to the formula <xref ref="eq-cubic-cardinal-spline" />. </p>
+</section>
+ 
+
+<exercises xml:id="exercises-spline-approximation">
+    <title>Homework</title>
+
+    <exercise number="1">
+        <statement>
+<p> Following <xref ref="example-approximating-spline" />, plot an approximating cubic spline for   the data <m>(k, \tan^{-1} k)</m>, <m>k=-5, -4, \dots, 5</m>. For comparison, also plot the actual function <m>y=\tan^{-1} x</m> on the interval <m>[-5, 5]</m>. How accurate is the approximation? Plot the difference of the spline and arctangent to answer this question.</p>
+<p>(Recall that arctangent is <c>atan</c> in Matlab.) </p></statement> </exercise>
+  
+<exercise number="2">
+        <statement>
+<p>Let us revisit <xref ref="example-sums-random" />, changing it to the following.</p> 
+<pre>
+k = 2;
+A = rand(k, 1e7) - 1/2;
+S = sum(A, 1);
+histogram(S, 100, 'Normalization', 'pdf')
+</pre>
+<p>(If using Octave where <c>histogram</c> is not available, replace the last line with 
+<c>hist(S, 100, 100/k)</c>.)</p>
+<p>This produces a <em>normalized</em> histogram of <m>10^7</m> sample sums, with <m>k</m> numbers in each sample. The numbers are chosen from uniform distribution on <m>[-1/2, 1/2]</m>. Normalization means that the area under the histogram is 1 (in probability terms, this histogram approximates the <em>probability density function</em> of sample sums, hence the option <q>pdf</q>.) </p>
+
+<p>What should the value <m>k</m> be in order for the histogram to resemble the cardinal B-splines of degree 3 shown in <xref ref="B-spline-png" />? (This can be determined experimentally after trying various <m>k</m>.) Having found such <m>k</m>, confirm your guess by adding the graph of the cardinal spline to the histogram plot (recall <c>hold on</c> / <c>hold off</c>  are useful for combining graphs.) </p>
+</statement></exercise>
+
+ 
+</exercises>
+
+</chapter>
+
+  

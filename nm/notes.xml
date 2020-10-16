@@ -86,6 +86,7 @@ along with MathBook XML.  If not, see <http://www.gnu.org/licenses/>.
             <xi:include href="./polynomial_interpolation.xml" />
             <xi:include href="./chebyshev.xml" />
             <xi:include href="./spline_interpolation.xml" />
+            <xi:include href="./spline_approximation.xml" />
         </part>
 
         <part xml:id="part-optimization">
