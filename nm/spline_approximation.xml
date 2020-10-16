@@ -39,9 +39,9 @@ disp(spline(x, y, 3.5))
 
 <p>We look for a way to smoothly model the data while avoiding the issues in <xref ref="section-drawbacks-spline-interpolation" />. To simplify the computations, assume the x-values are equally spaced, which means that after shifting and scaling we can assume <m>x_k=k</m> for <m>k=1, \dots, n</m>. Then the linear interpolation can be expressed as the sum 
 <men xml:id="eq-hat-function">
-L(x) = \sum_{k}=1^n y_k H(x-k)
+L(x) = \sum_{k=1}^n y_k H(x-k)
 </men>
-where <m>H(x) = \max(0, 1-|x|)</m> is a function whose graph is a triangle with base <m>[-1,1]</m>. Functions like <m>H</m> are sometimes called the <q>hat functions</q> based on the appearance of the graph. An important feature of the functions <m>H(x-k)</m> is that they add up to <m>1</m> everywhere on the interval <m>[1, n]</m> (why?); this ensures that interpolation of constant values <m>y_1=\cdots =y_n=1</m> produces a constant function.
+where <m>H(x) = \max(0, 1-|x|)</m> is a function whose graph is a triangle with base <m>[-1,1]</m>. Functions like <m>H</m> are sometimes called the <q>hat functions</q> based on the appearance of the graph. An important feature of the functions <m>H(x-k)</m> is that they add up to <m>1</m> everywhere on the interval <m>[1, n]</m> (why?). This ensures that interpolation of constant values <m>y_1=\cdots =y_n</m> produces a constant function, which is a necessary condition for the algorithm to preserve monotonicity of data. 
 </p> 
 
 <p>As we know, piecewise linear interpolation lacks smoothness, and this is seen in the angular shape of the hat function <xref ref="eq-hat-function" />. We would like to replace it with something of similar shape but smooth.
@@ -94,7 +94,7 @@ S(x) = \sum_{k=0}^{n+1} y_k B(x-k),\quad y_0=y_1, \ y_{n+1} = y_n
 This is typical when computing with values on a grid: sometimes our formulas refer to out-of-grid points, and instead of just ignoring such terms we should somehow extrapolate the known values outside of the grid. </p>
 
 <example xml:id="example-approximating-spline">
-  <title> Implement the approximating cubic spline</title> 
+  <title> Implement cubic spline approximation</title> 
 <statement><p>Use the examples from <xref ref="section-drawbacks-spline-interpolation" /> to demonstrate that the spline formula <xref ref="eq-approximating-cubic-spline-2" /> preserves monotonicity and positivity. </p></statement>
 <answer><pre>
 B = @(t) (1/6)*max(0, 2-abs(t)).^3 - (2/3)*max(0, 1-abs(t)).^3;
@@ -116,19 +116,19 @@ The plot shows a smoothly increasing function. Trying this again with <c>y = [9 
   <section xml:id="section-construct-cardinal-splines">
 <title>Construction of cardinal B-splines</title> 
 
-<p>The formula <xref ref="eq-cubic-cardinal-spline" /> deserves some explanation. The idea is to start with the linear interpolant (degree 1 spline) <m>S_1=L</m> defined by <xref ref="eq-hat-function" /> and repeatedly smoothen it by moving averages: 
+<p>The formula <xref ref="eq-cubic-cardinal-spline" /> deserves some explanation. The idea is to start with the linear interpolant (degree 1 spline) <m>S_1=L</m> defined by <xref ref="eq-hat-function" /> and repeatedly smoothen it using a <m>moving average</m> with a window of size <m>1</m>: 
 <men xml:id="eq-integral-B2">
 S_2(x) = \int_{x-1/2}^{x+1/2} S_1(t)\,dt
 </men>
 <men xml:id="eq-integral-B3">
 S_3(x) = \int_{x-1/2}^{x+1/2} S_2(t)\,dt
 </men>
-and so on. The fundamental theorem of calculus shows that <m>S_2'(x) = S_1(x+1/2)-S_1(x-1/2)</m>, in particular <m>S_2</m> has continuous first derivative. Similarly, <m>S_3'(x) = S_2(x+1/2)-S_2(x-1/2)</m>, so 
-<m>S_3''(x) = S_2'(x+1/2)-S_2'(x-1/2)</m> is continuous as well.</p> 
+and so on. The fundamental theorem of calculus shows that <me>S_2'(x) = S_1(x+1/2)-S_1(x-1/2)</me> in particular <m>S_2</m> has continuous first derivative. Similarly, <me>S_3'(x) = S_2(x+1/2)-S_2(x-1/2)</me> so 
+<me>S_3''(x) = S_2'(x+1/2)-S_2'(x-1/2)</me> is continuous as well.</p> 
 
 <p>The function <m>S_3</m> defined by <xref ref="eq-integral-B3" /> is the approximating cubic spline discussed above, while <m>S_2</m> is a quadratic spline. But these integral formulas should be simplified for practical use. By linearity of integrals, 
 <me>
-S_2(x) = \sum_{k}=1^n y_k  \int_{x-1/2}^{x+1/2} H(t)\,dt
+S_2(x) = \sum_{k=1}^n y_k  \int_{x-1/2}^{x+1/2} H(t)\,dt
 </me>
 where the integral can be evaluated explicitly: it is a cardinal B-spline of degree 2, which can be written out
 <me>
@@ -165,7 +165,7 @@ histogram(S, 100, 'Normalization', 'pdf')
 <c>hist(S, 100, 100/k)</c>.)</p>
 <p>This produces a <em>normalized</em> histogram of <m>10^7</m> sample sums, with <m>k</m> numbers in each sample. The numbers are chosen from uniform distribution on <m>[-1/2, 1/2]</m>. Normalization means that the area under the histogram is 1 (in probability terms, this histogram approximates the <em>probability density function</em> of sample sums, hence the option <q>pdf</q>.) </p>
 
-<p>What should the value <m>k</m> be in order for the histogram to resemble the cardinal B-splines of degree 3 shown in <xref ref="B-spline-png" />? (This can be determined experimentally after trying various <m>k</m>.) Having found such <m>k</m>, confirm your guess by adding the graph of the cardinal spline to the histogram plot (recall <c>hold on</c> / <c>hold off</c>  are useful for combining graphs.) </p>
+<p>What should the value <m>k</m> be in order for the histogram to resemble the cardinal B-splines of degree 3 shown in <xref ref="B-spline-png" />? Find the answer experimentally after trying a few values of <m>k</m>. Having found a suitable <m>k</m>, confirm your guess by adding the graph of the cardinal spline to the histogram plot (recall <c>hold on</c> / <c>hold off</c>  are useful for combining graphs.) </p>
 </statement></exercise>
 
  
