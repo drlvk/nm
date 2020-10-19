@@ -60,7 +60,7 @@ what is the derivative of the function at <m>x = 2</m>? Differentiating the piec
 
 <figure xml:id="dashboard-spline-png"><image source="images/dashboard_spline.png" /> <caption>Dashboard with splines</caption></figure>
 
-<p>Let us count unknowns and equations involved in the constructio of a cubic spline.
+<p>Let us count unknowns and equations involved in the construction of a cubic spline.
 <ul>
 <li>We have <m>n-1</m> subintervals between <m>n</m> data points.</li>
 <li>On each subinterval we choose a degree 3 polynomial; this means we have <m>4(n-1)</m> coefficients to choose. </li>
