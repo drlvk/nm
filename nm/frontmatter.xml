@@ -20,8 +20,9 @@
 
         <p>The following textbooks were helpful in preparation of these notes.<ul>
             <li><p><url href="https://ebookcentral-proquest-com.libezproxy2.syr.edu/lib/syracuse-ebooks/detail.action?docID=953183">Numerical Methods: Using MATLAB</url> by George Lindfield and John Penny</p></li>
-            <li><p><url href="https://www.mathworks.com/moler/chapters.html">Numerical Computing with MATLAB</url> by Clive Moler</p></li>
             <li><p><url href="https://epubs-siam-org.libezproxy2.syr.edu/doi/book/10.1137/9780898719987">A First Course in Numerical Methods</url> by Uri M. Ascher and Chen Greif </p></li>
+            <li><p><url href="https://syracuse.summon.serialssolutions.com/2.0.0/link?t=1603042996399">Approximation Theory and Approximation Practice</url> by Lloyd N. Trefethen</p></li>
+            <li><p><url href="https://www.mathworks.com/moler/chapters.html">Numerical Computing with MATLAB</url> by Clive Moler</p></li>
         </ul></p>
 
     </acknowledgement>

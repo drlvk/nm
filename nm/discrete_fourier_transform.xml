@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<chapter xml:id="chapter-discrete-fourier-transform" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+<title>Discrete Fourier Transform</title>
+
+
+    <introduction>
+        <p>Some functions are naturally periodic, for example the parametric formulas for a closed curve. The interpolation technique considered so far involve (piecewise) polynomials which are not periodic. Their natural analogue for periodic functions is  <em>trigonometric polynomials</em>. It turns out that the theory of interpolation or approximation of periodic functions by simpler periodic functions is computationally simpler than the corresponding theory for functions on an interval. 
+      </p>
+    </introduction>
+
+
+<section xml:id="section-periodic-functions">
+<title>Periodic functions and trigonometric polynomials</title>
+
+<p>A function <m>f</m> is periodic if there exists a constant <m>T</m> such that <m>f(x+T)=f(x)</m> for all <m>x\in \mathbb R</m>. Examples include <m>\sin x</m>, <m>\cos x</m>, and their combinations called <em>trigonometric polynomials</em>: 
+<men xml:id="eq-trigonometric-polynomial">
+ p(x)= \sum_{k=0}^n a_k \cos (2\pi kx/T) + \sum_{k=1}^n b_k \sin (2\pi kx/T) 
+</men>
+The function <xref ref="eq-trigonometric-polynomial" /> has period <m>T</m>. Using Euler's identity 
+<men xml:id="eq-euler-identity">
+e^{ix} = \cos x + i\sin x 
+</men>
+one can express trigonometric polynomials in <em>complex exponential form</em>: 
+<men xml:id="eq-trigonometric-polynomial-complex">
+p(x) = \sum_{k=-n}^n c_k \exp (2\pi i k x/T)
+</men>
+Indeed, the identity <xref ref="eq-euler-identity" /> implies <m>\cos x = (e^{ix}+e^{-ix})/2</m> and 
+<m>\sin x = (e^{ix}-e^{-ix})/(2i)</m>, so the expression <xref ref="eq-trigonometric-polynomial" /> can be rewritten as a linear combination of complex exponentials as in <xref ref="eq-trigonometric-polynomial-complex" />. Conversely, expression <xref ref="eq-trigonometric-polynomial-complex" /> can be rewritten in terms of trigonometric functions using <xref ref="eq-euler-identity" />. </p>
+
+<p>It is important to recognize that even if the coefficients <m>a_k, b_k</m> were real, the corresponding coefficients <m>c_k</m> will in general be complex. Complex numbers in Matlab can be entered directly like 
+<c>3 + 4i</c> (note there is no <c>*</c> between 4 and i). If you have variables <c>a, b</c> and want to construct <m>a + ib</m>, then <c>a + 1i*b</c> works. Also, the letter <c>j</c> can be used in place of <c>i</c>. 
+</p> 
+
+<p>The most common values of <m>T</m> are <m>T=2\pi</m> and <m>T=1</m>. Each choice makes some formulas simpler at the cost of making other formulas more complicated. This is why the theory of Fourier transform is presented in different sources with different notational conventions.</p>
+
+<example xml:id="example-plot-trig-polynomial">
+  <title> Plot a random trigonometric polynomial</title> 
+<statement><p>Plot a random trigonometric polynomial of degree 3, using complex exponential form with complex coefficients taken from the normal distribution. Note that Matlab command <c>plot(z)</c> when given a single vector <c>z</c> with complex values, interprets it as <c>plot(real(z), imag(z))</c>.</p></statement>
+<answer><p>This example uses <m>T=2\pi</m> (the choice of period does not change these plots). Note the vectorized evaluation <c>c*exp(1i*k'*t)</c> and recognize the role of transpose <c>k'</c> here. </p>
+<pre>
+n = 3;
+c = randn(1, 2*n+1)  + 1i*randn(1, 2*n+1);
+t = linspace(0, 2*pi, 1000);
+k = -n:n;
+z = c*exp(1i*k'*t);
+plot(z)
+</pre>
+</answer> </example> 
+ 
+</section>
+ 
+<section xml:id="section-fourier-series">
+<title>Fourier series</title>
+
+<p>Using the period <m>T=1</m>, we find that the functions <m>f_k(x) = \exp (2\pi i k x)</m> are 
+<em>orthonormal</em> with respect to the inner product 
+<men xml:id="eq-inner-product">
+\langle f, g \rangle = \int_0^1 f(x)\overline{g(x)}\,dx
+</men>
+(For other periods they are orthogonal but not orthonormal.) This makes it easy to compute the 
+<term>Fourier coefficients</term> of a given function <m>f</m> in the basis <m>\{f_k\colon k\in \mathbb Z\}</m>: 
+<men xml:id="eq-fourier-coefficients">
+c_k = \langle f, f_k\rangle = \int_0^1 f(x) e^{-2\pi i k x}\,dx
+</men>
+For sufficiently nice periodic functions (having a continuous derivative is enough), the <term>Fourier series</term> <m>\sum c_k f_k</m> converges to function <m>f</m>. </p> 
+
+<example xml:id="example-compute-fourier-coefficients">
+  <title> Compute Fourier coefficients</title> 
+<statement><p>Use the built-in command <c>integral</c> to compute the Fourier coefficients <m>c_k</m> for <m>k=-3, \dots, 3</m> for the complex-valued function 
+<me>f(x) = \sqrt{1+\cos(2\pi x)} + i\log(2+\sin(2\pi x))</me> 
+Then plot both the function and its partial Fourier sum <m>\sum_{|k|\le 3} c_k f_k</m> for comparison. </p> 
+</statement>
+<answer><p>The syntax of <c>integral</c> is <m>integral(@(x) ..., a, b)</m> where <m>a, b</m> are the limits of integration and the function is expressed in a form that allows vectorized evaluation. Here is the computation of Fourier coefficient</p> 
+<pre>
+f = @(x) sqrt(1 + cos(2*pi*x)) + 1i*log(2 + sin(2*pi*x));
+n = 3;
+c = zeros(1, 2*n+1);
+for k = -n:n
+    c(k+n+1) = integral(@(x) f(x).*exp(-2*pi*1i*k*x), 0, 1);
+end
+disp(c)
+</pre>
+<p>Then we combine both complex plots using different colors.</p>
+<pre>
+t = linspace(0, 1, 1000);
+k = -n:n;
+p = c*exp(2*pi*1i*k'*t);
+hold on
+plot(f(t))
+plot(p, 'r')
+hold off
+</pre>
+<p>Note that the lack of smoothness at one point slows down the convergence of Fourier series. If the function had <c>sqrt(1.1 + cos(2*pi*x))</c> instead, the convergence would be much better.</p>
+</answer> </example> 
+</section>
+
+<section xml:id="section-discrete-fourier-transform">
+<title>Discrete Fourier Transform</title>
+
+<p>There is a discrete version of the Fourier series theory outlined in <xref ref="section-fourier-series" />. In it we fix an integer <m>n</m> and replace a function <m>f\colon [0, 1]\to \mathbb C</m> by 
+its sampled values <m>z_k = f(k/n)</m>, <m>k=0, 1, \dots, n-1</m>. The discrete version of inner product 
+<xref ref="eq-inner-product" /> is 
+<men xml:id="eq-inner-product-discrete">
+\langle f, g \rangle_d =  \sum_{\ell=0}^{n-1}f(\ell/n)\overline{g(\ell/n)}
+=  \sum_{k=0} z_\ell \overline{w_\ell}
+</men>
+The functions <m>f_k = \exp(2\pi i k)</m>, <m>k=0, \dots, n-1</m>, are orthogonal with respect to this inner product. (Not orthonormal, as <m>\langle f_k, f_k = n</m>.) Note we only need <m>n</m> of these functions (why?). 
+</p>
+
+<p>The <term>Fourier coefficients</term> of a given discretized function <m>(z_0, z_1, \dots, z_{n-1})</m> 
+are computed as: 
+<men xml:id="eq-fourier-coefficients-discrete">
+c_k = \sum_{\ell=0}^{n-1} z_\ell \exp(-2\pi i k\ell/n) 
+</men>
+and from there, the function is precisely reconstructed as 
+<men xml:id="eq-fourier-sum-discrete">
+z_k = \frac{1}{n} \sum_{k=0}^{n-1} c_k \exp(2\pi i k/n)
+</men>
+Some people put <m>1/n</m> in <xref ref="eq-fourier-coefficients-discrete" /> instead of <xref ref="eq-fourier-sum-discrete" />, and some put <m>1/\sqrt{n}</m> in both, for symmetry.</p> 
+
+<p>The computation of Fourier coefficients <xref ref="eq-fourier-coefficients-discrete" /> amounts to matrix-vector multiplication <m>c = Wz</m> where <m>W</m> is the <term>Fourier matrix</term> defined as follows.
+Let <m>\omega = \exp(-2\pi i /n)</m>. The matrix <m>W</m> has size <m>n\times n</m>, with entries given by  <m>W_{k\ell} = \omega^{(k-1)(\ell-1)}</m>. Explicitly, 
+<men xml:id="eq-fourier-matrix">
+W = \begin{pmatrix} 1 &amp; 1 &amp; 1 &amp; 1 &amp; \dots &amp; 1 \\
+1 &amp; \omega &amp; \omega^2 &amp; \omega^3 &amp; \dots &amp; \omega^{n-1} \\
+1 &amp; \omega^2 &amp; \omega^4 &amp; \omega^6 &amp; \dots &amp; \omega^{2(n-1)} \\
+1 &amp; \omega^3 &amp; \omega^6 &amp; \omega^9 &amp; \dots &amp; \omega^{3(n-1)} \\
+\cdots \\
+1 &amp; \omega^{n-1} &amp; \omega^{2(n-1)} &amp; \omega^{3(n-1)} &amp; \dots &amp; \omega^{(n-1)(n-1)} \\
+\end{pmatrix}
+</men>
+Normally, matrix-vector multiplication takes on the order of <m>n^2</m> operations. The <term>Fast Fourier Transform</term> (FFT) is an algorithm that uses the specific structure of <m>W</m> to reduce the number of computations to something of the order <m>n\log n</m>. 
+The reconstruction of function values from coefficients <xref ref="eq-fourier-sum-discrete" /> is very similar. Besides the factor of <m>1/n</m>, the only other difference is replacing matrix <m>W</m> with matrix <m>W^*</m> of the same form <xref ref="eq-fourier-matrix" /> but with <m>\omega = \exp(2\pi i /n)</m>.</p>
+
+<p>In Matlab, the computation <xref ref="eq-fourier-coefficients-discrete" /> is implemented by command <c>fft</c> while <xref ref="eq-fourier-sum-discrete" /> is implemented by <c>ifft</c> (<q>i</q> for <q>inverse</q>). 
+Try applying them to standard basis vectors and compare the output to the columns of 
+<m>W</m> or <m>\frac{1}{n} W^*</m>. (The commands also allow matrix input: 
+<c>fft(eye(n))</c> and <c>ifft(eye(n))</c> return the matrices <m>W</m> and <m>\frac{1}{n} W^*</m>.) </p>
+</section>
+
+
+<section xml:id="section-trigonometric-interpolation">
+<title>Trigonometric Interpolation</title>
+
+<p>Discrete Fourier Transform allows us to interpolate any periodic function by a trigonometric polynomial by first discretizing it  as <m>z_k=f(k/n)</m>, <m>k=0, \dots, n-1</m>, applying FFT to compute Fourier coefficients <m>c_k</m>, and then constructing a trigonometric polynomial with these coefficients. By literally following the formula <xref ref="eq-fourier-sum-discrete" /> we arrive at the trigonometric polynomial
+<men xml:id="eq-bad-trig-interpolation">
+p(x) = \frac{1}{n}\sum_{k=0}^{n-1} c_k \exp(2\pi i x)
+</men>
+This indeed interpolates the function but not in a good way, as the following code shows. It interpolates the function in <xref ref="example-compute-fourier-coefficients" /> using <c>n=9</c> points, which are marked as black asterisks.</p> 
+<pre>
+f = @(x) sqrt(1 + cos(2*pi*x)) + 1i*log(2 + sin(2*pi*x));
+n = 9;
+z = f((0:n-1)/n);
+c = fft(z);
+k = 0:n-1;
+p = c/n*exp(2*pi*1i*k'*t);
+
+t = linspace(0, 1, 1000);
+hold on
+plot(f(t))
+plot(p, 'r')
+plot(z, 'k*')
+hold off  
+</pre>
+<p>The problem is that our formula for <c>p</c> involves complex exponential functions with <q>frequencies</q> 
+<m>k=0, 1, \dots, 9</m> which is not how trigonometric polynomials <xref ref="eq-trigonometric-polynomial-complex" /> normally look. The high frequencies create the oscillatory behavior which, while matching the data, does not create a reasonable interpolant.</p>
+
+<p>A key term here is <term>aliasing</term>, which is the fact that different trigonometric (or complex exponential) functions may coincide when restricted to a discrete grid of points (<url href="https://en.wikipedia.org/wiki/Aliasing#/media/File:AliasingSines.svg">illustration</url>). Specifically, 
+<me>
+\exp(2\pi i k t)  = \exp(2\pi i (k-n) t), \quad t = 0, 1/n, 2/n, \dots, 1
+</me>
+In order to avoid extraneous oscillations we should subtract <m>n</m> from large elements of the vector <c>k = 0:n-1</c> above, so that instead of  
+<cd>
+k = [0 1 2 3 4 5 6 7 8];
+</cd>
+we have 
+<cd>
+k = [0 1 2 3 4 -4 -3 -2 -1];
+</cd>
+Replacing <c>k = 0:n-1</c> in the above code with <c>k = [0:(n-1)/2 (1-n)/2:-1];</c> corrects the issue. </p> 
+
+<p>The previous paragraph operates with an odd number <m>n</m> which is more natural in this context because trigonometric polynomials <xref ref="eq-trigonometric-polynomial-complex" /> normally contain an odd number of terms. But what if we are given an even number of points to interpolate through, such as 10? It is not clear whether to keep <m>k=n/2</m> as positive: <c>k=[0:n/2 1-n/2:-1]</c> or to move it to negative: 
+<c>k=[0:n/2-1  -n/2:-1]</c>. Neither version works well. Their average does work; essentially, the term with <m>k=n/2</m> should be split into two. To avoid this complication, we stick to odd <m>n</m>.</p> 
+
+</section>
+
+<exercises xml:id="exercises-discrete-fourier-transform">
+    <title>Homework</title>
+
+    <exercise number="1">
+        <statement>
+<p> (Theoretical) Show that if the numbers <m>z_0, \dots, z_{n-1}</m> are real and satisfy the symmetry condition <m>z_{n-\ell} = z_\ell</m> for <m>\ell=1, \dots, n-1</m>, then the Discrete Fourier Transform 
+<xref ref="eq-fourier-coefficients-discrete" /> also has real values.</p> 
+</statement></exercise>
+  
+    <exercise number="2">
+        <statement>
+<p> Choose some complex numbers <m>z_0, z_1, \dots, z_{n-1}</m> (with odd <m>n</m>) so that connecting them in this order (and connecting <m>z_{n-1}</m> to <m>z_0</m>) one gets a closed curve similar to letter B. 
+Then use Discrete Fourier Transform to plot a trigonometric polynomial interpolating these numbers. Does its plot look like letter B? </p> 
+</statement></exercise>
+ 
+</exercises>
+
+</chapter>
