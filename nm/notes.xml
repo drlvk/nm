@@ -88,6 +88,7 @@ along with MathBook XML.  If not, see <http://www.gnu.org/licenses/>.
             <xi:include href="./spline_interpolation.xml" />
             <xi:include href="./spline_approximation.xml" />
             <xi:include href="./discrete_fourier_transform.xml" />
+            <xi:include href="./dft_applications.xml" />
         </part>
 
         <part xml:id="part-optimization">

@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<chapter xml:id="chapter-dft-applications" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+<title>Applications of Discrete Fourier Transform</title>
+
+
+    <introduction>
+        <p>Having computed the Fourier coefficients of a function (which may represent, for example, a sound recording or an image) we often discover that most of the coefficients are relatively small. One can try to discard small Fourier coefficients and reconstruct the function/sound/image from what remains, thus achieving some amount of data compression. 
+      </p>
+    </introduction>
+
+
+<section xml:id="section-image-compression">
+<title>Working with images in Matlab</title>
+
+<p>An image is loaded into Matlab with a command like <c>im = imread('filename.jpg')</c>. Try this using, for example, <url href="https://twitter.com/SyracuseU/status/831617805673984000/photo/1">the winter scene</url> (first save the file in Matlab/Octave current directory). There are several things to learn about this <c>im</c> object:
+<ul>
+<li> <c>size(im)</c> shows its size (dimensions) as 462<times/>692<times/>3. This is a three-dimensional array, where the last index means the <term>color channel</term>: Red, Green, Blue. The first two indices are rows and columns. One can access individual channels with <c>im(:, :, 1)</c> (for red). 
+Matlab can also work with <term>grayscale</term> images which have just one channel for brightness; such images are represented by matrices which makes them easier to work with. 
+</li>
+<li> <c>class(im)</c> says <q>uint8</q>. All other Matlab objects we worked have class <c>double</c> meaning they are floating-point numbers with double-precision, able to store about 16 decimal digits. But <c>uint8</c> is different: it is an <term>unsigned 8-bit integer</term>, with possible values 0, 1, <ellipsis/>, 255. This reflects the image format: in each channel, the brightness of each pixel ranges from 0 to 255. (How many possible colors does this create?) In other languages, one would say <q>type</q> instead of <q>class</q>.</li>
+</ul>
+</p>
+
+<p>The command <c>imshow(im)</c> displays the image. An image (an array of numbers) can be transformed in multiple ways and then either saved as a file with <c>imwrite</c> or just displayed with <c>imshow</c>; we will do the latter, which is simpler. Try the following and observe the effects: 
+ <ul>
+  <li>Remove one of colors entirely, for example <c>im(:, :, 3)  = 0;</c></li>
+  <li>Set all pixels darker than some level to black (0) with <c>im(im &lt; 128) = 0;</c></li>
+  <li>Set the intensity of some color to some specific value, for example <c>im(:, :, 2)  = 64;</c></li>
+  <li> <ellipsis/> </li>
+ </ul>
+If you do something that causes the array to lose its class <q>uint8</q>, that can usually be fixed with the command <c>uint8(...)</c>.
+</p>
+
+</section>
+
+<section xml:id="section-2d-dft">
+<title>Two-dimensional DFT</title>
+
+<p>Since images are two-dimensional (considering either grayscale images, or working with each color channel separately), they can be processed using the two-dimensional version of Discrete Fourier Transform, implemented in Matlab as <c>fft2</c> and (inverse) <c>ifft2</c>. The formulas for 2D transform follow the same logic as one-dimensional formulas <xref ref="eq-fourier-coefficients-discrete" />  and <xref ref="eq-fourier-sum-discrete" />. Namely, the <term>2D Fourier coefficients</term> of a given matrix <m>(z_{k\ell})</m> with indices 
+<m>k=0, \dots, m-1</m>, <m>\ell=0, \dots, n-1</m> are computed as: 
+<men xml:id="eq-fourier-coefficients-discrete-2d">
+c_{pq} = \sum_{k=0}^{m-1} \sum_{\ell=0}^{n-1} z_{k \ell} \exp(-2\pi i k p/m) \exp(-2\pi i \ell q/n) 
+</men>
+The matrix is reconstructed from its coefficients by inverse transform
+<men xml:id="eq-fourier-sum-discrete-2d">
+z_{k\ell} = \frac{1}{mn} \sum_{p=0}^{m-1}\sum_{q=0}^{n-1} c_{pq} \exp(2\pi i kp/m) \exp(2\pi i \ell q/n) 
+</men>
+The fact that Matlab indices begin with 1 means they have to be shifted by 1 in the above formulas, but since we 
+will just use  <c>fft2</c> and (inverse) <c>ifft2</c>, we will not worry about this.</p> 
+
+<p>Let us try this with the grayscale version of the winter image, saved here as a PNG file for lossless compression.</p>
+
+<figure xml:id="winter-png"><image source="images/winter.png" /> <caption>Grayscale PNG image</caption></figure>
+
+<p>After loading the image with <c>im = imread('winter.png')</c>, check this is a matrix (no separate channels for colors). Try <c>fc = fft2(im);</c> which produces a matrix of the same size but with complex entries. It is not easy to understand all of it. Small pieces can be inspected with <c>fc(1:5, 1:5)</c> for example. A histogram can help visualize the distribution of their magnitudes: <c>hist(abs(fc(:)), 50)</c>. (Recall that <c>fc(:)</c> means flattening a matrix to a vector.) Looks like nearly all coefficients are much smaller than the largest ones. </p> 
+
+<p>We can set all small Fourier coefficients (less than some threshold <c>thr</c>) to zero using 
+<c>fc(abs(fc) &lt; thr) = 0;</c>. One way to determine the threshold reasonably is to use 
+<term>percentiles</term>: for example,
+<cd>
+thr = prctile(abs(fc(:)), 75);
+</cd>
+returns the number <c>thr</c> such that 75 percent of Fourier coefficients are less than it, and the other are greater (in absolute value).</p>
+
+
+<example xml:id="example-compress-image">
+  <title> Compress an image using Discrete Fourier Transform</title> 
+<statement><p>Given a percentage <c>p</c>, such as 75, compress the <q>winter</q> image by setting <c>p</c> percent of its Fourier coefficients to zero.</p></statement>
+<answer><pre>
+p = 75;
+im = imread('winter.png');
+fc = fft2(im);
+thr = prctile(abs(fc(:)), p);
+fc(abs(fc) &lt; thr) = 0;
+im2 = uint8(real(ifft2(fc)));
+imshow(im2)
+</pre>
+<p>The inverse Fourier transform may have imaginary part due to the truncation of Fourier coefficients and rounding errors in computations. This imaginary part is removed with <c>real</c>. The result is converted to unsigned 8-bit integers with <c>uint8</c>. </p> 
+</answer> </example> 
+ 
+<p>The <url href="https://en.wikipedia.org/wiki/JPEG#Encoding">JPEG compression algorithm</url> is based on the Fourier Transform but differs from the above example in several ways: 
+<ul><li>It divides the image into 8<times/>8 pixel blocks and operates on each block separately</li>
+<li>It uses Discrete Cosine Transform in which the role of complex exponentials <m>\exp(2\pi i k/m)</m> is played by cosine functions <m>\cos(2\pi k/m)</m>. This improves the efficiency and eliminates the appearance of complex numbers.</li>
+<li>In addition to setting small Fourier coefficients to 0, it quantizes the other ones: rounds to the nearest integer, or nearest multiple of 5, etc. </li>
+<li>Since setting many elements to 0 does not by itself make a matrix smaller, the final step of the process is running a lossless compression algorithm which exploits the existence of many equal entries in the matrix.</li>
+</ul>
+</p>
+</section>
+ 
+
+<section xml:id="section-cosine-interpolation">
+<title>Cosine interpolation of non-periodic functions</title>
+
+<p>In <xref ref="chapter-discrete-fourier-transform" /> we worked with periodic functions, approximating them by trigonometric polynomials. Can we use trigonometric polynomials to approximate non-periodic functions?
+For example, suppose we solved the initial-value problem
+<men xml:id="eq-diffeq-for-intepolation">
+y'(t) =\sin(y^2)+t,\quad y(0)=1
+</men>
+with 
+<cd>
+[t, y] = ode45(@(t, y) sin(y^2) + t, 0:0.1:3, 1);
+</cd>
+Note that in contrast to <xref ref="chapter-ode-modeling" /> the second argument is given not as an interval (two-element vector) <c>[0 3]</c> but as a set of t-values at which the solution needs to be found. This ensures that we get y-values for these specific t-values. But now that we have them, how can we get a simple 
+<em>approximate</em> solution? 
+<ul>
+  <li>Polynomial interpolation? Hopeless, a degree 30 polynomial through 31 equally spaced points is not even worth trying.</li>
+  <li>Cubic spline interpolation? It would make a nice plot but in terms of a formula, the spline would have 120 coefficients (4 for each of 30 subintervals). This is hardly a simple solution. </li>
+  <li>Trigonometric polynomials? But they are periodic, and our function has different values at 0 and 3.</li>
+</ul>
+</p>
+<p>Compare the behavior of cosines <m>\cos kx</m> and sines <m>\sin kx</m> on the interval <m>[0, \pi]</m>. The cosines have different values at <m>0, \pi</m> while the sines are always 0 at both ends. This makes cosines,  specifically in the form <m>\cos (\pi k x/L)</m>, preferable for approximating a non-periodic function on <m>[0, L]</m>. The <term>Discrete Cosine Transform</term> is a tool used to find the coefficients of a given function in the cosine basis. It is somewhat technical (there are 4 different types of the transform), but the essence of the method can be stated simply: apply Fourier transform to the <term>even periodic extension</term> of the given function.</p>
+
+<p>The discrete version of even periodic extension is as follows: given function values 
+<m>y_1, \dots, y_n</m>, we extend them to <m>y_1, \dots, y_n, y_{n-1}, \dots, y_2</m> (for the total of <m>2n-2</m> values).  In Matlab terms, the extended vector is
+<cd>
+ye = [y y(end-1:-1:2)];
+</cd>
+Why not simply <c>[y y(end:-1:1)]</c>? Repeating the endpoint values <m>y_1, y_n</m> would distort the picture of this function. They should appear once while the rest appear twice; this can be viewed as yet another form of <q>trapezoidal adjustment</q>.</p>
+
+<p>Having found the Fourier coefficients <c>c = fft(ye)/numel(ye)</c> we observe they are all real (any imaginary component is due to round-off errors). This makes it possible to <q>fold</q> the sum of complex exponentials into a cosine sum: for <m>k=1, \dots, n-2</m> the pair of terms 
+<me>
+  c_k \exp(i k x ) +  c_{2n-k} \exp(i (2n-k) x )
+</me>
+is aliased to 
+<me>
+  c_k \exp(i k x ) +  c_{2n-k} \exp(i (-k) x ) = 2c_k \cos (kx)
+</me>
+(here <m>x</m> is a multiple of <m>\pi/n</m>.) The terms <m>c_0</m> and <m>c_{n-1}</m> do not have a counterpart among the coefficients <m>c_0, \dots, c_{2n-2}</m>, so the cosine sum ends up being 
+<men xml:id="eq-cosine-sum">
+c_0 + 2\sum_{k=1}^{n-2} c_k \cos (\pi kx/L) + c_{n-1} \cos (\pi (n-1) x/L)
+</men> 
+And of course, Matlab indexing of the coefficients begins with 1, forcing another adjustment: see the following example.  
+</p> 
+
+
+<example xml:id="example-cosine-interpolation">
+  <title> Interpolate with cosines</title> 
+<statement><p>Apply the cosine interpolation to the numerical solution of ODE <xref ref="eq-diffeq-for-intepolation" />. </p></statement>
+<answer><p>Since <c>ode45</c> returns <c>y</c> as a column, it is transposed in the code below. Then we extend this vector to <c>ye</c>, take its Fourier Transform <c>c</c>, and fold it into cosine coefficients <c>cf</c>. Then plot the resulting sum of cosines.</p>
+<pre>
+[t, y] = ode45(@(t, y) sin(y^2) + t, 0:0.1:3, 1);
+y = y';
+
+n = numel(y);
+ye = [y y(end-1:-1:2)];
+c = real(fft(ye))/numel(ye);
+cf = [c(1) 2*c(2:n-1) c(n)];
+
+L = 3;
+x = linspace(0, L, 1000);
+k = 0:n-1;
+g = cf*cos(k'*x*pi/L);
+plot(x, g, t, y, 'r*')
+</pre>
+</answer> </example> 
+
+<p>The cosine sum in <xref ref="example-cosine-interpolation" /> has 31 terms, as many as there are data points. But many of them are very close to zero, as <c>plot(cf)</c> shows. For example, we could keep the first <c>m=8</c> of them and still have a good approximation for this function.</p>
+<pre>
+m = 8;
+k = 0:m-1;
+g = cf(1:m)*cos(k'*x*pi/L);
+</pre>
+<p>This is essentially a one-dimensional version of image compression discussed in <xref ref="section-2d-dft" />.
+</p>
+</section>
+
+
+
+<exercises xml:id="exercises-dft-applications">
+    <title>Homework</title>
+
+    <exercise number="1">
+        <statement>
+<p>  Instead of deciding in advance how many coefficients to discard, it is usually preferable to maintain some degree of quality of the image. This is often measured in terms of <q>energy</q>, defined as the sum of squares of absolute values of Fourier coefficients. That, is to have 95% quality, we want to keep enough Fourier coefficients so that the sum of their squares is at least 95% of the total sum of squares. Equivalently, we discard the coefficients that contribute 10% of the energy.</p> 
+
+<p>The goal of this exercise is to modify <xref ref="example-compress-image" /> so that the input value is quality <c>q</c> such as 95 or 98, and the image is compressed based on the energy consideration. </p>
+
+<p>Suggestions: sort the Fourier coefficients from smallest to largest using 
+<cd>
+sorted = sort(abs(fc(:)));    
+</cd>
+The total energy is 
+<cd>
+total = sum(sorted.^2); 
+</cd>
+The key point is to write a while loop that sums the squares of the elements of <c>sorted</c> array until they reach the desired proportion of the total energy. When the loop exits, you will know what threshold value 
+<c>thr</c> should be used for truncating Fourier coefficients.</p>
+
+<p>Compare the quality of compressed image with <c>q=98</c>, <c>q = 95</c>, and <c>q = 90</c>.</p> 
+</statement></exercise>
+   
+ 
+</exercises>
+
+</chapter>
