@@ -188,7 +188,7 @@ total = sum(sorted.^2);
 The key point is to write a while loop that sums the squares of the elements of <c>sorted</c> array until they reach the desired proportion of the total energy. When the loop exits, you will know what threshold value 
 <c>thr</c> should be used for truncating Fourier coefficients.</p>
 
-<p>Compare the quality of compressed image with <c>q=98</c>, <c>q = 95</c>, and <c>q = 90</c>.</p> 
+<p>Compare the quality of compressed image with <c>q = 98</c>, <c>q = 95</c>, and <c>q = 90</c>.</p> 
 </statement></exercise>
    
  

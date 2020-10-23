@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<chapter xml:id="chapter-linear-least-squares" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+<title>Linear Least Squares</title>
+
+
+    <introduction>
+        <p>We briefly encountered least-squares fit in <xref ref="chapter-linear-systems" /> but this method deserves a closer look in regard to how we choose a model to fit a given data set. It is one thing to find a function that matches the data (interpolation), another to have a model that learns from the data and has predictive power. Interpolation uses about as many parameters (coefficients) as the number of data points; curve-fitting uses relatively few parameters, hence does not hit the points precisely. Using too many parameters results in overfitting: a model begins to memorize training data rather than learning to generalize from trend. 
+      </p>
+    </introduction>
+
+
+<section xml:id="section-lsq-overview">
+<title>Overview of least squares</title>
+
+<p>Least squares fit is about more than just fitting a curve to some points like <xref ref="example-parabola-best-fit" />. In its general form we have a vector <m>\mathbf y</m> of <m>n</m> observations and <m>p</m> vectors of <term>explanatory variables</term>, say 
+<m>\mathbf v_1, \dots, \mathbf v_p</m>. Our goal is to approximate <m>\mathbf y</m> by a linear combination of <m>\mathbf v_k</m>, say <m>\sum_{k=1}^p \beta_k \mathbf v_k</m>. What are these vectors in the polynomial model?</p> 
+
+<p>If <m>\mathbf z = \sum_{k=1}^p \beta_k \mathbf v_k</m> is the best prediction, then the difference <m>\mathbf z - \mathbf y</m> is orthogonal to each <m>\mathbf v_k</m>. 
+That is, 
+<men xml:id="eq-lsq-1">
+\mathbf z\cdot \mathbf v_k = \mathbf y\cdot \mathbf v_k
+</men>
+for each <m>k</m>. These are <m>p</m> linear equations for <m>p</m> parameters.  Let us express them in matrix form. Let <m>X</m> be the <m>n\times p</m> matrix formed by vectors  <m>\mathbf v_1, \dots, \mathbf v_p</m> as columns. Then <m>X^T\mathbf y</m> is the column vector with entries <m>\mathbf y\cdot \mathbf v_k</m>, matching the right hand side of <xref ref="eq-lsq-1" />. The left hand side of <xref ref="eq-lsq-1" /> involves <m>z = X\beta</m>  where <m>\beta</m> is the vector of coefficients that we are looking for. With this, we recognize that <m>X^TX \beta </m> is the vector whose entries match the left hand side. In conclusion, the matrix form of <xref ref="eq-lsq-1" /> is  
+<men xml:id="eq-lsq-2">
+X^TX  \beta = X^T \mathbf y 
+</men>
+which is known as the <term>normal equations</term> associated to the overdetermined system <m>X\beta = \mathbf y</m>. Note that <m>X^TX</m> is invertible if and only if the explanatory vectors are linearly independent (which they should be; otherwise we have redundant ones). </p> 
+
+<p>The goodness of fit could be measured in several ways. One indicator is the norm of the residual vector <m>\mathbf y-\mathbf z</m>, or better yet, the squared norm 
+<men xml:id="eq-residual-squares">
+ | \mathbf y-\mathbf z| = \sum_{k=1}^n |y_k-z_k|^2
+</men>
+However this quantity has the units of <m>y_k</m> squared, and a unit-free quantity is preferable. A popular approach is to compare the residual sum fo squares <xref ref="eq-residual-squares" /> to the total sum of squares 
+<men xml:id="eq-total-squares">
+ \sum_{k=1}^n |y_k-\bar y|^2 ,\quad \bar y = \frac{1}{n} \sum_{k=1}^n y_k
+</men>
+We want our model to predict <m>y_k</m> better than the baseline guess <m>\bar y</m> (which does not use any explanatory variables). So, if <xref ref="eq-residual-squares" />  is much smaller than <xref ref="eq-total-squares" />, the fit is good. The goodness-of-fit is then measured by the <term>coefficient of determination</term> 
+<men xml:id="eq-coeff-determination">
+  R^2 = 1 - \frac{\sum_{k=1}^n |y_k-z_k|^2}{\sum_{k=1}^n |y_k-\bar y|^2}
+</men>
+which shows how much of the variability in observation is predicted by the model. The value does not exceed 1, with 1 being exact fit and close to 0 being a rather useless model (<url href="https://imgs.xkcd.com/comics/linear_regression_2x.png">example</url>).  The quantity <m>R^2</m> may even be negative if the model does a worse job than the constant predictor <m>\bar y</m>. The notation  <m>R^2</m> comes from the fact that for linear regression <m>y=ax+b</m> (without testing-training split), it is the square of correlation coefficient. But in general it is not a square of anything.</p>
+</section>
+
+
+<section xml:id="section-overfitting">
+<title>Overfitting, training and testing</title>
+
+<p>Recall <xref ref="example-parabola-best-fit" /> in which we find a best-fitting parabola to given data. The code is extended below to allow arbitrary degree <m>d</m> of the polynomial, and to add the computation of 
+<m>R^2</m> according to <xref ref="eq-coeff-determination" />. Note the use of column vectors below.</p>
+
+<example xml:id="example-best-fit-polynomial">
+  <title>Fitting a polynomial of any degree</title> 
+<statement><p>Improve <xref ref="example-parabola-best-fit" /> to work with polynomials of any degree <m>d</m>, and add a computation of <m>R^2</m> to it.</p></statement>
+<answer><pre> 
+<pre>
+x = (0:14)';  
+y = [9 8 5 5 3 1 2 5 4 7 8 8 7 7 8]';  % data
+d = 2;                     % degree of polynomial
+X = x.^(0:d);              % matrix of linear system for parameters
+beta = X\y;                % optimal parameters
+f = @(x) (x.^(0:d))*beta;  % best-fitting function f
+
+t = linspace(min(x), max(x), 1000)';
+plot(t, f(t), 'b', x, y, 'r*')
+
+total = norm(y - mean(y))^2;
+residual = norm(y - f(x))^2;
+fprintf('R^2 for degree %d is %g\n', d, 1 - residual/total);
+</pre>
+</pre></answer></example>
+
+<p>If we increase <m>n</m> toward <m>7</m>, the curve gets closer to the points but it also becomes more wiggly. Most importantly, the prediction it makes for <m>x=10</m>, that is <m>f(10)</m>, becomes less realistic. This is <term>overfitting</term>, which describes the situation in which our model <m>f</m> mostly memorizes the data instead of learning from it. (<url href="https://imgs.xkcd.com/comics/curve_fitting_2x.png">Food for thought from xkcd</url>)</p>
+
+<p>A simple but effective way to combad overfitting is to split the data into two parts: one (training set) is used to compute the coefficients <m>\beta_k</m>, and then another part (testing set) is used to evaluate goodness of fit. The split may be done randomly, perhaps 50:50 or 60:40 proportion. Which of the following 50:50 splits looks better?
+<cd>
+x_train = x(1:8); 
+x_test = x(9:end);
+</cd>
+(and similarly for <c>y</c>) or 
+<cd>
+x_train = x(1:2:end); 
+x_test = x(2:2:end);
+</cd>
+</p>  
+
+<example xml:id="example-training-testing">
+  <title> Training-testing split</title> 
+<statement><p>Use the training-testing split in <xref ref="example-best-fit-polynomial" />. </p></statement>
+<answer><pre> 
+x = (0:14)';  
+y = [9 8 5 5 3 1 2 5 4 7 8 8 7 7 8]';
+x_train = x(1:2:end);
+y_train = y(1:2:end);
+x_test = x(2:2:end);
+y_test = y(2:2:end);
+
+d = 2;
+
+X = x_train.^(0:d);
+beta = X\y_train; 
+f = @(x) (x.^(0:d))*beta; 
+
+t = linspace(min(x), max(x), 1000)';
+plot(t, f(t), 'b', x, y, 'r*')
+
+total = norm(y_test - mean(y_test))^2;
+residual = norm(y_test - f(x_test))^2;
+fprintf('R^2 for degree %d is %g\n', d, 1 - residual/total);
+</pre></answer></example>
+
+<p>An additional detail: when one reports the model performance (not in this class, but perhaps for a publication), the reported value of <m>R^2</m> or other estimate of goodness-of-fit should be computed on a separate <term>validation set</term> which was not used for either training or testing. Using the testing set for reporting <m>R^2</m> introduces a subtle source of bias: if <em>many</em> models are tested, and one of them wins, it is more likely than not that the winning model <q>had better luck</q> with the specific data set used for testing, and that would lead us to overestimate its goodness-of-fit. (Here is an <url href="https://imgs.xkcd.com/comics/significant.png">example</url> of testing too many models and not validating.) </p> 
+
+</section>
+
+
+<section xml:id="section-standard-error">
+<title>The standard error of parameters</title>
+
+<p>A more statistics-oriented approach to model selection is to examine the randomness of the parameters <m>\beta_k</m> we found: we study the hypothesis that the <q>true value</q> of a particular parameter <m>\beta_k</m> is zero, meaning that the value we found for it is nonzero only due to chance. This approach does not really say whether a model is good for describing the data, but whether a particular parameter actually helps in it.
+</p> 
+
+<p>With this approach, we think of <m>\mathbf y - \mathbf z</m> as a vector of <m>n</m> observations of a random variables with  <m>n-p</m> degrees of freedom (where <m>p</m> is the number of parameters). The variance of such a random variable is estimated as 
+<men xml:id="eq-sample-variance">
+s^2 = \frac{1}{n-p} \sum_{k=1}^n (y_k-z_k)^2
+</men> 
+You may have seen this formula with <m>p=1</m> which corresponds to the constant model <m>z_k\equiv \bar y</m>. </p>
+
+<p>Solving for optimal parameters (theoretically) involves inverting the matrix <m>X^TX</m>, seen in <xref ref="eq-lsq-2" />. The matrix <m>s^2 (X^TX)^{-1}</m> can be considered the <term>covariance matrix</term> of estimated parameters. Specifically, its diagonal element in position <m>(k, k)</m> is the variance of <m>\beta_k</m>. The square root of variance gives the <term>standard error</term> of <m>\beta_k</m>. 
+As a rule of thumb, if <m>|\beta_k| \lt 2\operatorname{SE}(\beta_k)</m> (a parameter is within two standard errors of 0), this parameter should be considered inessential and possibly removed from the model. The following computation implements this statistical analysis. </p>
+
+<pre>
+s2 = norm(y-z)^2/(n-p);      % variance of error
+C = s2*inv(X'*X);            % covariance matrix for parameters
+ts = beta./sqrt(diag(C));    % the t-statistics of the parameters          
+</pre>
+
+<p>The parameters with <m>|t| \lt 2</m> should be considered for removal. In the example of fitting polynomials of degree <m>d</m>, we have <m>p = d+1</m> parameters. The consideration should be focused on the leading coefficient, because if it appears to be inessential, we should remove it by decreasing the degree <m>d</m> by <m>1</m>. Note that the removal of one parameter causes all others to be recalculated, so the rest may become essential now. </p>
+
+<example xml:id="example-t-statistics-parameters">
+  <title> Computing the t-statistics of parameters</title> 
+<statement><p>Modify <xref ref="example-best-fit-polynomial" /> to include the computation of t-statistics for each coefficient of the polynomial. </p></statement>
+<answer><p>Note that the vector of t-statistics, which is called <c>ts</c> below, contains the statistics for the coefficients of <m>x^0, \dots, x^d</m> in this order. This means that <m>ts(end)</m> is really the value of most interest here.</p>
+<pre> 
+x = (0:14)';  
+y = [9 8 5 5 3 1 2 5 4 7 8 8 7 7 8]'; 
+d = 2;            
+X = x.^(0:d);     
+beta = X\y;        
+f = @(x) (x.^(0:d))*beta; 
+
+n = numel(y);
+p = d+1;
+s2 = norm(y-f(x))^2/(n-p);
+C = s2*inv(X'*X);         
+ts = beta./sqrt(diag(C));
+disp(ts)
+</pre></answer></example> 
+</section>
+
+<section xml:id="section-multiple-regression">
+<title>Multiple regression</title>
+
+<p>Least squares method, as outlined at the beginning of <xref ref="section-lsq-overview" />, includes <term>multiple linear regression</term>, in which we model a dependent variable by a linear combination of several independent variables. In this form, the matrix <m>X</m> consists not of various powers of one variable, but of several explanatory variables. In the following example the observations modeled are the scores on a final exam, while explanatory variables are Homework average, Quiz average, Exam 1 score, Exam 2, and Exam 3. After fitting a linear combination of these five variable to the final exam score, the code calculates <m>R^2</m> and <m>t</m>-statistics. </p>
+<pre>
+hw = [97 99 90 76 96 80 100 55 69 85 89 100 73 89 95 98 98 73 100 84]';
+quiz = [94 104 101 76 102 83 90 81 101 101 105 99 91 98 95 101 88 77 97 95]';
+exam1 = [96 100 93 79 95 62 83 88 86 96 95 96 74 91 88 94 96 98 97 94]';
+exam2 = [71 80 59 31 70 26 63 65 69 78 79 65 38 75 71 75 68 64 73 68]';
+exam3 = [83 86 65 42 82 55 69 38 70 77 65 80 50 79 70 88 75 75 73 56]';
+y = [82 92 74 57 77 56 51 42 79 92 89 79 49 84 88 84 71 88 83 89]';      % final exam
+
+X = [hw quiz exam1 exam2 exam3];
+beta = X\y; 
+z = X*beta;      % predicted final scores
+
+total = norm(y - mean(y))^2;
+residual = norm(y - z)^2;
+disp('Parameters:')
+disp(beta');  
+fprintf('R^2 is %g\n', 1 - residual/total);
+
+[n, p] = size(X);   % X is a matrix of size n by p
+s2 = norm(y-z)^2/(n-p);
+C = s2*inv(X'*X);         
+ts = beta./sqrt(diag(C));
+disp('t-statistic values');
+disp(ts')
+</pre> 
+<p>How to intepret these results? Can the model be improved by discarding some explanatory variable which fail to explain anything?</p> 
+</section> 
+
+
+<exercises xml:id="exercises-linear-least-squares">
+    <title>Homework</title>
+
+    <exercise number="1">
+        <statement>
+<p> Modify <xref ref="example-training-testing" /> so that it runs a loop <c>for n=1:7</c> and within that loop, <m>R^2</m> is computed for each <m>n</m>. The code should then print the optimal value of <m>n</m>, its <m>R^2</m> value, and plot the graph for optimal model. </p></statement> </exercise>
+  
+<exercise number="2">
+        <statement>
+<p> The number of active COVID cases at SU duing October 1 - October 23 is given below.
+<cd>
+y = [5 5 4 5 9 25 45 65 77 87 87 89 97 101 90 74 57 26 20 13 12 12 13]'; 
+</cd>
+(The x-values can be <c>x = (1:23)'</c>.) Use the t-statistic for the leading coefficient as in <xref ref="example-t-statistics-parameters" />, determing what degree of a polynomial should be used to model this data. Also plot both the optimal polynomial and the data points. </p></statement></exercise>
+
+ 
+</exercises>
+
+</chapter>
+
+  

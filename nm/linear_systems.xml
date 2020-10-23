@@ -83,7 +83,7 @@ In Matlab this norm can be computed in several ways:
 The last way is easiest. </p>
 
 
-<example>
+<example xml:id="example-least-squares-norm-residual">
     <title>The least-squares solution and the norm of residual vector</title>
 <statement>
     <p>Find the least-squares solution <m>x</m> and the norm of residual vector $<m>Ax-b</m> for the system with the matrix

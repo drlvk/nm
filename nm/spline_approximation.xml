@@ -116,7 +116,7 @@ The plot shows a smoothly increasing function. Trying this again with <c>y = [9 
   <section xml:id="section-construct-cardinal-splines">
 <title>Construction of cardinal B-splines</title> 
 
-<p>The formula <xref ref="eq-cubic-cardinal-spline" /> deserves some explanation. The idea is to start with the linear interpolant (degree 1 spline) <m>S_1=L</m> defined by <xref ref="eq-hat-function" /> and repeatedly smoothen it using a <m>moving average</m> with a window of size <m>1</m>: 
+<p>The formula <xref ref="eq-cubic-cardinal-spline" /> deserves some explanation. The idea is to start with the linear interpolant (degree 1 spline) <m>S_1=L</m> defined by <xref ref="eq-hat-function" /> and repeatedly smoothen it using a <term>moving average</term> with a window of size <m>1</m>: 
 <men xml:id="eq-integral-B2">
 S_2(x) = \int_{x-1/2}^{x+1/2} S_1(t)\,dt
 </men>
@@ -140,7 +140,7 @@ where the integral can be evaluated explicitly: it is a cardinal B-spline of deg
 0 &amp; x \ge 3/2 
 \end{cases} 
 </me>
-Quadratic B-splines are awkward to use because of the fractional transition points above, which do not align with grid points. Averaging again by <xref ref="eq-integral-B3" /> improves the situation and leads, after very boring computations, to the formula <xref ref="eq-cubic-cardinal-spline" />. </p>
+Quadratic B-splines are awkward to use because of the fractional transition points above, which do not align with grid points. Averaging again by <xref ref="eq-integral-B3" /> improves the situation and leads, after tedious case-by-case computations, to the formula <xref ref="eq-cubic-cardinal-spline" />. </p>
 </section>
  
 
