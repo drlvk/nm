@@ -54,7 +54,6 @@ which shows how much of the variability in observation is predicted by the model
   <title>Fitting a polynomial of any degree</title> 
 <statement><p>Improve <xref ref="example-parabola-best-fit" /> to work with polynomials of any degree <m>d</m>, and add a computation of <m>R^2</m> to it.</p></statement>
 <answer><pre> 
-<pre>
 x = (0:14)';  
 y = [9 8 5 5 3 1 2 5 4 7 8 8 7 7 8]';  % data
 d = 2;                     % degree of polynomial
@@ -68,7 +67,6 @@ plot(t, f(t), 'b', x, y, 'r*')
 total = norm(y - mean(y))^2;
 residual = norm(y - f(x))^2;
 fprintf('R^2 for degree %d is %g\n', d, 1 - residual/total);
-</pre>
 </pre></answer></example>
 
 <p>If we increase <m>n</m> toward <m>7</m>, the curve gets closer to the points but it also becomes more wiggly. Most importantly, the prediction it makes for <m>x=10</m>, that is <m>f(10)</m>, becomes less realistic. This is <term>overfitting</term>, which describes the situation in which our model <m>f</m> mostly memorizes the data instead of learning from it. (<url href="https://imgs.xkcd.com/comics/curve_fitting_2x.png">Food for thought from xkcd</url>)</p>
