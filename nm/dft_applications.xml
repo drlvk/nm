@@ -81,7 +81,7 @@ imshow(im2)
 </answer> </example> 
  
 <p>The <url href="https://en.wikipedia.org/wiki/JPEG#Encoding">JPEG compression algorithm</url> is based on the Fourier Transform but differs from the above example in several ways: 
-<ul><li>It divides the image into 8<times/>8 pixel blocks and operates on each block separately</li>
+<ul><li>It divides the image into 8<times/>8 pixel blocks and operates on each block separately.</li>
 <li>It uses Discrete Cosine Transform in which the role of complex exponentials <m>\exp(2\pi i k/m)</m> is played by cosine functions <m>\cos(2\pi k/m)</m>. This improves the efficiency and eliminates the appearance of complex numbers.</li>
 <li>In addition to setting small Fourier coefficients to 0, it quantizes the other ones: rounds to the nearest integer, or nearest multiple of 5, etc. </li>
 <li>Since setting many elements to 0 does not by itself make a matrix smaller, the final step of the process is running a lossless compression algorithm which exploits the existence of many equal entries in the matrix.</li>
@@ -173,9 +173,9 @@ g = cf(1:m)*cos(k'*x*pi/L);
 
     <exercise number="1">
         <statement>
-<p>  Instead of deciding in advance how many coefficients to discard, it is usually preferable to maintain some degree of quality of the image. This is often measured in terms of <q>energy</q>, defined as the sum of squares of absolute values of Fourier coefficients. That, is to have 95% quality, we want to keep enough Fourier coefficients so that the sum of their squares is at least 95% of the total sum of squares. Equivalently, we discard the coefficients that contribute 10% of the energy.</p> 
+<p>  Instead of deciding in advance how many coefficients to discard, it is usually preferable to maintain some degree of quality of the image. This is often measured in terms of <q>energy</q>, defined as the sum of squares of absolute values of Fourier coefficients. That, is to have 95% quality, we want to keep enough Fourier coefficients so that the sum of their squares is at least 95% of the total sum of squares. Equivalently, we discard the coefficients that contribute 5% of the energy.</p> 
 
-<p>The goal of this exercise is to modify <xref ref="example-compress-image" /> so that the input value is quality <c>q</c> such as 95 or 98, and the image is compressed based on the energy consideration. </p>
+<p>The goal of this exercise is to modify <xref ref="example-compress-image" /> so that the input value is quality <c>q</c> such as 95 or 98, and the image in <xref ref="winter-png" /> is compressed based on the energy consideration. </p>
 
 <p>Suggestions: sort the Fourier coefficients from smallest to largest using 
 <cd>
