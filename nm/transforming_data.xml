@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<chapter xml:id="chapter-transforming-data" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+<title>Transforming data for LLS</title>
+
+
+    <introduction>
+        <p>The method of previous chapter works only for models in which parameters appear in a linear way, as coefficients to predetermined functions. This is often insufficient: for example, exponential and logistic models contain some parameters nonlinearly. In this chapter we expand the reach of Linear Least Squares method by transforming the variables involved in the problem, or by applying the method to the coefficients of an implicit function. 
+      </p>
+    </introduction>
+
+
+<section xml:id="section-example-exponential-fit">
+<title>Exponential fit</title>
+
+<p>Exponential growth is modeled by a function of the form <m>f(x) = ae^{bt}</m>. Suppose we have some data 
+<m>(x_k, y_k)</m>, <m>k=1, \dots, n</m>, and think that it describes exponential growth (which naturally occurs in ecology and epidemiology). A direct attempt to minimize the sum of differences squared: 
+<men xml:id="eq-sum-squares-exponential">
+  \sum_{k=1}^n \left(y_k - ae^{bx_k}\right)^2 \to \min 
+</men>
+is possible but requires optimization methods which we will consider later. There is an alternative approach:  instead of fitting <m>ae^{bx}</m> to the values <m>y_k</m>, fit its logarithm, <m>bx + \log a</m>, to the values 
+<m>\log y_k</m>. This means we will minimize the sum of squares of differences of (natural) logarithms: 
+<men xml:id="eq-sum-squares-exponential-log">
+  \sum_{k=1}^n \left(\log(y_k) - bx - \log a\right)^2 \to \min
+</men>
+</p>
+
+<p>It is important to understand the two problems <xref ref="eq-sum-squares-exponential" /> and <xref ref="eq-sum-squares-exponential-log" /> are not equivalent. If exact fit is possible, either approach will find it. But in general, some deviations (nonzero residuals) are inevitable, and the two approaches penalize deviations in different ways.</p>
+
+<p>For example, if the given y-values are <c>[1 2 10]</c> and we have two competing exponential functions: one predicts <c>[0.5 2 10]</c> while the other predicts <c>[1 2 11]</c>. Using the penalty function <xref ref="eq-sum-squares-exponential" />, the first model has the penalty <m>0.25</m> while the second has penalty <m>1</m>, so the first looks better. But if we look at the differences of logarithms, then the first has penality 
+<m>(\log 1 - \log 0.5)^2 = 0.48</m> while the second has penalty <m>(\log 10 - \log 11)^2 = 0.01</m>, so the second looks much better. </p>
+
+<p>Most importantly, the minimization problem <xref ref="eq-sum-squares-exponential-log" /> can be easily solved using the method of <xref ref="chapter-linear-least-squares" />. For notational convenience let <m>\beta_1= \log a</m> and <m>\beta_2 = b</m>. If the left hand side of <xref ref="eq-sum-squares-exponential-log" /> was zero, that would mean that <m>\beta_1, \beta_2</m> is a solution of the overdetermined linear system
+<men xml:id="eq-transformed-lls">  
+\beta_1 + \beta_2  x_k = \log y_k,\quad k=1, \dots, n
+</men>
+The least squares solution of <xref ref="eq-transformed-lls" /> is the vector <m>\beta = (\beta_1, \beta_2)</m> that minimizes <xref ref="eq-sum-squares-exponential-log" />.   </p>  
+
+
+<example xml:id="example-best-fit-exponential">
+  <title>Fit an exponential to COVID data</title> 
+<statement><p>The following are new COVID-19 infections in France as reported on Fridays in September-October (from Sep 4 to Oct 23).
+<cd>
+y = [6011 7742 9335 12048 10946 14618 20399 29472]';  
+</cd>
+Fit an exponential function to this data, using week numbers <c>1:8</c> as x-values.
+Extend it two weeks into the future by plotting it up to <m>x=10</m>. Include the original data on the plot.
+</p> 
+</statement>
+<answer><p>The vector <c>y</c> is already defined above, but we need <c>yt = log(y)</c> to get transformed y-values.</p>
+<pre> 
+x = (1:8)';  
+yt = log(y);
+X = x.^(0:1); 
+beta = X\yt;
+f = @(x) exp((x.^(0:1))*beta);
+
+t = linspace(1, 10, 1000)';
+plot(t, f(t), 'b', x, y, 'r*')
+</pre></answer></example>
+</section>
+
+<section xml:id="section-example-logistic-fit">
+<title>Logistic fit</title>
+
+<p>If we simplify the SIR model (<xref ref="section-ode-epidemiology" />) by removing the recovering process, the proportion of infected people in the population grows according to the ODE <m>y' = c y(1-y)</m> with some coefficient <m>c</m>. This ODE has an explicit solution 
+<men xml:id="eq-logistic-function">
+y = \frac{1}{1 + a e^{-kt}}
+</men>
+with <m>a, k > 0</m> depending on coefficient <m>c</m> (which we usually don't know in practice) and the initial condition <m>y(0)</m> (which we might not know either). But if we can collect some data, we can fit a logistic function <xref ref="eq-logistic-function" /> to it. As written, the model includes parameters <m>a, k</m> in a nonlinear way. But applying the <q>logit</q> transformation <m>\log(y/(1-y))</m> we obtain 
+<men xml:id="eq-logistic-function-logit">
+\log \frac{y}{1-y} = kt - \log a
+</men>
+Thus, we can fit a linear function to the values <m>\log(y_k/(1-y_k))</m> and then apply the inverse of the transformation <m>z = \log(y/(1-y))</m>, which is <m>y = 1 / (1+e^{-z})</m>. </p>
+
+<p>The logistic model can reasonable apply to other processes which are slow initially, speed up, and then slow down again. The following example, where <q>population</q> consists of COVID-positive students, models the process of their recovery. </p>  
+
+<example xml:id="example-best-fit-logistic">
+  <title>Fit a logistic function to COVID data</title> 
+<statement><p>There were at least 121 reported COVID infections among SU students between October 8 and October 26. The following are the cumulative counts of people recovered, day by day, starting with October 9.
+<cd>
+y = [1 1 1 5 8 10 27 44 62 93 101 110 112 115 116 117 118 120]';  
+</cd>
+Consider these as proportions of the total <q>population</q> of 121 and fit a logistic function to these proportions. </p> 
+</statement>
+<answer><p>The vector <c>y</c> is already defined above, but we need to compute proportions <c>p = y/133</c> and transform them by <c>yt = log(p/(1-p))</c>. Then the usual linear regression is applied. </p>
+<pre> 
+x = (1:numel(y))';  
+p = y/121;
+yt = log(p/(1-p));
+X = x.^(0:1); 
+beta = X\yt;
+f = @(x) 1 ./ (1 + exp(-(x.^(0:1))*beta));
+
+t = linspace(min(x), max(x), 1000)';
+plot(t, f(t), 'b', x, p, 'r*')
+</pre></answer></example>
+
+<p> The outcome of <xref ref="example-best-fit-logistic" /> is not entirely satisfactory. The logit transformation emphasizes the values near 0 and 1, and de-emphasizes those in between. We will revisit logistic fit later.</p> 
+</section> 
+
+
+<section xml:id="section-example-implicit-equation">
+<title>Fitting an ellipse to data points</title>
+
+<p>Not all data points represent a function of the form <m>y = f(x)</m>. They may happen to accumulate along some closed curve such as an ellipse. General implicit equation of an ellipse is 
+<men xml:id="eq-ellipse-implicit">
+Ax^2 + Bxy + Cy^2 + Dx + Ey  = 1
+</men>
+There are five unknown coefficients here. So, given a set of points <m>(x_k, y_k)</m>, <m>k=1, \dots, n</m>, we get a linear system by plugging each point into <xref ref="eq-ellipse-implicit" />. Its least squares solution describes an ellipse that fits the data best in the sense of having the smallest sum 
+<me>\sum_{k=1}^n (Ax_k^2 + Bx_ky_k + Cy_k^2 + Dx_k + Ey_k  - 1)^2</me>
+which should hopefully fit the ellipse. </p>
+
+
+<example xml:id="example-best-fit-ellipse">
+  <title>Fit an ellipse to given points</title> 
+<statement><p>Plot an ellipse that fits the given 7 data points: 
+<cd>  
+x = [1 2 4 5 4 3 1]'; 
+y = [2 0 -1 1 2 3 4]';
+</cd>
+Then plot it together with the points, using <c>fimplicit</c> command. Its syntax is 
+<cd>
+fimplicit(@(x, y) ..., [xmin xmax ymin ymax])  
+</cd>
+where the first argument is the implicit equation (something equated to 0), and the second is the plot window.</p>
+</statement>
+<answer><p>The vector <c>y</c> is already defined above, but we need to compute proportions <c>p = y/133</c> and transform them by <c>yt = log(p/(1-p))</c>. Then the usual linear regression is applied. </p>
+<pre> 
+X = [x.^2 x.*y y.^2 x y];
+b = X\ones(7, 1);
+hold on
+plot(x, y, 'r*')
+fun = @(x, y) b(1)*x.^2 + b(2)*x.*y + b(3)*y.^2 + b(4)*x + b(5)*y - 1;
+win = [min(x)-1 max(x)+1 min(y)-1 max(y)+1]; 
+fimplicit(fun, win)
+hold off
+</pre>
+<p>Here the vector of parameters is called <c>b</c> instead of <c>beta</c> to shorten the implicit formula.
+It is obtained by solving a system with 1 on the right hand side, according to <xref ref="eq-ellipse-implicit" />. The plot window is calculated from the data to allow margins of 1 unit on all sides.</p>
+
+<p> Note that while it's safe to leave spaces around <c>+</c> signs in the formula <c>fun</c> (some find it improves readability), one has to be extra careful with such spaces within a vector. Indeed, 
+<cd>
+[min(x) -1 max(x) +1 min(y) -1 max(y) +1]  
+</cd>
+would be a vector of 8 numbers, not 4. Matlab does understand 
+<cd>
+[min(x) - 1 max(x) + 1 min(y) - 1 max(y) + 1];
+</cd>
+as a vector of 4 numbers, however. </p>
+</answer></example>
+
+<question><title>Vectorizing a function for implicit plot</title>
+<p>It is tempting to write the anonymous function as <c>fun = @(x, y) [x.^2 x.*y y.^2 x y]*b - 1</c> which is shorter and consistent with how we used parameters in the past. And this works but Matlab complains: 
+<q>Warning: Function behaves unexpectedly on array inputs. To improve performance, properly vectorize your function to return an output with the same size and shape as the input arguments.</q> What is it complaining about? </p>
+</question>
+</section>
+
+<exercises xml:id="exercises-transforming-data">
+    <title>Homework</title>
+
+    <exercise number="1">
+        <statement>
+<p> A <term>power law</term> is a function of the form <m>y = a x^p</m>. By taking logarithm on both sides we get <m>\log y = p \log x + \log a</m>, which is a linear function of <m>\log x</m>. So, to fit a power law to given data <m>(x_k, y_k)</m>, we apply the logarithm to both <m>x_k</m> and <m>y_k</m>, and follow the linear regression process.  Try this with France COVID data <xref ref="example-best-fit-exponential" />. Does the power law fit better or worse than exponential? (Compare visually, on the basis of plots.) </p></statement> </exercise>
+  
+<exercise number="2">
+        <statement>
+<p> The number of active COVID cases at SU duing October 1 - October 23 is given below.
+<cd>
+y = [5 5 4 5 9 25 45 65 77 87 87 89 97 101 90 74 57 26 20 13 12 12 13]'; 
+</cd>
+The x-values can be <c>x = (1:23)'</c>. Considering the shape of this data, one may want to model it by a rational function of the form <m>y = 1/(Ax^2 + Bx+ C)</m> (to see why, think of how <m>y=1/(x^2+1)</m> looks.)
+Following the logic of <xref ref="example-best-fit-ellipse" />, rewrite the equation as 
+<m>Ax^2 y + Bxy + Cy = 1</m> and find the optimal <m>A, B, C</m> using least squares. Unlike in <xref ref="example-best-fit-ellipse" />, we do not need an implicit plot here since the function 
+<m>y = 1/(Ax^2 + Bx+ C)</m> can be plotted directly. Plot it together with the data points. How well does it fit?
+</p></statement></exercise>
+
+ 
+</exercises>
+
+</chapter>
+
+  
