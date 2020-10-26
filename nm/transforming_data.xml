@@ -164,7 +164,7 @@ as a vector of 4 numbers, however. </p>
         <statement>
 <p> A <term>power law</term> is a function of the form <m>y = a x^p</m>. By taking logarithm on both sides we get <m>\log y = p \log x + \log a</m>, which is a linear function of <m>\log x</m>. So, to fit a power law to given data <m>(x_k, y_k)</m>, we apply the logarithm to both <m>x_k</m> and <m>y_k</m>, and follow the linear regression process.  Try this with France COVID data <xref ref="example-best-fit-exponential" />. Does the power law fit better or worse than exponential? (Compare visually, on the basis of plots.) </p></statement> </exercise>
   
-<exercise number="2">
+<exercise number="2" xml:id="exercise-transforming-data-2">
         <statement>
 <p> The number of active COVID cases at SU duing October 1 - October 23 is given below.
 <cd>
@@ -176,6 +176,11 @@ Following the logic of <xref ref="example-best-fit-ellipse" />, rewrite the equa
 <m>y = 1/(Ax^2 + Bx+ C)</m> can be plotted directly. Plot it together with the data points. How well does it fit?
 </p></statement></exercise>
 
+<exercise number="3">
+        <statement>
+<p> There is an alternative approach to <xref ref="exercise-transforming-data-2" />: transform only <m>y</m> by <c>yt = 1./y</c> and fit a quadratic function to this transformed data in the usual way, using the matrix 
+<c>X = x.^(0:2)</c>. Then plot the reciprocal of that quadratic function. Try out this strategy. What goes wrong?
+</p></statement></exercise>
  
 </exercises>
 
