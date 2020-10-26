@@ -191,7 +191,7 @@ Replacing <c>k = 0:n-1</c> in the above code with <c>k = [0:(n-1)/2 (1-n)/2:-1];
 
     <exercise number="1">
         <statement>
-<p> (Theoretical) Show that if the numbers <m>z_0, \dots, z_{n-1}</m> are real and satisfy the symmetry condition <m>z_{n-\ell} = z_\ell</m> for <m>\ell=1, \dots, n-1</m>, then the Discrete Fourier Transform 
+<p> (Theoretical) Suppose <m>n</m> is an odd positive integer and that the numbers <m>z_0, \dots, z_{n-1}</m> are real and satisfy the symmetry condition <m>z_{n-\ell} = z_\ell</m> for <m>\ell=1, \dots, n-1</m>. Show that the Discrete Fourier Transform 
 <xref ref="eq-fourier-coefficients-discrete" /> also has real values.</p> 
 </statement></exercise>
   
