@@ -22,7 +22,7 @@
 is possible but requires optimization methods which we will consider later. There is an alternative approach:  instead of fitting <m>ae^{bx}</m> to the values <m>y_k</m>, fit its logarithm, <m>bx + \log a</m>, to the values 
 <m>\log y_k</m>. This means we will minimize the sum of squares of differences of (natural) logarithms: 
 <men xml:id="eq-sum-squares-exponential-log">
-  \sum_{k=1}^n \left(\log(y_k) - bx - \log a\right)^2 \to \min
+  \sum_{k=1}^n \left(\log(y_k) - bx_k - \log a\right)^2 \to \min
 </men>
 </p>
 
@@ -84,7 +84,7 @@ y = [1 1 1 5 8 10 27 44 62 93 101 110 112 115 116 117 118 120]';
 </cd>
 Consider these as proportions of the total <q>population</q> of 121 and fit a logistic function to these proportions. </p> 
 </statement>
-<answer><p>The vector <c>y</c> is already defined above, but we need to compute proportions <c>p = y/133</c> and transform them by <c>yt = log(p/(1-p))</c>. Then the usual linear regression is applied. </p>
+<answer><p>The vector <c>y</c> is already defined above, but we need to compute proportions <c>p = y/121</c> and transform them by <c>yt = log(p/(1-p))</c>. Then the usual linear regression is applied. </p>
 <pre> 
 x = (1:numel(y))';  
 p = y/121;
