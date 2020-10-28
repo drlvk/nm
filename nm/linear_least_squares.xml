@@ -199,7 +199,7 @@ disp(ts')
   
 <exercise number="2">
         <statement>
-<p> The number of active COVID cases at SU duing October 1 - October 23 is given below.
+<p> The number of active Covid cases at SU during October 1 - October 23 is given below.
 <cd>
 y = [5 5 4 5 9 25 45 65 77 87 87 89 97 101 90 74 57 26 20 13 12 12 13]'; 
 </cd>
