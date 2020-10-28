@@ -40,7 +40,7 @@ The least squares solution of <xref ref="eq-transformed-lls" /> is the vector <m
 
 <example xml:id="example-best-fit-exponential">
   <title>Fit an exponential to Covid data</title> 
-<statement><p>The following are new COVID-19 infections in France as reported on Fridays in September-October (from Sep 4 to Oct 23).
+<statement><p>The following are new Covid infections in France as reported on Fridays in September-October (from Sep 4 to Oct 23).
 <cd>
 y = [6011 7742 9335 12048 10946 14618 20399 29472]';  
 </cd>
@@ -74,11 +74,11 @@ with <m>a, k > 0</m> depending on coefficient <m>c</m> (which we usually don't k
 </men>
 Thus, we can fit a linear function to the values <m>\log(y_k/(1-y_k))</m> and then apply the inverse of the transformation <m>z = \log(y/(1-y))</m>, which is <m>y = 1 / (1+e^{-z})</m>. </p>
 
-<p>The logistic model can reasonable apply to other processes which are slow initially, speed up, and then slow down again. The following example, where <q>population</q> consists of COVID-positive students, models the process of their recovery. </p>  
+<p>The logistic model can reasonable apply to other processes which are slow initially, speed up, and then slow down again. The following example, where <q>population</q> consists of Covid-positive students, models the process of their recovery. </p>  
 
 <example xml:id="example-best-fit-logistic">
-  <title>Fit a logistic function to COVID data</title> 
-<statement><p>There were at least 121 reported COVID infections among SU students between October 8 and October 26. The following are the cumulative counts of people recovered, day by day, starting with October 9.
+  <title>Fit a logistic function to Covid data</title> 
+<statement><p>There were at least 121 reported Covid infections among SU students between October 8 and October 26. The following are the cumulative counts of people recovered, day by day, starting with October 9.
 <cd>
 y = [1 1 1 5 8 10 27 44 62 93 101 110 112 115 116 117 118 120]';  
 </cd>
@@ -162,16 +162,16 @@ as a vector of 4 numbers, however. </p>
 
     <exercise number="1">
         <statement>
-<p> A <term>power law</term> is a function of the form <m>y = a x^p</m>. By taking logarithm on both sides we get <m>\log y = p \log x + \log a</m>, which is a linear function of <m>\log x</m>. So, to fit a power law to given data <m>(x_k, y_k)</m>, we apply the logarithm to both <m>x_k</m> and <m>y_k</m>, and follow the linear regression process.  Try this with France COVID data <xref ref="example-best-fit-exponential" />. Does the power law fit better or worse than exponential? (Compare visually, on the basis of plots.) </p></statement> </exercise>
+<p> A <term>power law</term> is a function of the form <m>y = a x^p</m>. By taking logarithm on both sides we get <m>\log y = p \log x + \log a</m>, which is a linear function of <m>\log x</m>. So, to fit a power law to given data <m>(x_k, y_k)</m>, we apply the logarithm to both <m>x_k</m> and <m>y_k</m>, and follow the linear regression process.  Try this with France Covid data <xref ref="example-best-fit-exponential" />. Does the power law fit better or worse than exponential? (Compare visually, on the basis of plots.) </p></statement> </exercise>
   
 <exercise number="2" xml:id="exercise-transforming-data-2">
         <statement>
-<p> The number of active COVID cases at SU duing October 1 - October 23 is given below.
+<p> The number of active Covid cases at SU during October 1 - October 23 is given below.
 <cd>
 y = [5 5 4 5 9 25 45 65 77 87 87 89 97 101 90 74 57 26 20 13 12 12 13]'; 
 </cd>
 The x-values can be <c>x = (1:23)'</c>. Try to fit a <q>bell-shaped</q> Gaussian function 
-<m>y = \exp(Ax^2+Bx+C)</m> (where <m>C\lt 0</m>) to the data. This can be done by the logarithmic transform 
+<m>y = \exp(Ax^2+Bx+C)</m> (where <m>A\lt 0</m>) to the data. This can be done by the logarithmic transform 
 <c>yt = log(y)</c> followed by fitting a quadratic function to transformed data in the usual way, via the matrix 
 <c>X = x.^(0:2)</c>. Having found the parameters <c>beta</c>, we get a suitable function
 <c>f = @(x) exp(x.^(0:2)*beta)</c> which should be plotted together with the data points. 
