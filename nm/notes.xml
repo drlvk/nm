@@ -91,6 +91,7 @@ along with MathBook XML.  If not, see <http://www.gnu.org/licenses/>.
             <xi:include href="./dft_applications.xml" />
             <xi:include href="./linear_least_squares.xml" />
             <xi:include href="./transforming_data.xml" />
+            <xi:include href="./nonlinear_least_squares.xml" />
         </part>
 
         <part xml:id="part-optimization">

@@ -84,11 +84,11 @@ y = [1 1 1 5 8 10 27 44 62 93 101 110 112 115 116 117 118 120]';
 </cd>
 Consider these as proportions of the total <q>population</q> of 121 and fit a logistic function to these proportions. </p> 
 </statement>
-<answer><p>The vector <c>y</c> is already defined above, but we need to compute proportions <c>p = y/121</c> and transform them by <c>yt = log(p/(1-p))</c>. Then the usual linear regression is applied. </p>
+<answer><p>The vector <c>y</c> is already defined above, but we need to compute proportions <c>p = y/121</c> and transform them by <c>yt = log(p./(1-p))</c>. Then the usual linear regression is applied. </p>
 <pre> 
 x = (1:numel(y))';  
 p = y/121;
-yt = log(p/(1-p));
+yt = log(p./(1-p));
 X = x.^(0:1); 
 beta = X\yt;
 f = @(x) 1 ./ (1 + exp(-(x.^(0:1))*beta));
@@ -170,16 +170,22 @@ as a vector of 4 numbers, however. </p>
 <cd>
 y = [5 5 4 5 9 25 45 65 77 87 87 89 97 101 90 74 57 26 20 13 12 12 13]'; 
 </cd>
-The x-values can be <c>x = (1:23)'</c>. Considering the shape of this data, one may want to model it by a rational function of the form <m>y = 1/(Ax^2 + Bx+ C)</m> (to see why, think of how <m>y=1/(x^2+1)</m> looks.)
-Following the logic of <xref ref="example-best-fit-ellipse" />, rewrite the equation as 
-<m>Ax^2 y + Bxy + Cy = 1</m> and find the optimal <m>A, B, C</m> using least squares. Unlike in <xref ref="example-best-fit-ellipse" />, we do not need an implicit plot here since the function 
-<m>y = 1/(Ax^2 + Bx+ C)</m> can be plotted directly. Plot it together with the data points. How well does it fit?
+The x-values can be <c>x = (1:23)'</c>. Try to fit a <q>bell-shaped</q> Gaussian function 
+<m>y = \exp(Ax^2+Bx+C)</m> (where <m>C\lt 0</m>) to the data. This can be done by the logarithmic transform 
+<c>yt = log(y)</c> followed by fitting a quadratic function to transformed data in the usual way, via the matrix 
+<c>X = x.^(0:2)</c>. Having found the parameters <c>beta</c>, we get a suitable function
+<c>f = @(x) exp(x.^(0:2)*beta)</c> which should be plotted together with the data points. 
 </p></statement></exercise>
 
 <exercise number="3">
         <statement>
-<p> There is an alternative approach to <xref ref="exercise-transforming-data-2" />: transform only <m>y</m> by <c>yt = 1./y</c> and fit a quadratic function to this transformed data in the usual way, using the matrix 
-<c>X = x.^(0:2)</c>. Then plot the reciprocal of that quadratic function. Try out this strategy. What goes wrong?
+<p> As an alternative to <xref ref="exercise-transforming-data-2" />, one may try to model the same data 
+by a rational function of the form <m>y = 1/(Ax^2 + Bx+ C)</m>. (Indeed, the graph of function <m>y=1/(x^2+1)</m> 
+also looks bell-shaped.) Try following the process of  <xref ref="exercise-transforming-data-2" /> by transforming data <c>yt = 1./y</c>, fitting a quadratic function, and plotting the reciprocal of that function. What goes wrong? </p>
+
+<p>Then try the following fix to the issue encountered in the previous paragraph. 
+Following the logic of <xref ref="example-best-fit-ellipse" />, rewrite the equation 
+<m>y = 1/(Ax^2 + Bx+ C)</m> as <m>Ax^2 y + Bxy + Cy = 1</m> and find the optimal <m>A, B, C</m> using least squares. Unlike <xref ref="example-best-fit-ellipse" />, you do not need <c>fimplicit</c> to plot this function since the function <m>y = 1/(Ax^2 + Bx+ C)</m> can be plotted directly. Plot it together with the data points. Does it fit better or worse than the Gaussian function in <xref ref="exercise-transforming-data-2" />? 
 </p></statement></exercise>
  
 </exercises>
