@@ -32,7 +32,7 @@ S(A, M, r) = \sum_{k=1}^n \left(y_k - \frac{M}{1 + Ae^{-rx_k}}\right)^2
 </men>
 Since <m>S</m> is a smooth function, we could theoretically try the multivariable calculus approach: finds its partial derivatives of first order, equate them to zero, and solve the resulting system of equations:
 <men xml:id="eq-critical-points-eq">
-\frac{\partial S}{\partial A} = 0, \quad \frac{\partial S}{\partial M} = 0, \frac{\partial S}{\partial r} = 0
+\frac{\partial S}{\partial A} = 0, \quad \frac{\partial S}{\partial M} = 0, \quad \frac{\partial S}{\partial r} = 0
 </men>
 But this system will be <em>nonlinear</em> and is unlikely to have a symbolic solution. Should we try some  multivariable root-finding method such as Newton's method?</p>   
 
@@ -51,13 +51,13 @@ returns <c>-0.5</c> which is where the function is minimal. The choice of initia
 <cd>
 fminsearch(@(x) x^4 - x^2, 0)
 </cd>
-the initial point matters: the function may find the minimum 0.7071 or -0.7071. Note that <c>fminsearch</c> is not misled by <m>x=0</m> which is also critical point: it can tell a difference between minimum and maximum.</p>
+the initial point matters: the function may find the minimum 0.7071 or -0.7071. Note that <c>fminsearch</c> is not misled by <m>x=0</m> which is also a critical point: it can tell a difference between minimum and maximum.</p>
 
 <p>As most numerical methods, <c>fminsearch</c> may fail at its task:  
 <cd>
 fminsearch(@(x) exp(x), 0)  
 </cd>
-returns <c>-786.4315</c> (there are no points of minimum, of course), while 
+returns <q>-786.4315</q> (there are no points of minimum, of course), while 
 <cd>
 fminsearch(@(x) x^3 - x, 4)
 </cd>
@@ -71,7 +71,7 @@ finds the minimum of <m>b_1^2 + b_2^4 + 3b_1 - b_2</m> (using letter b to shorte
 
 
 <example xml:id="example-best-fit-logistic-nls">
-  <title>Fit a logistic function to COVID data</title> 
+  <title>Fit a logistic function to Covid data</title> 
 <statement><p> Fit a general logistic curve to the data in <xref ref="example-best-fit-logistic" /> without variable transformations.</p></statement> 
 <answer><p>Once we have the data <c>x, y</c>, we can set up the sum-of-squares function <c>S</c> according to
  <xref ref="eq-sum-logistic-residuals" />. The parameters are to be represented by the components 
@@ -83,7 +83,7 @@ x = 1:numel(y);
  
 f = @(x, b) b(2)./(1+b(1)*exp(-b(3)*x));                  % the model equation
 opt = fminsearch(@(b) sum((y - f(x, b)).^2), [1; 1; 1]);  % optimal b
-x
+
 t = linspace(min(x), max(x), 1000)';
 plot(t, f(t, opt), 'b', x, y, 'r*')
 </pre>
@@ -104,7 +104,7 @@ deviations <c>y - f(x, b)</c>. Finally, the optimal (?) values of parameter <c>b
 <p>The theory of partial differential equations tells us that if a substance diffuses from a point source at 
 <m>(u, v)</m> under somewhat idealized conditions (ignoring currents, decay, etc) then its concentration after some time will be expressed by the two-dimensional Gaussian function 
 <men xml:id="eq-2d-gaussian">
-z = A\exp(-C((x-u)^2 + (y-v)^2))
+z = A\exp\left(-C((x-u)^2 + (y-v)^2)\right)
 </men>
 Here <m>A, C</m> are the shape parameters of the Gaussian (describing how tall and wide it is) and <m>(u, v)</m> are its location parameters (where it is centered). We are really interested in the latter, but all four will need to be determined by the nonlinear least squares process.</p> 
 
@@ -168,7 +168,7 @@ with
 
     <exercise number="1">
         <statement>
-<p> Consider the count of world-wide COVID cases (<url href="https://www.nytimes.com/interactive/2020/world/coronavirus-maps.html">source</url>):</p>
+<p> Consider the count of world-wide Covid cases (<url href="https://www.nytimes.com/interactive/2020/world/coronavirus-maps.html">source</url>):</p>
 
 <figure xml:id="covid-world-png"><image source="images/covid_world.png" /> <caption>New reported cases</caption></figure>
 
@@ -179,10 +179,10 @@ To reduce the amount of data, let's use the 7-day averages reported on the 1st, 
 <pre>
 y = [1 4 21 67 80 79 77 85 94 110 126 148 180 205 230 257 259 254 265 267 292 295 337 389];  
 </pre>
-<p>Corresponding x-values are simply <m>x = 1:numel(y)</m>. Run <c>plot(x, y, '*')</c> to help with choosing initial parameters, as described below. 
+<p>Corresponding x-values are simply <c>x = 1:numel(y)</c>. Run <c>plot(x, y, '*')</c> to visualize the data: this will help with choosing initial parameters, as described below.
 </p>
 
-<p>High-dimensional optimization is difficult, and <c>fminsearch</c> will need your help in the form of a good initial point. The logistic equation <xref ref="eq-logistic-curve-shift" /> leads to the 9-parameter model
+<p>High-dimensional optimization is difficult, and <c>fminsearch</c> will need your help in the form of a good initial point (<c>ones(9, 1)</c> is not good enough). The logistic equation <xref ref="eq-logistic-curve-shift" /> leads to the 9-parameter model
 <men xml:id="eq-sum-logistic-curves">
  y = \frac{M_1}{1 + e^{-r_1 (x-a_1)}} + \frac{M_2}{1 + e^{-r_2 (x-a_2)}} + \frac{M_3}{1 + e^{-r_3 (x-a_3)}}
 </men>

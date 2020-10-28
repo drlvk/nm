@@ -39,7 +39,7 @@ The least squares solution of <xref ref="eq-transformed-lls" /> is the vector <m
 
 
 <example xml:id="example-best-fit-exponential">
-  <title>Fit an exponential to COVID data</title> 
+  <title>Fit an exponential to Covid data</title> 
 <statement><p>The following are new COVID-19 infections in France as reported on Fridays in September-October (from Sep 4 to Oct 23).
 <cd>
 y = [6011 7742 9335 12048 10946 14618 20399 29472]';  
