@@ -148,8 +148,7 @@ X = x.^(0:d);
 beta = X\y;        
 f = @(x) (x.^(0:d))*beta; 
 
-n = numel(y);
-p = d+1;
+[n, p] = size(X);
 s2 = norm(y-f(x))^2/(n-p);
 C = s2*inv(X'*X);         
 ts = beta./sqrt(diag(C));
@@ -186,7 +185,7 @@ ts = beta./sqrt(diag(C));
 disp('t-statistic values');
 disp(ts')
 </pre> 
-<p>How to intepret these results? Can the model be improved by discarding some explanatory variable which fail to explain anything?</p> 
+<p>How to intepret these results? Can the model be improved by discarding some explanatory variables which fail to explain anything?</p> 
 </section> 
 
 
