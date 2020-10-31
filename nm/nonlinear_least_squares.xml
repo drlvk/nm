@@ -36,7 +36,7 @@ Since <m>S</m> is a smooth function, we could theoretically try the multivariabl
 </men>
 But this system will be <em>nonlinear</em> and is unlikely to have a symbolic solution. Should we try some  multivariable root-finding method such as Newton's method?</p>   
 
-<p>In practice, trying to minimize a function by solving <xref ref="eq-critical-points-eq" /> is not the most productive approach: there are probably many critical points, some of them saddle points, and some of them may be poitns of local maximum rather than minimum. It is better to search for a minimum directly, which is a problem of <term>multivariable optimization</term>. We will study optimization in the last part of this course. For now, we'll use the built-in Matlab tool <c>fminsearch</c>, the underlying principle of which (the Nelder-Mead method) will be considered later. </p>
+<p>In practice, trying to minimize a function by solving <xref ref="eq-critical-points-eq" /> is not the most productive approach: there are probably many critical points, some of them saddle points, and some of them may be points of local maximum rather than minimum. It is better to search for a minimum directly, which is a problem of <term>multivariable optimization</term>. We will study optimization in the last part of this course. For now, we'll use the built-in Matlab tool <c>fminsearch</c>, the underlying principle of which (the Nelder-Mead method) will be considered later. </p>
 
 </section>
 
@@ -73,7 +73,7 @@ finds the minimum of <m>b_1^2 + b_2^4 + 3b_1 - b_2</m> (using letter b to shorte
 <example xml:id="example-best-fit-logistic-nls">
   <title>Fit a logistic function to Covid data</title> 
 <statement><p> Fit a general logistic curve to the data in <xref ref="example-best-fit-logistic" /> without variable transformations.</p></statement> 
-<answer><p>Once we have the data <c>x, y</c>, we can set up the sum-of-squares function <c>S</c> according to
+<solution><p>Once we have the data <c>x, y</c>, we can set up the sum-of-squares function <c>S</c> according to
  <xref ref="eq-sum-logistic-residuals" />. The parameters are to be represented by the components 
  <c>b(1), b(2), b(3)</c> in some order (I use the alphabetical order <m>A, M, r</m>). The parameters should be positive, so perhaps <c>[1; 1; 1]</c> can be our initial point. The orientation of data vectors 
 <c>x, y</c> does not matter here since we no longer make a linear system out of them. </p>
@@ -91,7 +91,7 @@ plot(t, f(t, opt), 'b', x, y, 'r*')
 explanatory variable(s) <c>x</c> and parameter(s) <c>b</c>, then minimize the sum of squares of the 
 deviations <c>y - f(x, b)</c>. Finally, the optimal (?) values of parameter <c>b</c> are used to plot the best-fitting curve. </p>
 
-<p>The above code fails, as is often the case with multivariable optimization. We should think of a better way to choose the initial point than just <c>[1; 1; 1]</c>. For example, the second parameter is the carrying capacity, and this is clearly at least as large as 120. An initial point like <c>[1; 100; 1]</c> does the job. Note that the fit is much better than what we achieved in <xref ref="example-best-fit-logistic" />.</p></answer></example>
+<p>The above code fails, as is often the case with multivariable optimization. We should think of a better way to choose the initial point than just <c>[1; 1; 1]</c>. For example, the second parameter is the carrying capacity, and this is clearly at least as large as 120. An initial point like <c>[1; 100; 1]</c> does the job. Note that the fit is much better than what we achieved in <xref ref="example-best-fit-logistic" />.</p></solution></example>
 
 </section>
 
@@ -119,13 +119,13 @@ z = [3 9 8 4 6 9 8 3 6 6 5];
   <title>Find the source of pollution</title> 
 <statement><p> Fit a two-dimensional Gaussian to the above data and report the expected location of the source.  
 </p></statement>
-<answer><p>The problem is solved in three lines: model function, optimization, output. The components of vector <c>b</c> below represent the parameters  <m>A, C, u, v</m> in this order.</p>
+<solution><p>The problem is solved in three lines: model function, optimization, output. The components of vector <c>b</c> below represent the parameters  <m>A, C, u, v</m> in this order.</p>
 <pre>
 f = @(x, y, b) b(1)*exp(-b(2)*((x-b(3)).^2 + (y-b(4)).^2));
 opt = fminsearch(@(b) sum((z - f(x, y, b)).^2), [1; 1; 1; 1]);
 fprintf('The source is located near (%g, %g) \n', opt(3:4))
 </pre>
-</answer></example>
+</solution></example>
 
 </section>
 

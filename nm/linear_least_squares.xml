@@ -53,7 +53,7 @@ which shows how much of the variability in observation is predicted by the model
 <example xml:id="example-best-fit-polynomial">
   <title>Fitting a polynomial of any degree</title> 
 <statement><p>Improve <xref ref="example-parabola-best-fit" /> to work with polynomials of any degree <m>d</m>, and add a computation of <m>R^2</m> to it.</p></statement>
-<answer><pre> 
+<solution><pre> 
 x = (0:14)';  
 y = [9 8 5 5 3 1 2 5 4 7 8 8 7 7 8]';  % data
 d = 2;                     % degree of polynomial
@@ -67,7 +67,7 @@ plot(t, f(t), 'b', x, y, 'r*')
 total = norm(y - mean(y))^2;
 residual = norm(y - f(x))^2;
 fprintf('R^2 for degree %d is %g\n', d, 1 - residual/total);
-</pre></answer></example>
+</pre></solution></example>
 
 <p>If we increase <m>n</m> toward <m>7</m>, the curve gets closer to the points but it also becomes more wiggly. Most importantly, the prediction it makes for <m>x=10</m>, that is <m>f(10)</m>, becomes less realistic. This is <term>overfitting</term>, which describes the situation in which our model <m>f</m> mostly memorizes the data instead of learning from it. (<url href="https://imgs.xkcd.com/comics/curve_fitting_2x.png">Food for thought from xkcd</url>)</p>
 
@@ -86,7 +86,7 @@ x_test = x(2:2:end);
 <example xml:id="example-training-testing">
   <title> Training-testing split</title> 
 <statement><p>Use the training-testing split in <xref ref="example-best-fit-polynomial" />. </p></statement>
-<answer><pre> 
+<solution><pre> 
 x = (0:14)';  
 y = [9 8 5 5 3 1 2 5 4 7 8 8 7 7 8]';
 x_train = x(1:2:end);
@@ -106,7 +106,7 @@ plot(t, f(t), 'b', x, y, 'r*')
 total = norm(y_test - mean(y_test))^2;
 residual = norm(y_test - f(x_test))^2;
 fprintf('R^2 for degree %d is %g\n', d, 1 - residual/total);
-</pre></answer></example>
+</pre></solution></example>
 
 <p>An additional detail: when one reports the model performance (not in this class, but perhaps for a publication), the reported value of <m>R^2</m> or other estimate of goodness-of-fit should be computed on a separate <term>validation set</term> which was not used for either training or testing. Using the testing set for reporting <m>R^2</m> introduces a subtle source of bias: if <em>many</em> models are tested, and one of them wins, it is more likely than not that the winning model <q>had better luck</q> with the specific data set used for testing, and that would lead us to overestimate its goodness-of-fit. (Here is an <url href="https://imgs.xkcd.com/comics/significant.png">example</url> of testing too many models and not validating.) </p> 
 
@@ -139,7 +139,7 @@ ts = beta./sqrt(diag(C));    % the t-statistics of the parameters
 <example xml:id="example-t-statistics-parameters">
   <title> Computing the t-statistics of parameters</title> 
 <statement><p>Modify <xref ref="example-best-fit-polynomial" /> to include the computation of t-statistics for each coefficient of the polynomial. </p></statement>
-<answer><p>Note that the vector of t-statistics, which is called <c>ts</c> below, contains the statistics for the coefficients of <m>x^0, \dots, x^d</m> in this order. This means that <m>ts(end)</m> is really the value of most interest here.</p>
+<solution><p>Note that the vector of t-statistics, which is called <c>ts</c> below, contains the statistics for the coefficients of <m>x^0, \dots, x^d</m> in this order. This means that <m>ts(end)</m> is really the value of most interest here.</p>
 <pre> 
 x = (0:14)';  
 y = [9 8 5 5 3 1 2 5 4 7 8 8 7 7 8]'; 
@@ -153,7 +153,7 @@ s2 = norm(y-f(x))^2/(n-p);
 C = s2*inv(X'*X);         
 ts = beta./sqrt(diag(C));
 disp(ts)
-</pre></answer></example> 
+</pre></solution></example> 
 </section>
 
 <section xml:id="section-multiple-regression">

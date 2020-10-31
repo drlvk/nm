@@ -48,7 +48,7 @@ Fit an exponential function to this data, using week numbers <c>1:8</c> as x-val
 Extend it two weeks into the future by plotting it up to <m>x=10</m>. Include the original data on the plot.
 </p> 
 </statement>
-<answer><p>The vector <c>y</c> is already defined above, but we need <c>yt = log(y)</c> to get transformed y-values.</p>
+<solution><p>The vector <c>y</c> is already defined above, but we need <c>yt = log(y)</c> to get transformed y-values.</p>
 <pre> 
 x = (1:8)';  
 yt = log(y);
@@ -58,7 +58,7 @@ f = @(x) exp((x.^(0:1))*beta);
 
 t = linspace(1, 10, 1000)';
 plot(t, f(t), 'b', x, y, 'r*')
-</pre></answer></example>
+</pre></solution></example>
 </section>
 
 <section xml:id="section-example-logistic-fit">
@@ -84,7 +84,7 @@ y = [1 1 1 5 8 10 27 44 62 93 101 110 112 115 116 117 118 120]';
 </cd>
 Consider these as proportions of the total <q>population</q> of 121 and fit a logistic function to these proportions. </p> 
 </statement>
-<answer><p>The vector <c>y</c> is already defined above, but we need to compute proportions <c>p = y/121</c> and transform them by <c>yt = log(p./(1-p))</c>. Then the usual linear regression is applied. </p>
+<solution><p>The vector <c>y</c> is already defined above, but we need to compute proportions <c>p = y/121</c> and transform them by <c>yt = log(p./(1-p))</c>. Then the usual linear regression is applied. </p>
 <pre> 
 x = (1:numel(y))';  
 p = y/121;
@@ -95,7 +95,7 @@ f = @(x) 1 ./ (1 + exp(-(x.^(0:1))*beta));
 
 t = linspace(min(x), max(x), 1000)';
 plot(t, f(t), 'b', x, p, 'r*')
-</pre></answer></example>
+</pre></solution></example>
 
 <p> The outcome of <xref ref="example-best-fit-logistic" /> is not entirely satisfactory. The logit transformation emphasizes the values near 0 and 1, and de-emphasizes those in between. We will revisit logistic fit later.</p> 
 </section> 
@@ -126,7 +126,7 @@ fimplicit(@(x, y) ..., [xmin xmax ymin ymax])
 </cd>
 where the first argument is the implicit equation (something equated to 0), and the second is the plot window.</p>
 </statement>
-<answer><p>The vector <c>y</c> is already defined above, but we need to compute proportions <c>p = y/133</c> and transform them by <c>yt = log(p/(1-p))</c>. Then the usual linear regression is applied. </p>
+<solution><p>The vector <c>y</c> is already defined above, but we need to compute proportions <c>p = y/133</c> and transform them by <c>yt = log(p/(1-p))</c>. Then the usual linear regression is applied. </p>
 <pre> 
 X = [x.^2 x.*y y.^2 x y];
 b = X\ones(7, 1);
@@ -149,7 +149,7 @@ would be a vector of 8 numbers, not 4. Matlab does understand
 [min(x) - 1 max(x) + 1 min(y) - 1 max(y) + 1];
 </cd>
 as a vector of 4 numbers, however. </p>
-</answer></example>
+</solution></example>
 
 <question><title>Vectorizing a function for implicit plot</title>
 <p>It is tempting to write the anonymous function as <c>fun = @(x, y) [x.^2 x.*y y.^2 x y]*b - 1</c> which is shorter and consistent with how we used parameters in the past. And this works but Matlab complains: 

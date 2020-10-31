@@ -68,7 +68,7 @@ returns the number <c>thr</c> such that 75 percent of Fourier coefficients are l
 <example xml:id="example-compress-image">
   <title> Compress an image using Discrete Fourier Transform</title> 
 <statement><p>Given a percentage <c>p</c>, such as 75, compress the <q>winter</q> image by setting <c>p</c> percent of its Fourier coefficients to zero.</p></statement>
-<answer><pre>
+<solution><pre>
 p = 75;
 im = imread('winter.png');
 fc = fft2(im);
@@ -78,7 +78,7 @@ im2 = uint8(real(ifft2(fc)));
 imshow(im2)
 </pre>
 <p>The inverse Fourier transform may have imaginary part due to the truncation of Fourier coefficients and rounding errors in computations. This imaginary part is removed with <c>real</c>. The result is converted to unsigned 8-bit integers with <c>uint8</c>. </p> 
-</answer> </example> 
+</solution> </example> 
  
 <p>The <url href="https://en.wikipedia.org/wiki/JPEG#Encoding">JPEG compression algorithm</url> is based on the Fourier Transform but differs from the above example in several ways: 
 <ul><li>It divides the image into 8<times/>8 pixel blocks and operates on each block separately.</li>
@@ -138,7 +138,7 @@ And of course, Matlab indexing of the coefficients begins with 1, forcing anothe
 <example xml:id="example-cosine-interpolation">
   <title> Interpolate with cosines</title> 
 <statement><p>Apply the cosine interpolation to the numerical solution of ODE <xref ref="eq-diffeq-for-intepolation" />. </p></statement>
-<answer><p>Since <c>ode45</c> returns <c>y</c> as a column, it is transposed in the code below. Then we extend this vector to <c>ye</c>, take its Fourier Transform <c>c</c>, and fold it into cosine coefficients <c>cf</c>. Then plot the resulting sum of cosines.</p>
+<solution><p>Since <c>ode45</c> returns <c>y</c> as a column, it is transposed in the code below. Then we extend this vector to <c>ye</c>, take its Fourier Transform <c>c</c>, and fold it into cosine coefficients <c>cf</c>. Then plot the resulting sum of cosines.</p>
 <pre>
 [t, y] = ode45(@(t, y) sin(y^2) + t, 0:0.1:3, 1);
 y = y';
@@ -154,7 +154,7 @@ k = 0:n-1;
 g = cf*cos(k'*x*pi/L);
 plot(x, g, t, y, 'r*')
 </pre>
-</answer> </example> 
+</solution> </example> 
 
 <p>The cosine sum in <xref ref="example-cosine-interpolation" /> has 31 terms, as many as there are data points. But many of them are very close to zero, as <c>plot(cf)</c> shows. For example, we could keep the first <c>m=8</c> of them and still have a good approximation for this function.</p>
 <pre>

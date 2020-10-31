@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<chapter xml:id="chapter-single-variable-minimization" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+<title>Single Variable Minimization</title>
+
+
+    <introduction>
+        <p>The problem of optimization is to find, approximately, a minimum (preferably global) of a given function (on a certain set). There are some parallels with root-finding methods of <xref ref="part-equations" /> (related to the gradient being zero at the critical points) but the subjects turn out to be different. We begin the study of optimization with minimization of a given function on an interval.
+      </p>
+    </introduction>
+
+
+<section xml:id="section-introduction-optimization">
+<title>Basic concepts of optimization</title>
+
+<p> Optimization may be naturally stated as search for maximum (for example, maximum profit) or minimum (minimum cost). But since every point of maximum of  a function <m>f</m> is also a point of minimum of <m>-f</m>, it is enough to study the minimization problem. </p> 
+
+<p>Suppose <m>f\colon E\to \mathbb R</m> is a real-valued function on some set <m>E\subset \mathbb R^d</m>. The function attains its <term>global minimum</term> at <m>p\in E</m> if <m>f(x)\ge f(p)</m> for all <m>x\in E</m>. It is possible to have several points of global minimum, for example <m>f(x)=\sin x</m> on the interval <m>[0, 4\pi]</m> attains global minimum of <m>-1</m> at the points <m>x=3\pi/2</m> and <m>x = 7\pi/2</m>. </p>
+
+<p>The <term>Extreme Value Theorem</term> states that if <m>f</m> is a continuous function and the set <m>E</m> is closed (includes all its boundary points) and bounded (is contained in some cube), then there is a point <m>p\in E</m> at which <m>f</m> attains its global minimum.</p>
+
+<p>A function <m>f</m> attains its <term>local minimum</term> at <m>p\in E</m> if there exists <m>r > 0</m> such that <m>f(x)\ge f(p)</m> for all <m>x\in E</m> such that <m>|x-r| \lt r</m>. That is, there exists a neighborhood of point <m>p</m> such that the smallest value of <m>f</m> in that neighborhood is <m>f(p)</m>. </p>
+
+<p>A major source of difficulty of optimization is searching for global minimum and finding only a local one. There is no universal recipe for avoiding this problem. Consider the function <m>f(x) = \sin x + \sin \sqrt{2}x</m> on some long interval such as <m>[-100, 100]</m>. Where is its global minimum? There is no reliable and efficient way to find it. </p>  
+
+<p>A function that has only one minimum on some set is called <m>unimodal</m>. For example, <m>f(x) = x^2 - x</m> is unimodal on the interval <m>[0, 2]</m> but <m>f(x) = x - x^2</m> is not (according to our definition; when people focus on maximum instead of minimum, the situation is reversed). Working with unimodal functions is much easier because our algorithm is much more likely to find minimum. </p>
+
+<p>A function is <term>convex</term> (also called <q>concave up</q> in calculus) if its graph lies below its secant lines, meaning 
+<men xml:id="eq-def-convexity">
+  f( (1-t) a + t b) \le t f(a) + (1-t) f(b), \quad 0 \lt  t \lt 1
+</men>
+A function is <term>strictly convex</term> if the inequality <xref ref="eq-def-convexity" /> is strict. Such a function is unimodal on any interval. (Can you find a unimodal function that is not convex?)</p> 
+
+<p>Also, <m>f</m> is called <term>concave</term> (in calculus, <q>concave down</q>) if the sign of inequality 
+in <xref ref="eq-def-convexity" /> is reversed. </p> 
+
+</section>
+ 
+
+<section xml:id="section-brute-force">
+<title>Brute force search</title>
+
+<p>This is a very direct approach to minimization of <m>f\colon [a, b]\colon \mathbb R</m>: choose some large number of points <m>x_1, \dots, x_n</m> on the interval, equally spaced, evaluate <m>f</m> at each point, take the minimum of <m>f(x_k)</m>. How close will this be to the actual global minimum? If <m>f</m> is differentiable and <m>|f'|\le M</m> on the interval, the mean value theorem implies
+<men xml:id="eq-mean-value-inequality">
+  |f(x)-f(y)| \le M|x-y| 
+</men>
+for all <m>x, y</m>. Placing <m>n</m> points  on the interval, we have intervals of size <m>h = (b-a)/(n-1)</m> between them. Hence, each point of the interval is within distance <m>h/2</m> of some grid point <m>x_k</m>. Therefore, 
+<men xml:id="eq-mvi-estimate">
+\min_{k} f(x_k) - \frac{Mh}{2} \le \min_{a\le x\le b} f(x)  \le \min_{k} f(x_k)
+</men>
+This may be good enough for a rough estimate of global minimum. One can also refine this estimate by applying a more advanced method on the interval <m>[x_{k-1}, x_{k+1}]</m> around the point <m>x_k</m> where <m>\min_{k} f(x_k)</m> is attained.</p>
+
+<p>In Matlab, the code for brute force search may look like
+<cd>
+x = linspace(a, b, n);
+y = f(x);
+[fm, ind] = min(y);
+</cd>
+Note the two-outputs form of <c>min</c> command: when used in this way, the first output is the value of minimum, and the second is the index at which it was found. So, <c>y(ind)</c> is the same as <c>fm</c> but more importantly, <c>x(ind)</c> is the corresponding <m>x</m>-value.</p> 
+
+
+<example xml:id="example-brute-force">
+  <title>Using brute force search on an interval</title> 
+<statement><p> Minimize <m>f(x) = \sin (x) + \sin (\sqrt{2}x)</m> on the interval <m>[0, 100]</m> using <m>n=100000</m> points. Then use <xref ref="eq-mvi-estimate" /> to estimate the true global minimum of <m>f</m> on this interval.</p> </statement> 
+<solution><pre>
+f = @(x) sin(x) + sin(sqrt(2)*x);
+a = 0;
+b = 100;
+n = 100000;   % number of points
+x = linspace(a, b, n);
+y = f(x);
+[fm, ind] = min(y);
+fprintf('Minimum %g attained near %g \n', fm, x(ind));
+</pre>
+<p>The output is  <q>Minimum -1.99306 attained near 29.9413</q>. To estimate the accurac, note that 
+<m>|f'(x)|\le 1+\sqrt{2}\approx 2.4</m> everywhere, and that <m>h = (100-0)/(10^6 - 1)\approx 10^{-4}</m>.
+So <m>Mh/2 \approx 0.00012</m> and therefore, the true global minimum of <m>f</m> lies between <m>-1.99306 - Mh/2 = -1.99218</m> and <m>-1.99306</m>.</p>
+</solution></example>
+
+<p>Brute force search requires many function evaluations, especially with several parameters. It is not practical as the primary search method, but may be useful in combination with other methods.</p> 
+
+</section>
+
+<section xml:id="section-newton-method-min">
+<title>Newton method for minimization</title>
+
+<p>If we can find the derivative <m>f'</m> (or gradient <m>\nabla f</m> in higher dimensions), it may be possible to apply one of root-finding methods of <xref ref="part-equations" /> to it. For example, Newton's method was one of those. But since we are solving <m>f'=0</m>, the method will involve the second derivative of <m>f</m>: it amounts to iteration of the function 
+<men xml:id="eq-iterate-newton-min">
+  g(x) = x - \frac{f'(x)}{f''(x)}
+</men>
+Let's try this out on a simple example.</p> 
+
+
+<example xml:id="example-newton-method-min">
+  <title>Using Newton method for minimization</title> 
+<statement><p> Minimize <m>f(x) = x^4 - 3 x^2 + x + 1</m> using the Newton method. How does the result depend on the initial point? </p> </statement> 
+<solution><p>First compute the derivatives <m>f'(x) = 4x^3 - 6x+1</m> and <m>f''(x) = 12x^2 - 6</m>. Then iterate the function <m>g</m> from <xref ref="eq-iterate-newton-min" /> as in 
+<xref ref="example-solve-fixed-point-iteration" />. Most of the code is copied from there. </p>
+<pre>
+f = @(x) x^4 - 3*x^2 + x + 1;
+fp = @(x) 4*x^3 - 6*x + 1;
+fpp = @(x) 12*x^2 - 6;
+
+g = @(x) x - fp(x)/fpp(x);
+x0 = 0;
+max_tries = 1000;
+for k = 1:max_tries
+    x1 = g(x0);
+    if abs(x1-x0) &lt; 100*eps(x0)
+        break
+    end
+    x0 = x1;
+end
+if k &lt; max_tries
+    fprintf('Found x = %g with f(x) = %g after %d steps\n', x1, f(x1), k);
+else
+    disp('Failed to converge')
+end
+</pre> 
+<p> The result is obtained quickly: <q>Found x = 0.169938 with f(x) = 1.08414 after 5 steps</q>. But is this a minimum? Try 
+<cd>
+t = linspace(-2, 2, 1000);
+plot(t, f(t))
+</cd> 
+to check. Also, note that looking at a graph like this is essentially a human-assisted brute-force search, since the function was evaluated on a uniform grid through the interval <m>[-2, 2]</m>.</p>
+
+<p>Do we get a better result with a different starting point?</p></solution></example>
+ 
+<p>The issue demonstrated by <xref ref="example-newton-method-min" />  is that applying Newton's method (or another root-finding method) to <m>f'</m> is equally likely to lead to a maximum as to a minimum. However, this can be useful when we know that a function has just one critical point and that point is a minimum.</p> 
+</section>
+
+
+<section xml:id="section-golden-section">
+<title>Golden section search</title>
+
+<p>This is a bracket-based method for minimization which is similar to bisection method. However, if we applied 
+  bisection method to <m>f'</m> we might find a local maximum. The <term>golden section</term> search will not do that; it is designed to search for a minimum.  
+</p>
+
+<p>The bisection method was based on the idea that if <m>f(a)f(b) \lt 0</m> (and <m>f</m> is continuous), then there is a root of <m>f</m> on the interval <m>[a, b]</m>. What do we need to be sure there is at least a local minimum on <m>[a, b]</m>? Some point <m>c\in [a, b]</m> such that <m>f(c) \lt f(a)</m> and <m>f(c) \lt f(b)</m>. 
+However, if we divide the interval into <m>[a, c]</m> and <m>[c, b]</m>, it is not clear what to do next: which part should we keep?</p>
+
+<p>Instead, the bracket should include two interior points, say <m>a \lt c \lt d \lt b</m>. Then we can compare <m>f(c)</m> and <m>f(d)</m>; the smaller one will point to us which interval to keep, either <m>[a, d]</m> (if <m>f(c)</m> is smaller)  or <m>[c, b]</m> (if <m>f(d)</m> is smaller). </p>
+
+<p>The choice of two points <m>c,d</m> is not obvious. We could place them <m>1/3</m> of the way from each end, namely <m>c=a+(b-a)/3</m> and <m>d=b-(b-a)/3</m>. Then if, for example, <m>f(c)\lt f(d)</m>, we know there is a point of minimum in <m>[a, d]</m>. To keep the process going, need to pick two interior evaluation points on <m>[a,d]</m>. Frustratingly, the point <m>c</m> which is in <m>[a, d]</m>, does not fit our algorithm because it is in the middle of <m>[a,d]</m>, not <m>1/3</m> from an edge. </p>
+
+<p> Golden section method improves on the above by choosing <m>c,d</m> as follows:
+<me>
+c = a+r(b-a), \quad d=b-r(b-a), \quad \text{where} r=\frac{3-\sqrt{5}}{2}
+</me>
+The number <m>r</m> is related to golden ratio <m>\varphi = (\sqrt{5}+1 )/2\approx 1.618</m> by <m>r=1/\varphi^2</m>. The following intervals are all in the golden ratio to each other: 
+<me>
+\frac{b-a}{d-a} = \frac{b-a}{b-c} = \frac{d-a}{c-a}  = \frac{b-c}{b-d} 
+ = \frac{c-a}{d-c} = \frac{b-d}{d-c} = \varphi
+</me>
+The result of this invariance of the ratio is that when the bracket is reduced, the remaining interior point again divides it in the golden ratio.</p>
+
+<figure xml:id="golden-png"><image source="images/golden.png" /> <caption>Golden section search</caption></figure>
+
+<p>With each step of iteration, only one additional evaluation of <m>f</m> is needed. The bracket size is divided by <m>\varphi</m> at every step. This is linear rate of convergence, which is slow but reliable (if the function is unimodal), and we don't need the derivative of <m>f</m> to use this method.</p>  
+
+<p>What if the function is not unimodal? If we are lucky, the process may converge to the global minimum. But it's quite possible that the global minimum will be lost from the bracket at some step and then we'll converge to a local minimum instead.</p>
+
+<example xml:id="example-golden-section">
+<title> Minimize by golden section</title>
+<statement><p>Minimize <m>f(x) = x^4 - 3 x^2 + x + 1</m> using the golden section method on the interval <m>[-2, 2]</m>. </p> </statement>
+<solution>
+<pre>
+f = @(x) x.^4 - 3*x.^2 + x + 1;
+a = -2;
+b = 2;
+r = (3-sqrt(5))/2;
+
+while b-a >= 100*eps(a)
+    c = a + r*(b-a);
+    d = b - r*(b-a);
+    if f(c) &lt; f(d)
+        b = d;
+    else
+        a = c;
+    end
+end
+
+fprintf('Found a minimum x = %g with f(x) = %g \n', c, f(c));
+</pre></solution></example>
+
+<p>The code in <xref ref="example-golden-section" /> does not explicitly store the previously computed values to be re-used at next step, but, depending on the language used, such <em>caching</em> of previously computed function values will happen behind the scenes.</p>
+
+</section>
+
+<exercises xml:id="exercises-single-variable-minimization">
+    <title>Homework</title>
+
+<exercise number="1">
+<statement> <p> (Theoretical) For each of the following functions, use the derivative $f'$ to determine if it is unimodal  on the given interval. You do not need to actually find the minimum. 
+<ol label="(a)">
+<li> <m>e^{-x}\sin x </m> on <m>[1,100] </m> </li>
+<li> <m>\ln(x)+10/x </m> on <m>[1,100] </m> </li>
+<li> <m>x^2 e^{x} </m> on <m>[-10,10] </m> </li>
+<li> <m>x^3 e^{x} </m> on <m>[-10,10] </m> </li>
+</ol>
+</p></statement></exercise>
+ 
+<exercise number="2">
+<statement> <p> One can combine the reliability of golden section method with the speed of Newton's method as follows: start with golden section, and when the bracket becomes small (say, less than <m>0.1</m>), switch to Newton's method. This makes sense because once we get close to a root of <m>f'</m>, Newton's method converges to that specific root very quickly. </p>
+
+<p>Apply the idea of previous paragraph to the minimization problem in <xref ref="example-golden-section" />. This means exiting the while loop sooner, and following <xref ref="example-newton-method-min" /> after that.</p></statement></exercise>
+
+ 
+</exercises>
+
+</chapter>
+
+  
