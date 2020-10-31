@@ -147,7 +147,7 @@ However, if we divide the interval into <m>[a, c]</m> and <m>[c, b]</m>, it is n
 
 <p> Golden section method improves on the above by choosing <m>c,d</m> as follows:
 <me>
-c = a+r(b-a), \quad d=b-r(b-a), \quad \text{where} r=\frac{3-\sqrt{5}}{2}
+c = a+r(b-a), \quad d=b-r(b-a), \quad \text{where } r=\frac{3-\sqrt{5}}{2}
 </me>
 The number <m>r</m> is related to golden ratio <m>\varphi = (\sqrt{5}+1 )/2\approx 1.618</m> by <m>r=1/\varphi^2</m>. The following intervals are all in the golden ratio to each other: 
 <me>
