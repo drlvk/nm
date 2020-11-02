@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<chapter xml:id="chapter-parabolic-interpolation-descent" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+<title>Parabolic Interpolation and Gradient Descent</title>
+
+
+    <introduction>
+        <p> Previously we considered the analogues of bisection and Newton method for minimization. 
+          There is also an analogue of secant method: parabolic interpolation. It does not require derivatives.
+          On the other hand, if the first-order derivative is available, it can be used for minimization in a way different from Newton's method. 
+      </p>
+    </introduction>
+
+
+<section xml:id="section-parabolic-interpolation">
+<title>Successive parabolic interpolation</title>
+
+<p>Recall that Newton's method for root-finding, namely <m>x = a - f(a)/f'(a)</m>, has a geometric interpretation: draw a tangent line to <m>y = f(x)</m> at <m>x = a</m>, and use the intersection of that line with the horizontal axis as the new <m>x</m>-value. This geometric construction naturally led to the secant method: just replace a tangent line by a secant line. Is there a geometric interpretation for minimization using Newton's method, that is <m>x = a - f'(a)/f''(a)</m>? </p>
+
+<p>Yes, there is. Let <m>T_2</m> be the Taylor polynomial at <m>x = a</m> of degree 2, namely 
+<me>
+  T_2(x) = f(a) + f'(a) (x-a) + \frac{f''(a)}{2}(x-a)^2
+</me>
+The critical point of this polynomial is found by equating <m>T_2'</m> to zero: since
+<me>
+  T_2'(x) = f'(a) +  f''(a)(x-a)
+</me>
+we get <m>x = a - f'(a)/f''(a)</m>. Therefore, the logic of minimization by Newton's method is to draw a <q>tangent parabola</q> at <m>x=p</m> and use its critical point (hopefully a minimum) as the new <m>x</m>-value.</p>
+
+<p>Having made this geometric observation, we can eliminate derivatives from the picture by constructing a 
+<q>secant parabola</q> instead, which is a parabola passing through three points on the graph of a function. 
+Following the logic of the secant method, we should replace the <q>oldest</q> of the three points used to construct the parabola by the critical point of this parabola. The process repeats until it (hopefully) converges to a point of minimum. This is the method of <term>successive parabolic interpolation</term>.</p> 
+
+<p>How to find the critical point of parabola passing through points <m>(a, f(a))</m>, <m>(b, f(b))</m>, <m>(c, f(c))</m>?  Newton interpolating polynomial is one way: it provides the interpolating  polynomial in the form
+<men xml:id="eq-newton-form-parabola">
+g(x) = f(a) + \alpha(x-a) + \beta(x-a)(x-b)
+</men>
+from where we can find <m>g'(x) = \alpha + \beta(2x - a- b)</m>, hence
+<men xml:id="eq-crit-point-interp">
+x = \frac{a+b}{2} - \frac{\alpha}{2\beta}
+</men>  
+The coefficients <m>\alpha, \beta</m> are determined from <m>g(b) = f(b)</m> and <m>g(c) = f(c)</m>, namely
+<men xml:id="eq-coeffs-newton-parabola">
+\alpha = \frac{f(b)-f(a)}{b-a},\quad 
+\beta = \frac{f(c) - f(a) - \alpha(c-a)}{(c-a)(c-b)}
+</men> 
+</p>
+
+<example xml:id="example-successive-parabolic-interpolation">
+<title> Minimize by successive parabolic interpolation</title>
+<statement><p>Minimize <m>f(x) = x^4 - 3 x^2 + x + 1</m> using successive parabolic interpolation with 
+initial triple of points <m>a, b, c = -2, 0, 2</m>. </p> </statement>
+<solution>
+<pre>
+f = @(x) x.^4 - 3*x.^2 + x + 1;
+a = -2;
+b = 0;
+c = 2;
+
+max_tries = 10000;
+
+for k = 1:max_tries
+    alpha = (f(b)-f(a))/(b-a);
+    beta = (f(c)-f(a)-alpha*(c-a))/((c-a)*(c-b));
+    x = (a+b)/2 - alpha/(2*beta);
+    a = b;
+    b = c;
+    c = x;
+    if max([a b c]) - min([a b c]) &lt; 1e-6
+        break
+    end
+end
+
+if k &lt; max_tries
+    fprintf('Found x = %g with f(x) = %g after %d steps\n', c, f(c), k);
+else
+    disp('Failed to converge')
+end
+</pre>
+<p>As the example shows, parabolic interpolation can converge to a local maximum. Indeed, a closer look shows it does not distinguish between <m>f</m> and <m>-f</m>, so it can minimize just as well as maximize. As with Newton's method, we can benefit from this method by using it in a small neighborhood of minimum.</p>
+</solution></example>
+
+<p>Would it help if instead of replacing the <q>oldest</q> of <m>a, b, c</m> we replaced the point with largest value of <m>f</m>? This would at least make the method prefer minimization to maximization. Try this out on the above example, using something like 
+<cd>
+old = [a b c];
+[fm, ind] = max(f(old)); 
+old(ind) = x;
+</cd>
+and so on. (This sounds like a good idea but it can turn the process into an infinite loop.) </p>
+
+
+</section>
+
+<section xml:id="section-gradient-descent-1d">
+<title>Gradient descent in one dimension</title>
+
+<p>The method of gradient descent uses only the first derivative of function <m>f</m> to determine the direction in which to look for its minimum. As a motivating example, suppose we started Newton's method at <m>a = 1</m> and found <m>f'(1) =  3</m> and <m>f''(1) = -2</m>. According to Newton's method our next point should be 
+<m>1 - \frac{3}{-2} = 2.5</m>. But since the function is increasing near <m>1</m>, should not the search move to the left instead of to the right? </p>
+
+<p>In its simplest, one-dimensional form, gradient descent amounts to repeatedly computing <m>x = a - \beta f'(a)</m> where a parameter <m>\beta > 0</m> may be a fixed number or be somehow adjusted in the process. The idea is to make a small step in the direction where the function <m>f</m> decreases. </p>
+
+<example xml:id="example-simplest-form-gradient-descent">
+<title> First attempt at gradient descent</title>
+<statement><p>Minimize the function <m>f(x) = x^4 - 3 x^2 + x + 1</m> from <xref ref="example-newton-method-min" /> using gradient descent with <m>\beta = 0.1</m> and initial point <m>0</m>. </p> </statement>
+<solution><pre>
+f = @(x) x.^4 - 3*x.^2 + x + 1;
+fp = @(x) 4*x.^3 - 6*x + 1;
+
+beta = 0.1;
+a = 0;
+max_tries = 10000; 
+for k = 1:max_tries
+    x = a - beta*fp(a);
+    if abs(x-a) &lt; 100*eps(a)
+        break
+    end
+    a = x;
+end
+
+if k &lt; max_tries
+    fprintf('Found x = %g with f(x) = %g after %d steps\n', x, f(x), k);
+else
+    disp('Failed to converge')
+end
+</pre>
+<p>The code takes more steps than Newton's method in <xref ref="example-newton-method-min" /> but it actually  minimizes the function. </p>
+</solution></example>
+
+<p>If no formula for <m>f'</m> is available, the methods of numerical differentiation (<xref ref="chapter-numerical-differentiation" />) can be used to implement gradient descent, for example with 
+<m>f'(a) \approx (f(a+h)-f(a-h))/(2h)</m> with some small <m>h</m>. </p>
+
+<p>Unfortunately, gradient descent with fixed <m>\beta</m> is not a reliable  method. Simply multiplying both  
+<c>f</c> and <c>fp</c> by 2 in <xref ref="example-simplest-form-gradient-descent" /> results in failure to converge (why? add <c>disp(x)</c> to the loop to see). We could make <m>\beta</m> smaller and restore convergence, but this is manual fine-tuning. The underlying issue is <em>scaling</em>: multiplying <m>f</m> by a positive constant does not change the location of its minima, yet it affects the gradient descent if it uses the same <m>\beta</m> value. (Newton's method is invariant under scaling because  <m>f'/f''</m> is invariant.)</p>
+
+<example xml:id="example-model-case-gradient-descent">
+<title> Model case of gradient descent</title>
+<statement><p>Determine for what values of <m>\beta</m> the gradient descent will converge for the function <m>f(x) = Mx^2</m> where <m>M > 0</m>. </p> </statement>
+<solution><p> Here <m>f'(x) = 2Mx</m>, hence <m>a - \beta f'(a) = (1-2M\beta)a</m>. This converges to <m>0 </m> if and only if <m>|1-2M\beta| \lt 1</m>. This means we need <m>0 \lt \beta \lt 1/M</m>, and the optimal value of <m>\beta</m> is <m>1/(2M)</m>. Note that <m>f''(x) = 2M</m>. </p>
+</solution></example>
+
+
+<p>The message of <xref ref="example-model-case-gradient-descent" /> is that we should try to adjust <m>\beta</m> to be of the size <m>1/f''</m>, even if we do not have a formula for <m>f''</m>. One way to do this is to start with a guess like <m>\beta=0.1</m> and then <em>update</em> <m>\beta</m> after every step using 
+<m>\beta = |x-p|/|f'(x)-f'(p)|</m>. This makes <m>\beta</m> approximately the reciprocal of <m>|f''|</m>. (Similar idea was used in Broyden's method in <xref ref="chapter-broyden" />.) To implement this idea, we insert the line 
+<cd>
+beta = abs(x-a)/abs(fp(x)-fp(a));
+</cd>  
+into the loop (where?). Now if the function is multiplied by 2 or even 2000, the method continues to converge.
+</p>  
+
+
+</section>
+
+<exercises xml:id="exercises-parabolic-interpolation-descent">
+    <title>Homework</title>
+
+<exercise number="1">
+<statement> <p> (Theoretical) Show that no fixed value <m>\beta > 0</m> can make the gradient descent converge for the function <m>f(x) = |x|^{3/2}</m>.</p>
+
+<p>(Note that <m>f</m> is differentiable, with <m>f'(x) = (3/2)\sqrt{x}</m> for <m>x\ge 0</m> and 
+<m>f'(x) = -(3/2)\sqrt{-x}</m> for <m>x\le 0</m>.)</p></statement></exercise>
+ 
+<exercise number="2">
+<statement> <p>Parabolic interpolation is also useful when applied just once, without iteration. For example, after evaluating <m>f</m> on a grid <m>x_1, \dots, x_n</m> and choosing <m>k</m> with smallest <m>f(x_k)</m> (i.e., brute force minimization) we can get a more precise location of the minimum with parabolic interpolation through the points <m>(x_j, f(x_j))</m>, <m>j=k-1, k, k+1</m>.</p> 
+
+<p>Apply the above idea to the function <m>f(x) = \sin (x)</m> on the interval <m>[0, 7]</m>. Use <m>n=100</m> points for brute force minimization, identifying a grid point <m>x_k</m> with smallest minimum. Then 
+find a more precise point of minimum <m>x^*</m> using parabolic interpolation. Since the exact point of minimum is <m>3\pi/2</m>,  the script should display the differences <m>|x_k - 3\pi/2|</m> and <m>|x^* - 3\pi/2|</m> to illustrate the benefit of parabolic interpolation. </p></statement></exercise>
+
+ 
+</exercises>
+
+</chapter>
+
+  

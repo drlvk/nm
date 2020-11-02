@@ -97,6 +97,7 @@ along with MathBook XML.  If not, see <http://www.gnu.org/licenses/>.
         <part xml:id="part-optimization">
             <title>Optimization</title> 
             <xi:include href="./single_variable_minimization.xml" />
+            <xi:include href="./parabolic_interpolation_descent.xml" />            
         </part>
 
     </book>

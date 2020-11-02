@@ -94,7 +94,7 @@ Let's try this out on a simple example.</p>
 
 <example xml:id="example-newton-method-min">
   <title>Using Newton method for minimization</title> 
-<statement><p> Minimize <m>f(x) = x^4 - 3 x^2 + x + 1</m> using the Newton method. How does the result depend on the initial point? </p> </statement> 
+<statement><p> Minimize <m>f(x) = x^4 - 3 x^2 + x + 1</m> using the Newton method with initial point <m>x_0=0</m>. How does the result depend on the initial point? </p> </statement> 
 <solution><p>First compute the derivatives <m>f'(x) = 4x^3 - 6x+1</m> and <m>f''(x) = 12x^2 - 6</m>. Then iterate the function <m>g</m> from <xref ref="eq-iterate-newton-min" /> as in 
 <xref ref="example-solve-fixed-point-iteration" />. Most of the code is copied from there. </p>
 <pre>
