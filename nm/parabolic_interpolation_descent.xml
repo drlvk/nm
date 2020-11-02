@@ -26,7 +26,7 @@ The critical point of this polynomial is found by equating <m>T_2'</m> to zero: 
 <me>
   T_2'(x) = f'(a) +  f''(a)(x-a)
 </me>
-we get <m>x = a - f'(a)/f''(a)</m>. Therefore, the logic of minimization by Newton's method is to draw a <q>tangent parabola</q> at <m>x=p</m> and use its critical point (hopefully a minimum) as the new <m>x</m>-value.</p>
+we get <m>x = a - f'(a)/f''(a)</m>. Therefore, the logic of minimization by Newton's method is to draw a <q>tangent parabola</q> at <m>x=a</m> and use its critical point (hopefully a minimum) as the new <m>x</m>-value.</p>
 
 <p>Having made this geometric observation, we can eliminate derivatives from the picture by constructing a 
 <q>secant parabola</q> instead, which is a parabola passing through three points on the graph of a function. 
@@ -145,7 +145,7 @@ end
 <cd>
 beta = abs(x-a)/abs(fp(x)-fp(a));
 </cd>  
-into the loop (where?). Now if the function is multiplied by 2 or even 2000, the method continues to converge.
+into the loop in <xref ref="example-simplest-form-gradient-descent" /> (where?). Now if the function is multiplied by 2 or even 2000, the method continues to converge.
 </p>  
 
 
@@ -163,8 +163,7 @@ into the loop (where?). Now if the function is multiplied by 2 or even 2000, the
 <exercise number="2">
 <statement> <p>Parabolic interpolation is also useful when applied just once, without iteration. For example, after evaluating <m>f</m> on a grid <m>x_1, \dots, x_n</m> and choosing <m>k</m> with smallest <m>f(x_k)</m> (i.e., brute force minimization) we can get a more precise location of the minimum with parabolic interpolation through the points <m>(x_j, f(x_j))</m>, <m>j=k-1, k, k+1</m>.</p> 
 
-<p>Apply the above idea to the function <m>f(x) = \sin (x)</m> on the interval <m>[0, 7]</m>. Use <m>n=100</m> points for brute force minimization, identifying a grid point <m>x_k</m> with smallest minimum. Then 
-find a more precise point of minimum <m>x^*</m> using parabolic interpolation. Since the exact point of minimum is <m>3\pi/2</m>,  the script should display the differences <m>|x_k - 3\pi/2|</m> and <m>|x^* - 3\pi/2|</m> to illustrate the benefit of parabolic interpolation. </p></statement></exercise>
+<p>Write a script that applies the above idea to the function <m>f(x) = \sin (x)</m> on the interval <m>[0, 7]</m>. Use <m>n=100</m> points for brute force minimization, locating a grid point <m>x_k</m> with the smallest function value <m>f(x_k)</m>. Then find a more precise point of minimum <m>x^*</m> using parabolic interpolation. Since the exact point of minimum is <m>3\pi/2</m>,  the script should display the differences <m>|x_k - 3\pi/2|</m> and <m>|x^* - 3\pi/2|</m> to illustrate the benefit of parabolic interpolation. </p></statement></exercise>
 
  
 </exercises>
