@@ -185,7 +185,7 @@ also looks bell-shaped.) Try following the process of  <xref ref="exercise-trans
 
 <p>Then try the following fix to the issue encountered in the previous paragraph. 
 Following the logic of <xref ref="example-best-fit-ellipse" />, rewrite the equation 
-<m>y = 1/(Ax^2 + Bx+ C)</m> as <m>Ax^2 y + Bxy + Cy = 1</m> and find the optimal <m>A, B, C</m> using least squares. Unlike <xref ref="example-best-fit-ellipse" />, you do not need <c>fimplicit</c> to plot this function since the function <m>y = 1/(Ax^2 + Bx+ C)</m> can be plotted directly. Plot it together with the data points. Does it fit better or worse than the Gaussian function in <xref ref="exercise-transforming-data-2" />? 
+<m>y = 1/(Ax^2 + Bx+ C)</m> as <m>Ax^2 y + Bxy + Cy = 1</m> and find the optimal <m>A, B, C</m> using least squares. Unlike <xref ref="example-best-fit-ellipse" />, you do not need <c>fimplicit</c> to plot this function since the function <m>y = 1/(Ax^2 + Bx+ C)</m> can be plotted directly (note that you will need <c>1./(...)</c> rather than <c>1/(...)</c> to compute the reciprocals in a vectorized way.) Plot the function together with the data points. Does it fit better or worse than the Gaussian function in <xref ref="exercise-transforming-data-2" />? 
 </p></statement></exercise>
  
 </exercises>
