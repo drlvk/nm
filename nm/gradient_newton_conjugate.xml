@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<chapter xml:id="chapter-gradient-newton-conjugate" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+<title>Gradient methods and Newton's method</title>
+
+
+    <introduction>
+        <p> Although the idea of following the direction of steepest descent is natural, it has important limitations in multivariate optimization. We consider why the steepest descent might not be the right direction, and some approaches to correct this. 
+      </p>
+    </introduction>
+
+<section xml:id="section-gradient-descent-nd">
+<title>Gradient descent in several variables</title>
+
+<p>In order to minimize a function <m>f\colon \mathbb R^n \to \mathbb R</m>, we can start with initial vector <m>\mathbf a</m> and compute <m>\mathbf x = \mathbf a - \beta \nabla f(a)</m>, then replace <m>\mathbf a</m> with <m>\mathbf x</m> and repeat until convergence is achieved (or the limit on steps is reached). This is the <m>n</m>-dimensional version of the gradient descent method in <xref ref="section-gradient-descent-1d" />. We already saw that the choice of <m>\beta</m> is difficult even in one dimension. It gets worse in several dimensions.</p>
+
+<p>Consider the function 
+<men xml:id="eq-quadratic-badly-scaled">
+f(\mathbf x) = x_1^2 + 10^6 x_2^2
+</men>
+with the minimum at <m>(0, 0)</m>. Its gradient is <m>\nabla f = \langle 2x_1, 2\cdot 10^6 x_2\rangle</m>. So, the process described above is
+<me>
+\mathbf x = \langle (1-2\beta)a_1, (1-2\beta\cdot 10^6)a_2 \rangle
+</me> 
+There is no good value of <m>\beta</m> to use here. If <m>\beta > 10^{-6}</m>, the second coordinate grows exponentially.  If <m>\beta \lt 10^{-6}</m>, for example <m>\beta = 10^{-6}/2</m> (which is optimal for the second coordinate), it will take a million steps just to reduce the first coordinate, say, from <m>1</m> to <m>0.37</m>. </p>
+
+<p>The underlying issue is that the direction <m>-\nabla f</m> does not really point toward the minimum of <m>f</m> in this example. The steepest descent goes sideways due to very different rates of change in different variables. This is one of main reasons why optimization in several variables is hard, and why it is sensitive to <em>scaling</em> of the variables. We would not have such difficulties with <m>x_1^2 + 3 x_2^2</m>. </p>
+
+<p>One way to improve the situation is to run a one-variable minimization algorithm, <term>line search</term> at each step, to find the minimum of <m>f</m> on the line of steepest descent. This means minimizing the function 
+<m>h(t) = f(\mathbf a - t \mathbf g)</m> where <m>g = \nabla f(\mathbf a)</m>. If we find the exact minimum on the line, then the minimization process for function <xref ref="eq-quadratic-badly-scaled" /> ends in two steps. But for slightly more complicated functions the difficulty emerges again. Consider 
+<url href="https://en.wikipedia.org/wiki/Rosenbrock_function">Rosenbrock's function</url>
+<men xml:id="eq-rosenbrock">
+f(\mathbf x) = (x_1 - 1)^2 + 100(x_1^2 - x_2)^2
+</men>
+Its graph has a curved <q>valley</q> along the parabola <m>x_2 = x_1^2</m>. One-dimensional minimization along the line of steepest descent leads to each consecutive direction being perpendicular to the previous one (why?). So the algorithm ends up zig-zagging in tiny steps in the deep narrow valley, making very little progress toward minimum. And since each step is its own minimization problem (in one dimension), the entire process may take too long. </p> 
+
+<p>In order to try the method of previous paragraph in practice, we need a line-search subroutine we will use Matlab's command for one-dimensional minimization on an interval: <c>fminbnd</c>.  Example: 
+<cd>
+fminbnd(@(t) t*cos(t), 0, 5)
+</cd>
+returns <m>3.4256</m> which is the location of the minimum (not the minimum value). The command <c>fminbnd</c> is guaranteed to stay within the given interval but is not guaranteed to find the absolute minimum on that interval. Indeed, <c>fminbnd(@(t) t*cos(t), 0, 12)</c> returns the same <m>3.4256</m> even though the absolute minimum is at <m>t \approx 9.5293</m>. To see what is going on, use <c>optimset</c> to enable the display of iterative minimization process. 
+<cd>
+options = optimset('Display', 'iter');
+fminbnd(@(t) t*cos(t), 0, 12, options)    
+</cd>
+As this expanded output shows, the command <c>fminbnd</c> is a straightforward combination of golden section and parabolic interpolation methods. As a result, it is fast but can easily miss the absolute minimum. For our purposes, using a line search at each step of gradient descent, <q>fast</q> is more important. 
+</p> 
+
+
+<example xml:id="example-gradient-descent-line-search">
+<title> Gradient descent with line search</title>
+<statement><p>Minimize  Rosenbrock's function <xref ref="eq-rosenbrock" /> using line search in the direction of steepest descent, <m>-\nabla f</m>, at each step. Use a random starting point <c>randn(2, 1)</c>. Plot the path of the search. </p> </statement>
+<solution><p>The gradient of Rosenbrock's function is 
+<men xml:id="eq-rosenbrock-grad">
+\begin{pmatrix} 2(x_1-1) + 400x_1(x_1^2-x_2) \\ -200(x_1^2 - x_2)\end{pmatrix}
+</men>
+The code uses a matrix <c>path</c> to record the path taken by the search. </p>
+<pre>
+f = @(x) (x(1)-1).^2 + 100*(x(1).^2 - x(2)).^2;
+fg = @(x) [2*(x(1)-1) + 400*x(1)*(x(1).^2 - x(2)); -200*(x(1).^2 - x(2))];
+x = randn(2, 1);
+max_tries = 10000;
+
+path = zeros(2, max_tries);
+for k = 1:max_tries
+    path(:, k) = x;
+    g = -fg(x);    % direction of descent
+    t_min = fminbnd(@(t) f(x + t*g), 0, 1);
+    dx = t_min*g;
+    x = x + dx;
+    if norm(dx) &lt; 1e-6
+        break
+    end
+end
+
+plot(path(1, 1:k), path(2, 1:k), '-+')
+if k &lt; max_tries
+    fprintf('Found x = (%g, %g) with f(x) = %g after %d steps\n', x, f(x), k);
+else
+    disp('Failed to converge')
+end
+</pre>
+<p>Whether the code converges or fails depends on the initial point. Often it fails despite being on the right track, because of too many tiny zigzagging steps.</p>
+</solution></example>
+
+<p>Note there is a reason to have a less restrictive stopping conditions for step size <c>norm(dx)</c> when the goal is minimization (compared to root-finding). A smooth function changes slowly near a point of minimum (like a parabola near its vertex), so an error of size <m>10^{-6}</m> in terms of location of the minimum could mean an error of about <m>10^{-12}</m> for the minimal value.</p>
+
+<p>There are several <q>weak line search</q> methods designed to determine a step size that makes the function noticeably smaller without finding its exact minimum. They can speed up the process but do not completely resolve the zigzagging issue which is the root of the difficulty in <xref ref="example-gradient-descent-line-search" />. The <em>directions</em> seem to be a problem, not just the step sizes.</p>
+</section> 
+
+
+
+<section xml:id="section-newton-method-min-nd">
+<title>Newton's method for multivariate minimization </title>
+
+<p>Recall that the Newton method for solving a vector equation <m>\mathbf F(\mathbf x) = 0</m> 
+proceeds in iterative steps of the form <m>\mathbf x = \mathbf a - J(\mathbf a)^{-1} \mathbf F(\mathbf a)</m>
+where <m>J</m> is the Jacobian matrix of <m>\mathbf F</m>.  For the purpose of minimizing a scalar function <m>f</m>, we let <m>\mathbf F = \nabla f</m>. The Jacobian matrix <m>J</m> of <m>\mathbf F</m> then becomes the <term>Hessian matrix</term> of <m>f</m>, which is the matrix of all second-order partial derivatives.  
+<me>
+H = \begin{pmatrix}
+\partial^2 f/\partial x_1^2 &amp; \partial^2 f/\partial x_1\partial x_2 \\
+\partial^2 f/\partial x_1\partial x_2  &amp; \partial^2 f/\partial x_2^2
+\end{pmatrix}
+</me> 
+Thus, the Newton method for minimization proceeds in steps <m>\mathbf x = \mathbf a - H^{-1} \nabla f(\mathbf a)</m>. One can view the application of <m>H^{-1}</m> as the <q>course correction</q>: with rare exceptions, the method does <em>not</em> choose the direction of steepest descent. For the badly scaled quadratic function 
+<xref ref="eq-quadratic-badly-scaled" /> the Newton direction is right on target: since 
+<me> 
+    H = \begin{pmatrix} 2 &amp; 0 \\ 0 \\ 2\cdot 10^{6} \end{pmatrix} 
+</me>
+the step taken from any point <m>\mathbf a</m> is 
+<me> 
+ -H^{-1} \nabla f(\matbf a) = - \begin{pmatrix} 1/2 &amp; 0 \\ 0 \\ (1/2)\cdot 10^{-6} \end{pmatrix} 
+ \begin{pmatrix} 2a_1 \\ 2\cdot 10^6 a_2 \end{pmatrix} = -\mathbf a
+</me>
+so we arrive at the minimum <m>\mathbf x = 0</m> after one step. This works for any quadratic function.
+</p>
+
+<p>Since a smooth function locally looks like a quadratic polynomial (2nd order Taylor polynomial), Newton's method has a chance of improving the situation even for challenging functions like Rosenbrock's. Let us try it out.</p> 
+
+
+<example xml:id="example-newton-min-rosenbrock">
+<title> Multivariate minimization with Newton's method</title>
+<statement><p>Minimize  Rosenbrock's function <xref ref="eq-rosenbrock" />  using Newton's method with a random starting point <c>randn(2, 1)</c>. Plot the path of the search. </p> </statement>
+<solution><p>The gradient of Rosenbrock's function is <xref ref="eq-rosenbrock-grad" /> and its Hessian matrix is
+<men xml:id="eq-rosenbrock-hess">
+\begin{pmatrix} 2 + 400 (x_1^2-x_2) + 800 x_1^2 &amp; -400x_1 \\
+-400 x_1 &amp; 200 \end{pmatrix}
+</men>
+</p>
+<pre>
+f = @(x) (x(1)-1).^2 + 100*(x(1).^2 - x(2)).^2;
+fg = @(x) [2*(x(1)-1) + 400*(x(1).^2 - x(2))*x(1); -200*(x(1).^2 - x(2))];
+fh = @(x) [2 + 400*(x(1)^2-x(2)) + 800*x(1)^2,  -400*x(1); -400*x(1), 200];
+x = randn(2, 1);
+
+max_tries = 10000;
+
+path = zeros(2, max_tries);
+for k=1:max_tries
+    path(:, k) = x;
+    dx = -fh(x)\fg(x);
+    x = x + dx;
+    if norm(dx) &lt; 1e-6
+        break
+    end
+end
+
+plot(path(1, 1:k), path(2, 1:k), '-+')
+if k &lt; max_tries
+    fprintf('Found x = (%g, %g) with f(x) = %g after %d steps\n', x, f(x), k);
+else
+    disp('Failed to converge')
+end
+</pre>
+<p>The process usually makes a few seemingly random jumps but then quickly converges.</p>
+</solution></example>
+
+<p>The downsides of Newton's method were already noted in <xref ref="section-newton-method-min" />: it requires second-order derivatives, and it could just as well converge to a local maximum.</p>
+
+</section>
+
+
+<section xml:id="section-conjugate-gradient">
+<title>Conjugate gradient method</title>
+
+<p>The methods considered so far in this chapter have one thing in common: lack of memory. Each step 
+is taken as if it was the first. In contrast, <term>conjugate gradient method</term> uses its previous step to determine the direction of next one. The primary benefit is avoiding <q>sharp turns</q> which create a zigzagging pattern we saw in <xref ref="example-gradient-descent-line-search" />. The method described below is sometimes called <em>nonlinear</em> conjugate gradient method because <q>conjugate gradient method</q> often refers specifically to minimization of a quadratic function <m>f(\mathbf x) = |A\mathbf x - \mathbf b|^2</m> as a way of approximately solving the linear system  <m>A\mathbf x = \mathbf b</m>. </p> 
+
+<p>Suppose we arrived to point <m>\mathbf a</m> from point <m>\mathbf b</m>, following the direction vector <m>\mathbf v</m>. With the conjugate gradient method, the direction of our next move will be<m>\mathbf w = -\nabla f(a) + \gamma \mathbf v</m> where <m>\gamma > 0</m>. Large <m>\gamma</m> means we keep mostly the same direction as before, small <m>\gamma</m> means we go with the gradient. We should make <m>\gamma</m> smaller, giving more importance to the gradient, if <m>\mathbf a</m> is much closer to the minimum than <m>\mathbf b</m>. This progress can be measured by the ratio <m>|\nabla f(\mathbf a)|^2/|\nabla f(\mathbf b)|^2</m> (small if we arrived in the vicinity of minimum), so we use this quantity as <m>\gamma</m>. </p>
+
+
+<example xml:id="example-conjugate-gradient">
+<title> Conjugate gradient method</title>
+<statement><p>Modify <xref ref="example-gradient-descent-line-search" /> so that it minimizes the simplified Rosenbrock's function
+<men xml:id="eq-rosenbrock-simplified">
+f(\mathbf x) = (x_1 - 1)^2 + (x_1^2 - x_2)^2
+</men>
+using conjugate gradient method. Use a random starting point <c>randn(2, 1)</c>. Plot the path of the search. </p> </statement>
+<solution>
+<pre>
+f = @(x) (x(1)-1).^2 + (x(1).^2 - x(2)).^2;
+fg = @(x) [2*(x(1)-1) + 4*x(1)*(x(1).^2 - x(2)); -2*(x(1).^2 - x(2))];
+
+x = randn(2, 1);
+v = zeros(2, 1);
+gamma = 0;
+max_tries = 10000;
+
+path = zeros(2, max_tries);
+for k = 1:max_tries
+    path(:, k) = x;
+    w = -fg(x) + gamma*v;  % with correction
+    t_min = fminbnd(@(t) f(x + t*w), 0, 1);
+    dx = t_min*w;
+    if norm(dx) &lt; 1e-6
+        break
+    end
+
+    gamma = norm(fg(x+dx))^2/norm(fg(x))^2;  % update gamma
+    x = x + dx;                              % update x
+    v = w;                 % record the step for the future
+end
+
+plot(path(1, 1:k), path(2, 1:k), '-+')
+if k &lt; max_tries
+    fprintf('Found x = (%g, %g) with f(x) = %g after %d steps\n', x, f(x), k);
+else
+    disp('Failed to converge')
+end
+</pre>
+<p>Compare the search path to what we get without correction in <c>w</c>: it is less zigzagging. However, if we use the original Rosenbrock function <xref ref="eq-rosenbrock" /> which is very far from quadratic or convex, the search diverges to infinity. Several other correction terms (different choices for <m>\gamma</m> coefficient) have been proposed. But it appears that the <q>narrow valley</q> landscape of the Rosenbrock function is best navigated either by using both first and second order derivatives (the Newton method) or by using no derivatives at all (the Nelder-Mead method, to be considered later).</p>
+</solution></example>
+
+
+</section>
+
+<exercises xml:id="exercises-gradient-newton-conjugate">
+    <title>Homework</title>
+
+<exercise number="1">
+<statement> <p> Modify <xref ref="example-newton-min-rosenbrock" /> to include the idea of Broyden's method from <xref ref="example-durand-kerner-broyden" />. The following modification should help with convergence: start with small initial guess 
+<cd>
+B = 0.001*eye(2);
+</cd>
+and make the stopping condition less restrictive: 
+<cd>
+norm(h) &lt; 1e-6
+</cd>
+
+Re-run the script several times (about five): since it has a random initial point, the results may differ. Does the minimization process converge to the minimum <m>(1, 1)</m> every time? 
+</p></statement></exercise>
+ 
+ 
+</exercises>
+
+</chapter>
+
+  
