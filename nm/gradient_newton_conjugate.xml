@@ -106,11 +106,11 @@ H = \begin{pmatrix}
 Thus, the Newton method for minimization proceeds in steps <m>\mathbf x = \mathbf a - H^{-1} \nabla f(\mathbf a)</m>. One can view the application of <m>H^{-1}</m> as the <q>course correction</q>: with rare exceptions, the method does <em>not</em> choose the direction of steepest descent. For the badly scaled quadratic function 
 <xref ref="eq-quadratic-badly-scaled" /> the Newton direction is right on target: since 
 <me> 
-    H = \begin{pmatrix} 2 &amp; 0 \\ 0 \\ 2\cdot 10^{6} \end{pmatrix} 
+    H = \begin{pmatrix} 2 &amp; 0 \\ 0 &amp; 2\cdot 10^{6} \end{pmatrix} 
 </me>
 the step taken from any point <m>\mathbf a</m> is 
 <me> 
- -H^{-1} \nabla f(\matbf a) = - \begin{pmatrix} 1/2 &amp; 0 \\ 0 \\ (1/2)\cdot 10^{-6} \end{pmatrix} 
+ -H^{-1} \nabla f(\mathbf a) = - \begin{pmatrix} 1/2 &amp; 0 \\ 0 &amp; (1/2)\cdot 10^{-6} \end{pmatrix} 
  \begin{pmatrix} 2a_1 \\ 2\cdot 10^6 a_2 \end{pmatrix} = -\mathbf a
 </me>
 so we arrive at the minimum <m>\mathbf x = 0</m> after one step. This works for any quadratic function.
@@ -209,7 +209,7 @@ else
     disp('Failed to converge')
 end
 </pre>
-<p>Compare the search path to what we get without correction in <c>w</c>: it is less zigzagging. However, if we use the original Rosenbrock function <xref ref="eq-rosenbrock" /> which is very far from quadratic or convex, the search diverges to infinity. Several other correction terms (different choices for <m>\gamma</m> coefficient) have been proposed. But it appears that the <q>narrow valley</q> landscape of the Rosenbrock function is best navigated either by using both first and second order derivatives (the Newton method) or by using no derivatives at all (the Nelder-Mead method, to be considered later).</p>
+<p>Compare the search path to what we get without correction in <c>w</c>: it is less zigzagging. However, if we use the original Rosenbrock function <xref ref="eq-rosenbrock" /> which is very far from quadratic or convex, the search diverges to infinity. Several other correction terms (different choices for <m>\gamma</m> coefficient) have been proposed for the nonlinear conjugate gradient method. But it appears that the <q>narrow valley</q> landscape of the Rosenbrock function is best navigated either by using both first and second order derivatives (the Newton method) or by using no derivatives at all (the Nelder-Mead method, to be considered later).</p>
 </solution></example>
 
 
@@ -219,7 +219,7 @@ end
     <title>Homework</title>
 
 <exercise number="1">
-<statement> <p> Modify <xref ref="example-newton-min-rosenbrock" /> to include the idea of Broyden's method from <xref ref="example-durand-kerner-broyden" />. The following modification should help with convergence: start with small initial guess 
+<statement> <p> Modify <xref ref="example-newton-min-rosenbrock" /> to include the idea of Broyden's method from <xref ref="example-durand-kerner-broyden" />: the script should not use the Hessian matrix <c>fh</c>, instead relying on an approximation to its inverse obtained with Broyden's method. The following modification should help with convergence: start with small initial guess 
 <cd>
 B = 0.001*eye(2);
 </cd>
