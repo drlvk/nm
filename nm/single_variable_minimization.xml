@@ -24,7 +24,7 @@
 
 <p>A major source of difficulty of optimization is searching for global minimum and finding only a local one. There is no universal recipe for avoiding this problem. Consider the function <m>f(x) = \sin x + \sin \sqrt{2}x</m> on some long interval such as <m>[-100, 100]</m>. Where is its global minimum? There is no reliable and efficient way to find it. </p>  
 
-<p>A function that has only one minimum on some set is called <m>unimodal</m>. For example, <m>f(x) = x^2 - x</m> is unimodal on the interval <m>[0, 2]</m> but <m>f(x) = x - x^2</m> is not (according to our definition; when people focus on maximum instead of minimum, the situation is reversed). Working with unimodal functions is much easier because our algorithm is much more likely to find minimum. </p>
+<p>A function that has only one minimum on some set is called <term>unimodal</term>. For example, <m>f(x) = x^2 - x</m> is unimodal on the interval <m>[0, 2]</m> but <m>f(x) = x - x^2</m> is not (according to our definition; when people focus on maximum instead of minimum, the situation is reversed). Working with unimodal functions is much easier because our algorithm is much more likely to find minimum. </p>
 
 <p>A function is <term>convex</term> (also called <q>concave up</q> in calculus) if its graph lies below its secant lines, meaning 
 <men xml:id="eq-def-convexity">
@@ -41,7 +41,7 @@ in <xref ref="eq-def-convexity" /> is reversed. </p>
 <section xml:id="section-brute-force">
 <title>Brute force search</title>
 
-<p>This is a very direct approach to minimization of <m>f\colon [a, b]\colon \mathbb R</m>: choose some large number of points <m>x_1, \dots, x_n</m> on the interval, equally spaced, evaluate <m>f</m> at each point, take the minimum of <m>f(x_k)</m>. How close will this be to the actual global minimum? If <m>f</m> is differentiable and <m>|f'|\le M</m> on the interval, the mean value theorem implies
+<p>This is a very direct approach to minimization of <m>f\colon [a, b]\to \mathbb R</m>: choose some large number of points <m>x_1, \dots, x_n</m> on the interval, equally spaced, evaluate <m>f</m> at each point, take the minimum of <m>f(x_k)</m>. How close will this be to the actual global minimum? If <m>f</m> is differentiable and <m>|f'|\le M</m> on the interval, the mean value theorem implies
 <men xml:id="eq-mean-value-inequality">
   |f(x)-f(y)| \le M|x-y| 
 </men>
@@ -98,9 +98,9 @@ Let's try this out on a simple example.</p>
 <solution><p>First compute the derivatives <m>f'(x) = 4x^3 - 6x+1</m> and <m>f''(x) = 12x^2 - 6</m>. Then iterate the function <m>g</m> from <xref ref="eq-iterate-newton-min" /> as in 
 <xref ref="example-solve-fixed-point-iteration" />. Most of the code is copied from there. </p>
 <pre>
-f = @(x) x^4 - 3*x^2 + x + 1;
-fp = @(x) 4*x^3 - 6*x + 1;
-fpp = @(x) 12*x^2 - 6;
+f = @(x) x.^4 - 3*x.^2 + x + 1;
+fp = @(x) 4*x.^3 - 6*x + 1;
+fpp = @(x) 12*x.^2 - 6;
 
 g = @(x) x - fp(x)/fpp(x);
 x0 = 0;
@@ -193,7 +193,7 @@ fprintf('Found a minimum x = %g with f(x) = %g \n', c, f(c));
     <title>Homework</title>
 
 <exercise number="1">
-<statement> <p> (Theoretical) For each of the following functions, use the derivative $f'$ to determine if it is unimodal  on the given interval. You do not need to actually find the minimum. 
+<statement> <p> (Theoretical) For each of the following functions, use the derivative <m>f'</m> to determine if it is unimodal  on the given interval. You do not need to actually find the minimum. 
 <ol label="(a)">
 <li> <m>e^{-x}\sin x </m> on <m>[1,100] </m> </li>
 <li> <m>\ln(x)+10/x </m> on <m>[1,100] </m> </li>
