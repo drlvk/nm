@@ -175,11 +175,11 @@ with
 <p>The graph shows three stages of accelerated growth: March-April, June-July, and October; the third one is ongoing. Since the total reflects the spread of disease in different regions, it is natural that it looks like the sum of different logistic curves. </p> 
 
 <p>Accordingly, we should model this by the sum of three logistic curves. 
-To reduce the amount of data, let's use the 7-day averages reported on the 1st, 11th, and 21th of every month, from March 1 to October 21. These 24 data values are below.</p>
+To reduce the amount of data, we use the 7-day averages reported on the 1st, 11th, and 21th of every month, from March 1 to October 21. These 24 data values (measured in thousands) are below.</p>
 <pre>
 y = [1 4 21 67 80 79 77 85 94 110 126 148 180 205 230 257 259 254 265 267 292 295 337 389];  
 </pre>
-<p>Corresponding x-values are simply <c>x = 1:numel(y)</c>. Run <c>plot(x, y, '*')</c> to visualize the data: this will help with choosing initial parameters, as described below.
+<p>The corresponding x-values are simply <c>x = 1:numel(y)</c>. Run <c>plot(x, y, '*')</c> to visualize the data: this will help with choosing initial parameters, as described below.
 </p>
 
 <p>High-dimensional optimization is difficult, and <c>fminsearch</c> will need your help in the form of a good initial point (<c>ones(9, 1)</c> is not good enough). The logistic equation <xref ref="eq-logistic-curve-shift" /> leads to the 9-parameter model
@@ -188,9 +188,9 @@ y = [1 4 21 67 80 79 77 85 94 110 126 148 180 205 230 257 259 254 265 267 292 29
 </men>
 Reasonable initial guesses would be: 
 <ul>
-<li> <m>a_1, a_2, a_3</m> are the x-values of places where the three <q>waves</q> are the steepest; </li>
-<li> <m>M_1, M_2, M_3</m> are the sizes of the three waves;</li>
-<li> <m>r_1, r_2, r_3</m> could be set to 1;</li>
+<li> <m>a_1, a_2, a_3</m> are the x-values of places where the three <q>waves</q> are the steepest </li>
+<li> <m>M_1, M_2, M_3</m> are the sizes of the three waves</li>
+<li> <m>r_1, r_2, r_3</m> could be set to 1</li>
 </ul>
 </p>
 
