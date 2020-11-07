@@ -141,7 +141,7 @@ end
 
 
 <p>The message of <xref ref="example-model-case-gradient-descent" /> is that we should try to adjust <m>\beta</m> to be of the size <m>1/f''</m>, even if we do not have a formula for <m>f''</m>. One way to do this is to start with a guess like <m>\beta=0.1</m> and then <em>update</em> <m>\beta</m> after every step using 
-<m>\beta = |x-p|/|f'(x)-f'(p)|</m>. This makes <m>\beta</m> approximately the reciprocal of <m>|f''|</m>. (Similar idea was used in Broyden's method in <xref ref="chapter-broyden" />.) To implement this idea, we insert the line 
+<m>\beta = |x-a|/|f'(x)-f'(a)|</m>. This makes <m>\beta</m> approximately the reciprocal of <m>|f''|</m>. (Similar idea was used in Broyden's method in <xref ref="chapter-broyden" />.) To implement this idea, we insert the line 
 <cd>
 beta = abs(x-a)/abs(fp(x)-fp(a));
 </cd>  

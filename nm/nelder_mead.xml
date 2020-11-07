@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<chapter xml:id="chapter-nelder-mead" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+<title>The Nelder-Mead method</title>
+
+
+    <introduction>
+        <p> Functions of one variable can be efficiently minimized by a combination of golden section and parabolic interpolation methods, which is implemented by <c>fminbnd</c> command in Matlab. These methods are derivative-free: we do not need to either know or estimate any derivatives of the objective function. 
+        In contrast, all methods for minimization in several variables that we studied so far require derivatives. The goal of this chapter is  to understand a derivative-free minimization method introduced by Nelder and Mead in 1965, which powers the Matlab command <c>fminsearch</c>.  
+      </p>
+    </introduction>
+
+<section xml:id="section-nelder-mead-reflect">
+<title>First attempt at derivative-free minimization</title>
+
+<p>The intuitive picture of steepest descent (the gradient method) is a drop of water sliding down the graph of a function under the force of gravity: the water follows the steepest way down. The intuition of the Nelder-Mead method is a geometric shape like a triangle or a tetrahedron tumbling down a sloped surface. In two dimensions, the shape is a triangle, in three dimensions it is a tetrahedron; in <m>n</m> dimensions it is an <m>n</m>-dimensional <term>simplex</term>, meaning <m>n+1</m> points that are not contained in any hyperplane. 
+To keep the explanation simple, we focus on the case <m>n=2</m>. </p>
+ 
+<p>Given a triangle <m>ABC</m> in <m>xy</m>-plane, we evaluate the function <m>f</m> at its vertices. The vertex with the largest value of <m>f</m> (for example, <m>C</m>) <em>might</em> get replaced by its reflection. One could imagine reflecting <m>C</m> about the opposite side <m>AB</m> by dropping a perpendicular line from <m>C</m> onto <m>AB</m> and following it. However, this kind of reflection is not invariant under linear transformations of <m>xy</m> plane, such as the scaling of coordinates. The Nelder-Mead method uses reflection about the midpoint of <m>AB</m> which can be expressed in vector form as
+<men xml:id="eq-nm-reflection">
+R = A + B - C = (A+B+C) - 2C
+</men>
+The second version is slightly easier to code, see below. 
+</p>
+
+<p>However, it would be pointless to replace <m>C</m> by <m>R</m> if this did not make the function smaller. So the replacement only happens if <m>f(R)\lt f(C)</m>. Otherwise the program stops and reports the midpoint <m>(A+B+C)/3</m> of the last computed triangle as an approximate point of minimum. This is a <q>reflection-only</q> version of the Nelder-Mead method.</p> 
+
+
+<example xml:id="example-reflection-nelder-mead">
+<title> Reflection-only Nelder-Mead method </title>
+<statement><p>Minimize the function 
+<men xml:id="eq-objective-function-sine">
+f(\mathbf x) = x_1^4 + x_2^2 - \sin(x_1+x_2)
+</men>
+using the reflection-only version of the Nelder-Mead method. Use a random starting point <c>randn(2, 1)</c> as one vertex <m>A</m> of the initial triangle, and let other vertices be <m>A+h\mathbf e_1</m>, <m>A+h\mathbf e_2</m> with small <m>h = 0.01</m> (this makes a small right isosceles triangle). Plot the path of the search. </p> </statement>
+<solution><p>It is convenient to arrange column vectors <m>A, B, C</m> into a matrix <m>T</m> representing a triangle. This makes it easy to replace the vertex with greatest value of <m>f</m> after identifying it with two-output <c>max</c> command. The command <c>mean(T, 2)</c> computes the mean <m>(A+B+C)/3</m> while
+<c>sum(T, 2)</c> is <m>A+B+C</m>.</p>
+<pre>
+f = @(x) x(1)^4 + x(2)^2 - sin(x(1)+x(2));
+
+A = randn(2, 1);
+B = A + [0.01; 0];
+C = A + [0; 0.01];
+T = [A B C];
+max_tries = 10000;
+path = zeros(2, max_tries);
+
+for k = 1:max_tries
+    path(:, k) = mean(T, 2);
+    values = [f(T(:,1)) f(T(:,2)) f(T(:,3))];
+    [fmin, ind] = max(values);
+    R = sum(T, 2) - 2*T(:, ind);
+    if f(R) &lt; fmin
+        T(:, ind) = R;
+    else 
+        break
+    end
+end
+
+plot(path(1, 1:k), path(2, 1:k), '-+')
+if k &lt; max_tries
+    x = mean(T, 2);
+    fprintf('Found x = (%g, %g) with f(x) = %g after %d steps\n', x, f(x), k);
+else
+    disp('Failed to converge')
+end
+</pre></solution>
+</example>
+
+</section> 
+
+
+<section xml:id="section-nelder-mead-contract">
+<title>Reflection-contraction combination</title>
+
+<p>One issue with the reflection-only method of <xref ref="section-nelder-mead-reflect" /> is the fixed size of the triangle. With a large triangle, we will only have a rough idea of where  the minimum is when the search
+ends. Also, a large triangle will not detect any fine features of the landscape such as the narrow valley of Rosenbrock's function. On the other hand, a small triangle necessarily moves in small steps and is therefore slow.</p>  
+ 
+<p>There is a way to improve the situation: instead of stopping when reflection does not work, reduce the size of triangle in half, contracting it toward the <q>best</q> vertex (the one is the with lowest value). The contraction map is <m>f(x) = (x+b)/2</m> where <m>b</m> is the vertex toward which we contract. This reflection-contraction method needs a stopping criterion, so it does not run forever. We can stop when the triangle becomes very small, with vertices getting close to one another. </p> 
+
+<example xml:id="example-reflection-contraction-nelder-mead">
+<title> Reflection-contraction Nelder-Mead method </title>
+<statement><p>Minimize the function <xref ref="eq-objective-function-sine" />
+using the reflection-contraction version of the Nelder-Mead method. Use a random starting point <c>randn(2, 1)</c> as one vertex <m>A</m> of the initial triangle, and let other vertices be <m>A + \mathbf e_1</m>, <m>A+\mathbf e_2</m>, so that the initial triangle is not small anymore. Plot the path of the search. </p> </statement>
+<solution><p>The code is mostly the same as in <xref ref="example-reflection-nelder-mead" />, with additional lines noted in comments.</p>
+<pre>
+f = @(x) x(1)^4 + x(2)^2 - sin(x(1)+x(2));
+% f = @(x) (x(1)-1)^2 + 100*(x(1)^2 - x(2))^2;
+
+A = randn(2, 1);
+B = A + [1; 0];
+C = A + [0; 1];
+T = [A B C];
+max_tries = 10000;
+path = zeros(2, max_tries);
+
+for k = 1:max_tries
+    path(:, k) = mean(T, 2);
+    if max(abs(T - path(:, k))) &lt; 1e-6
+        break     % stop, the triangle is small enough
+    end
+    values = [f(T(:,1)) f(T(:,2)) f(T(:,3))];
+    [fmin, ind] = max(values);
+    R = sum(T, 2) - 2*T(:, ind);
+    if f(R) &lt; fmin
+        T(:, ind) = R;
+    else 
+        [fmax, ind] = min(values);   % find the best vertex
+        T = (T + T(:, ind))/2;       % contract toward it
+    end
+end
+
+plot(path(1, 1:k), path(2, 1:k), '-+')
+if k &lt; max_tries
+    x = mean(T, 2);
+    fprintf('Found x = (%g, %g) with f(x) = %g after %d steps\n', x, f(x), k);
+else
+    disp('Failed to converge')
+end
+</pre></solution>
+</example>
+
+<p><xref ref="example-reflection-contraction-nelder-mead" /> works fine in terms of speed and accuracy. 
+However, replacing the relatively simple function <m>f</m> in <xref ref="example-reflection-nelder-mead" /> with Rosenbrock's function <xref ref="eq-rosenbrock" />
+<cd>f = @(x) (x(1)-1)^2 + 100*(x(1)^2 - x(2))^2 </cd>
+we find the search usually fails. The moving triangle has to become very small to fit into the <q>narrow valley</q> of this function, which makes subsequent movement along the valley floor very slow. As as the valley is long, it fails to reach the minimum within the allowed number of steps. </p>
+</section>
+
+<section xml:id="section-nelder-mead-expand">
+<title>Reflection-contraction-expansion Nelder-Mead method</title>
+
+<p>The reason for the lack of success with Rosenbrock's function is that the version of Nelder-Mead method described in <xref ref="section-nelder-mead-contract" />  does not allow the triangle to change its <em>shape</em> to fit the geometry of the graph. A long narrow valley calls for a long narrow triangle.</p>  
+
+<p>The process of changing the shape of the triangle is <em>expansion</em>, which is introduced as an alternative to reflection from <xref ref="section-nelder-mead-reflect" />. Suppose that the current triangle qualifies for reflection: for example, <m>C</m> is the point with largest value, and <m>f(R) \lt f(C)</m>. Consider 
+the possibility of replacing <m>C</m> with a point <m>E</m> that lies beyong <m>R</m>, thus making the triangle longer. The point <m>E</m> is determined by the following equation, which  shows that it is as far from <m>R</m> as <m>R</m> is from the center of reflection <m>(A+B)/2</m>: 
+<me> 
+ E = \frac{3}{2}(A+B) - 2C =  1.5 (A+B+C) - 3.5 C
+</me>
+If <m>f(E) \lt f(R)</m>, then we replace <m>C</m> with <m>E</m> rather than <m>R</m>. In other words, the <q>highest</q> vertex of the triangle is replaced by whichever of <m>E, R</m> is lower. </p>
+
+<p>Having both contraction and expansion in the process means the triangle can grow smaller and larger, moving faster when the path is clear, or becoming very narrow to fit into a difficult to reach valley.</p>
+
+
+
+<example xml:id="example-rce-nelder-mead">
+<title> Reflection-contraction-expansion Nelder-Mead method </title>
+<statement><p>Minimize Rosenbrock's function <xref ref="eq-rosenbrock" /> using the reflection-contraction-expansion version of the Nelder-Mead method. Use a random starting point <c>randn(2, 1)</c> as one vertex <m>A</m> of the initial triangle, and let other vertices be <m>A + \mathbf e_1</m>, <m>A+\mathbf e_2</m>. Plot the path of the search. </p> </statement>
+<solution><p>The code is mostly the same as in <xref ref="example-reflection-contraction-nelder-mead" />, with additional lines noted in comments.</p>
+<pre>
+f = @(x) (x(1)-1)^2 + 100*(x(1)^2 - x(2))^2;
+
+A = randn(2, 1);
+B = A + [1; 0];
+C = A + [0; 1];
+T = [A B C];
+max_tries = 10000;
+path = zeros(2, max_tries);
+
+for k = 1:max_tries
+    path(:, k) = mean(T, 2);
+    if max(abs(T - path(:, k))) &lt; 1e-6
+        break
+    end
+    values = [f(T(:,1)) f(T(:,2)) f(T(:,3))];
+    [fmin, ind] = max(values);
+    R = sum(T, 2) - 2*T(:, ind);
+    if f(R) &lt; fmin
+        E = 1.5*sum(T, 2) - 3.5*T(:, ind);  % consider expansion
+        if f(E) &lt; f(R)
+            T(:, ind) = E;                  % choose to expand
+        else
+            T(:, ind) = R;                  % choose to reflect
+        end
+    else 
+        [fmax, ind] = min(values);
+        T = (T + T(:, ind))/2;
+    end
+end
+
+plot(path(1, 1:k), path(2, 1:k), '-+')
+if k &lt; max_tries
+    x = mean(T, 2);
+    fprintf('Found x = (%g, %g) with f(x) = %g after %d steps\n', x, f(x), k);
+else
+    disp('Failed to converge')
+end
+</pre></solution>
+</example>
+
+<p>The algorithm described above works quite well, considering we are minimizing a challenging function without using any derivative information. The version of the Nelder-Mead algorithm implemented in Matlab is a little different in that it chooses between three ways of contracting a simplex (called <q>contract inside</q>, <q>contract outside</q>, <q>shrink</q>) but the main ideas are the same. To observe the process of <c>fminsearch</c> optimization, run 
+<cd>
+f = @(x) (x(1)-1)^2 + 100*(x(1)^2 - x(2))^2;
+options = optimset('Display', 'iter');
+fminsearch(f, randn(2, 1), options)   
+</cd>
+</p>
+</section>
+
+<exercises xml:id="exercises-nelder-mead">
+    <title>Homework</title>
+
+<exercise number="1">
+<statement> <p> The stopping condition of the method in <xref ref="example-rce-nelder-mead" /> is that 
+<cd>
+max(abs(T - path(:, k))) &lt; 1e-6    
+</cd>
+meaning that every coordinate of every vertex of triangle <m>T</m> with within <m>10^{-6}</m> of the corresponding coordinate of the center of <m>T</m>. This is just saying <q>the triangle is small</q>, and makes no use of the values of function <m>f</m>. Replacing this stopping condition with <q>the difference between the largest and smallest of the values of <m>f</m> at the vertices of <m>T</m> is less than <m>10^{-6}</m>.</q> 
+Does the method still reliably find the minimum <m>(1, 1)</m> of Rosenbrock's function? Does it take more or fewer steps with the new stopping condition, or about the same as before? </p></statement></exercise>
+ 
+ 
+</exercises>
+
+</chapter>
+
+  
