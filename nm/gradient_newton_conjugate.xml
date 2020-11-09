@@ -13,7 +13,7 @@
 <section xml:id="section-gradient-descent-nd">
 <title>Gradient descent in several variables</title>
 
-<p>In order to minimize a function <m>f\colon \mathbb R^n \to \mathbb R</m>, we can start with initial vector <m>\mathbf a</m> and compute <m>\mathbf x = \mathbf a - \beta \nabla f(a)</m>, then replace <m>\mathbf a</m> with <m>\mathbf x</m> and repeat until convergence is achieved (or the limit on steps is reached). This is the <m>n</m>-dimensional version of the gradient descent method in <xref ref="section-gradient-descent-1d" />. We already saw that the choice of <m>\beta</m> is difficult even in one dimension. It gets worse in several dimensions.</p>
+<p>In order to minimize a function <m>f\colon \mathbb R^n \to \mathbb R</m>, we can start with initial vector <m>\mathbf a</m> and compute <m>\mathbf x = \mathbf a - \beta \nabla f(\mathbf a)</m>, then replace <m>\mathbf a</m> with <m>\mathbf x</m> and repeat until convergence is achieved (or the limit on steps is reached). This is the <m>n</m>-dimensional version of the gradient descent method in <xref ref="section-gradient-descent-1d" />. We already saw that the choice of <m>\beta</m> is difficult even in one dimension. It gets worse in several dimensions.</p>
 
 <p>Consider the function 
 <men xml:id="eq-quadratic-badly-scaled">
@@ -28,7 +28,7 @@ There is no good value of <m>\beta</m> to use here. If <m>\beta > 10^{-6}</m>, t
 <p>The underlying issue is that the direction <m>-\nabla f</m> does not really point toward the minimum of <m>f</m> in this example. The steepest descent goes sideways due to very different rates of change in different variables. This is one of main reasons why optimization in several variables is hard, and why it is sensitive to <em>scaling</em> of the variables. We would not have such difficulties with <m>x_1^2 + 3 x_2^2</m>. </p>
 
 <p>One way to improve the situation is to run a one-variable minimization algorithm, <term>line search</term> at each step, to find the minimum of <m>f</m> on the line of steepest descent. This means minimizing the function 
-<m>h(t) = f(\mathbf a - t \mathbf g)</m> where <m>g = \nabla f(\mathbf a)</m>. If we find the exact minimum on the line, then the minimization process for function <xref ref="eq-quadratic-badly-scaled" /> ends in two steps. But for slightly more complicated functions the difficulty emerges again. Consider 
+<m>h(t) = f(\mathbf a + t \mathbf g)</m> where <m>\mathbf g = -\nabla f(\mathbf a)</m>. If we find the exact minimum on the line, then the minimization process for function <xref ref="eq-quadratic-badly-scaled" /> ends in two steps. But for slightly more complicated functions the difficulty emerges again. Consider 
 <url href="https://en.wikipedia.org/wiki/Rosenbrock_function">Rosenbrock's function</url>
 <men xml:id="eq-rosenbrock">
 f(\mathbf x) = (x_1 - 1)^2 + 100(x_1^2 - x_2)^2
