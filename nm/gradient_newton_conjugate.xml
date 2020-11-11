@@ -28,7 +28,7 @@ There is no good value of <m>\beta</m> to use here. If <m>\beta > 10^{-6}</m>, t
 <p>The underlying issue is that the direction <m>-\nabla f</m> does not really point toward the minimum of <m>f</m> in this example. The steepest descent goes sideways due to very different rates of change in different variables. This is one of main reasons why optimization in several variables is hard, and why it is sensitive to <em>scaling</em> of the variables. We would not have such difficulties with <m>x_1^2 + 3 x_2^2</m>. </p>
 
 <p>One way to improve the situation is to run a one-variable minimization algorithm, <term>line search</term> at each step, to find the minimum of <m>f</m> on the line of steepest descent. This means minimizing the function 
-<m>h(t) = f(\mathbf a + t \mathbf g)</m> where <m>\mathbf g = -\nabla f(\mathbf a)</m>. If we find the exact minimum on the line, then the minimization process for function <xref ref="eq-quadratic-badly-scaled" /> ends in two steps. But for slightly more complicated functions the difficulty emerges again. Consider 
+<m>h(t) = f(\mathbf a + t \mathbf g)</m> where <m>\mathbf g = -\nabla f(\mathbf a)</m>. If we find the exact minimum on the line each time, then the minimization process for function converges to the minimum quickly. But for slightly more complicated functions the difficulty emerges again. Consider 
 <url href="https://en.wikipedia.org/wiki/Rosenbrock_function">Rosenbrock's function</url>
 <men xml:id="eq-rosenbrock">
 f(\mathbf x) = (x_1 - 1)^2 + 100(x_1^2 - x_2)^2
@@ -94,7 +94,7 @@ end
 <section xml:id="section-newton-method-min-nd">
 <title>Newton's method for multivariate minimization </title>
 
-<p>Recall that the Newton method for solving a vector equation <m>\mathbf F(\mathbf x) = 0</m> 
+<p>Recall from <xref ref="chapter-multivariate-newton" /> that the Newton method for solving a vector equation <m>\mathbf F(\mathbf x) = 0</m> 
 proceeds in iterative steps of the form <m>\mathbf x = \mathbf a - J(\mathbf a)^{-1} \mathbf F(\mathbf a)</m>
 where <m>J</m> is the Jacobian matrix of <m>\mathbf F</m>.  For the purpose of minimizing a scalar function <m>f</m>, we let <m>\mathbf F = \nabla f</m>. The Jacobian matrix <m>J</m> of <m>\mathbf F</m> then becomes the <term>Hessian matrix</term> of <m>f</m>, which is the matrix of all second-order partial derivatives.  
 <me>
