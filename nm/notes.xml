@@ -100,6 +100,7 @@ along with MathBook XML.  If not, see <http://www.gnu.org/licenses/>.
             <xi:include href="./parabolic_interpolation_descent.xml" />
             <xi:include href="./gradient_newton_conjugate.xml" />
             <xi:include href="./nelder_mead.xml" />
+            <xi:include href="./constrained_optimization.xml" />
         </part>
 
     </book>

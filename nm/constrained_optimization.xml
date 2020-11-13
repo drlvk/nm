@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<chapter xml:id="chapter-constrained-optimization" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+<title>Constrained Optimization</title>
+
+
+    <introduction>
+        <p> Often the variables in an optimization problem cannot be chosen arbitrarily: there are constraints as as being nonnegative, or having some upper bound, or satisfying some equation or inequality (which could be linear or nonlinear). We consider some approaches to constrained optimization problems, including the possibility of converting them to unconstrained optimization by adding a penalty term.
+      </p>
+    </introduction>
+
+
+<section xml:id="section-penalty-method">
+<title>Penalty method</title>
+
+<p>A typical problem of constrained optimization is to find the minimum of a function <m>f</m> on some region 
+<m>D</m> of <m>\mathbb R^n</m>. One approach is to add a penalty for being outside of <m>D</m>, for example let
+<men xml:id="eq-constant-penalty">
+   g(x) = \begin{cases} f(x)  &amp; x\in D \\ f(x) + M &amp; x\notin D \end{cases} 
+</men>
+where <m>M</m> is a large number, say <m>10^6</m>. Then try to minimize <m>g</m>, with the expectation that the minimum will be in <m>D</m>. Since <m>g=f</m> within <m>D</m>, such a minimum will also be a minimum of <m>f</m>. 
+</p> 
+
+<p>The <em>constant penalty</em> <xref ref="eq-constant-penalty" /> has several disadvantages. It makes <m>g</m> discontinuous, and it does not eliminate <em>local</em> minima outside of <m>D</m>. Since minimization methods often converge to a local minimum, we may end up outside of <m>D</m> even though there are much smaller values within <m>D</m>. </p>   
+
+<p>A way to correct both of the above issues is to add to <m>f</m> a continuous penalty function <m>P</m> that is equal to <m>0</m> inside <m>D</m> and is positive outside of <m>D</m>. Then minimize <m>f+P</m>. 
+One way to construct <m>P</m> is to describe the region <m>D</m> by way of an inequality <m>c\le 0</m>, for example <m>x^2 + y^2 - 1 \le 0</m> describes a disk of radius <m>1</m>. There are multiple ways to use such an inequality  to form a penalty function. For example, the linear penalty 
+<men xml:id="eq-linear-penalty">
+P_1(x) = M\max(0, c)
+</men>
+(with a large constant <m>M</m>) and quadratic penalty 
+<men xml:id="eq-quadratic-penalty">
+P_2(x) = M\max(0, c)^2
+</men>
+The linear penalty is continuous but not differentiable on the boundary of <m>D</m>. The quadratic penalty is differentiable, which is preferable for the methods that rely on derivative. Indeed, the gradient of <xref ref="eq-quadratic-penalty" />  is  
+<men xml:id="eq-quadratic-penalty-grad">
+\nabla P_2(x) = 2 M \max(0, c) \nabla c
+</men>
+On the other hand, the fact that <m>P_2</m> starts off with zero slope makes it more likely that the minimum of <m>f + P_2</m> will be slightly outside of the region <m>D</m>. So there is a tradeoff between what is better for minimization algorithms and what is more efficient in keeping the  </p>
+
+<p>Let us try both methods with a simple function: minimize <m>f(x, y) = (x + 7y)^3</m> on the disk <m>x^2 + y^2\le 1</m>. We could use our own implementation of Nelder-Mead method from <xref ref="chapter-nelder-mead" /> but <c>fminsearch</c> already does that, so it is used below. 
+</p>
+
+<example xml:id="example-comparing-penalty-functions">
+<title> Comparing two penalty functions</title>
+<statement><p>Minimize  <m>f(x, y) = (x + 7y)^3 </m> on the disk <m>x^2 + y^2\le 1</m> by using <c>fminsearch</c> with a penalty term. </p> </statement>
+<solution>
+<pre>
+f = @(x) (x(1) + 7*x(2)).^3;
+c = @(x) x(1).^2 + x(2).^2 - 1;
+M = 1e6;
+
+x0 = randn(2, 1);
+xm1 = fminsearch(@(x) f(x) + M*max(c(x), 0), x0);
+xm2 = fminsearch(@(x) f(x) + M*max(c(x), 0).^2, x0);
+
+fprintf('Linear penalty: found x = (%g, %g), |x| = %g, f(x) = %g \n', xm1, norm(xm1), f(xm1));
+fprintf('Quadratic penalty: found x = (%g, %g), |x| = %g, f(x) = %g \n', xm2, norm(xm2), f(xm2));
+</pre>
+<p>With the linear penalty, the minimization process sometimes fails to converge within the allowed attempts; but if it converges, it stays in the unit disk. With the quadratic penalty, the convergence is more reliable but the norm of the point of minimum is usually greater than <m>1</m>. </p>
+</solution></example>
+
+<p>In practice, quadratic penalty is usually preferable and the issue of the minimum being slightly out of bounds is dealt with by increasing <m>M</m> and using the previously found point of minimum as a new starting point. This is done below.</p>
+
+<example xml:id="example-iterative-constrained-minimization">
+<title> Iterative minimization on the unit disk</title>
+<statement><p>Minimize  <m>f(x, y) = (x + 7y)^3 </m> on the disk <m>x^2 + y^2\le 1</m> by iteratively using <c>fminsearch</c> with a quadratic penalty term. </p> </statement>
+<solution>
+<pre>
+f = @(x) (x(1) + 7*x(2)).^3;
+c = @(x) x(1).^2 + x(2).^2 - 1;
+x0 = randn(2, 1);
+
+for M = [1e3, 1e6, 1e9, 1e12]
+    x0 = fminsearch(@(x) f(x) + M*max(c(x), 0).^2, x0);
+end
+    
+fprintf('Found x = (%g, %g), |x| = %g, f(x) = %g \n', x0, norm(x0), f(x0));
+</pre>
+<p>With the linear penalty, the minimization process sometimes fails to converge within the allowed attempts; but if it converges, it stays in the unit disk. With the quadratic penalty, the convergence is more reliable but the norm of the point of minimum is usually greater than <m>1</m>. </p>
+</solution></example>
+
+<p>Note that the penalty method works just as well with <term>equality constraints</term> of the form 
+<m>c = 0</m>. In this case one adds <m>Mh^2</m> instead of <m>M\max(c, 0)^2</m> to the objective function. And if there are multiple constraints, they are all added. </p> 
+
+</section>
+
+
+<section xml:id="section-lagrange-multiplier">
+<title>Lagrange multiplier method</title>
+
+<p>Suppose we want to minimize <m>f</m> subject to equality constraint <m>c = 0</m> in <m>n</m>-dimensional space. A point <m>x^*</m> of such constrained minimum must have <m>\nabla f</m> perpendicular to the surface 
+<m>c = 0</m>. Therefore, <m>\nabla f </m> is parallel to <m>\nabla c</m>. We can express this as <m>\nabla f = \lambda \nabla c</m> where <m>\lambda</m> is the <m>Lagrange multiplier</m> (so far unknown). We have the system 
+<me> \nabla f(\mathbf x) - \lambda c(\mathbf x) = 0, \quad c(\mathbf x) = 0</me>
+of <m>n+1</m> equations with <m>n+1</m> unknowns. The Jacobian of this system is the block matrix 
+<me>
+\begin{pmatrix} Hf &amp; -\nabla c \\ (\nabla c)^T &amp; 0  \end{pmatrix}
+</me>
+where <m>Hf</m>  is the Hessian of <m>f</m>. It is feasible to solve the system using multivarible Newton's method, for example. </p> 
+
+
+<example xml:id="example-lagrange-multiplier">
+<title> Using the Lagrange multiplier method</title>
+<statement><p>Minimize  <m>f(\mathbf x) = x_1^4 + \exp(3x_1+x_2)</m> on the circle <m>x_1^2 + x_2^2 = 1</m> using the Lagrange multiplier method. </p> </statement>
+<solution><p>The code is similar to <xref ref="example-newton-min-rosenbrock" /> but with more complicated
+gradient and Hessian. To avoid notational confusion, it uses <c>x</c> for the vector <m>(x_1, x_2)</m> and 
+<c>v</c> for the vector <m>(x_1, x_2, \lambda)</m>. </p>
+<pre>
+f = @(x) x(1)^4 + exp(3*x(1)+x(2));
+
+Fg = @(v) [4*v(1)^3 + 3*exp(3*v(1) + v(2)) - v(3)*(2*v(1)); exp(3*v(1) + v(2)) - v(3)*(2*v(2)); -(v(1)^2 + v(2)^2 - 1)];
+Fh = @(v) [12*v(1)^2 + 9*exp(3*v(1) + v(2)) - v(3)*2, 3*exp(3*v(1) + v(2)), -(2*v(1)); ... 
+    3*exp(3*v(1) + v(2)), exp(3*v(1) + v(2)) - v(3)*2, -(2*v(2)); ...
+    -2*v(1),  -2*v(2), 0];
+    
+v = randn(3, 1);
+
+max_tries = 10000;
+
+for k=1:max_tries
+    dv = -Fh(v)\Fg(v);
+    v = v + dv;
+    if norm(dv) &lt; 1e-6
+        break
+    end
+end
+
+x = v(1:2);
+if k &lt; max_tries
+    fprintf('Found x = (%g, %g) with f(x) = %g after %d steps\n', x, f(x), k);
+else
+    disp('Failed to converge')
+end
+</pre>
+<p>The method converges quickly and the point it finds satisfies to constraint. But this point is often a maximum rather than a minimum of the function. As usual with Newton's method, the situation can be improved by running a rough search algorithm first, just to locate a good starting point. </p>
+</solution></example>
+
+<p>Matlab provides <m>fmincon</m> command which implements constrained minimization with various constraints, both equality and inequality types. However, its availability may vary depending on version, and Octave does not have it built-in.</p> 
+
+</section>
+
+
+<exercises xml:id="exercises-constrained-optimization">
+    <title>Homework</title>
+
+<exercise number="1">
+<statement> <p> (Theoretical) Use the Lagrange multiplier method to find the critical points of the function 
+<m>f(x, y) = (x + 7y)^3 </m> on the circle <m>x^2 + y^2 = 1</m>. Compare with the result of 
+<xref ref="example-iterative-constrained-minimization" />. 
+</p></statement></exercise>
+
+
+<exercise number="2">
+<statement> <p>Using the penalty method of <xref ref="example-iterative-constrained-minimization" />, find four numbers <m>x_1, x_2, x_3, x_4</m> on the interval <m>[-1, 1]</m> for which the product of all pairwise distances 
+<me>
+\prod_{1\le k \lt \ell\le 4}|x_k - x_\ell|
+</me>
+is as large as possible. What pattern do you observe in the points that achieve this maximum?</p> 
+
+<p>Remark: such maximization problem makes sense for any number of points, and on any bounded set. The points that maximize the product of distances are known as <term>Fekete points</term> and are used in approximation theory, specifically for polynomial interpolation.</p> 
+    
+<p>Hint: to improve the performance of <c>fminsearch</c>, do not use absolute value: instead, minimize the product  
+<me>
+\prod_{1\le k \lt \ell\le 4}(x_k - x_\ell)
+</me>
+This product can be concisely expressed in Matlab as 
+<cd>
+prod(x(1:3)-x(4))*prod(x(1:2)-x(3))*(x(1)-x(2))    
+</cd>
+The constraint function <c>c</c> could be simply <c>max(abs(x)) - 1</c>; this constrains all four points to the interval at once.</p>
+</statement></exercise>
+
+ 
+</exercises>
+
+</chapter>
+
+  
