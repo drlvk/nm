@@ -91,7 +91,7 @@ fprintf('Found x = (%g, %g), |x| = %g, f(x) = %g \n', x0, norm(x0), f(x0));
 <title>Lagrange multiplier method</title>
 
 <p>Suppose we want to minimize <m>f</m> subject to equality constraint <m>c = 0</m> in <m>n</m>-dimensional space. A point <m>x^*</m> of such constrained minimum must have <m>\nabla f</m> perpendicular to the surface 
-<m>c = 0</m>. Therefore, <m>\nabla f </m> is parallel to <m>\nabla c</m>. We can express this as <m>\nabla f = \lambda \nabla c</m> where <m>\lambda</m> is the <m>Lagrange multiplier</m> (so far unknown). We have the system 
+<m>c = 0</m>. Therefore, <m>\nabla f </m> is parallel to <m>\nabla c</m>. We can express this as <m>\nabla f = \lambda \nabla c</m> where <m>\lambda</m> is the <term>Lagrange multiplier</term> (so far unknown). We have the system 
 <me> \nabla f(\mathbf x) - \lambda c(\mathbf x) = 0, \quad c(\mathbf x) = 0</me>
 of <m>n+1</m> equations with <m>n+1</m> unknowns. The Jacobian of this system is the block matrix 
 <me>
