@@ -33,11 +33,11 @@ P_1(x) = M\max(0, c)
 <men xml:id="eq-quadratic-penalty">
 P_2(x) = M\max(0, c)^2
 </men>
-The linear penalty is continuous but not differentiable on the boundary of <m>D</m>. The quadratic penalty is differentiable, which is preferable for the methods that rely on derivative. Indeed, the gradient of <xref ref="eq-quadratic-penalty" />  is  
+The linear penalty is continuous but not differentiable on the boundary of <m>D</m>. The quadratic penalty is differentiable, which is preferable for the methods that rely on the gradient. Indeed, the gradient of <xref ref="eq-quadratic-penalty" />  is  
 <men xml:id="eq-quadratic-penalty-grad">
 \nabla P_2(x) = 2 M \max(0, c) \nabla c
 </men>
-On the other hand, the fact that <m>P_2</m> starts off with zero slope makes it more likely that the minimum of <m>f + P_2</m> will be slightly outside of the region <m>D</m>. So there is a tradeoff between what is better for minimization algorithms and what is more efficient in keeping the  </p>
+On the other hand, the fact that <m>P_2</m> starts off with zero slope makes it more likely that the minimum of <m>f + P_2</m> will be slightly outside of the region <m>D</m>. So there is a tradeoff between reaching the minimum and enforcing the constraint.</p>
 
 <p>Let us try both methods with a simple function: minimize <m>f(x, y) = (x + 7y)^3</m> on the disk <m>x^2 + y^2\le 1</m>. We could use our own implementation of Nelder-Mead method from <xref ref="chapter-nelder-mead" /> but <c>fminsearch</c> already does that, so it is used below. 
 </p>
@@ -109,7 +109,9 @@ gradient and Hessian. To avoid notational confusion, it uses <c>x</c> for the ve
 <pre>
 f = @(x) x(1)^4 + exp(3*x(1)+x(2));
 
-Fg = @(v) [4*v(1)^3 + 3*exp(3*v(1) + v(2)) - v(3)*(2*v(1)); exp(3*v(1) + v(2)) - v(3)*(2*v(2)); -(v(1)^2 + v(2)^2 - 1)];
+Fg = @(v) [4*v(1)^3 + 3*exp(3*v(1) + v(2)) - v(3)*(2*v(1)); ...
+    exp(3*v(1) + v(2)) - v(3)*(2*v(2)); ...
+    -(v(1)^2 + v(2)^2 - 1)];
 Fh = @(v) [12*v(1)^2 + 9*exp(3*v(1) + v(2)) - v(3)*2, 3*exp(3*v(1) + v(2)), -(2*v(1)); ... 
     3*exp(3*v(1) + v(2)), exp(3*v(1) + v(2)) - v(3)*2, -(2*v(2)); ...
     -2*v(1),  -2*v(2), 0];
