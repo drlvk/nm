@@ -229,10 +229,9 @@ norm(h) &lt; 1e-6
 </cd>
 Re-run the script several times (about five): since it has a random initial point, the results may differ. Does the minimization process converge to the minimum <m>(1, 1)</m> every time? 
 </p>
-
 </statement></exercise>
 
-<p>Remark: the combination of ideas of Broyden's method and line search, with some modifications, is known as the <url href="https://en.wikipedia.org/wiki/Broyden%E2%80%93Fletcher%E2%80%93Goldfarb%E2%80%93Shanno_algorithm">BFGS algorithm</url>, which is widely used for gradient-based unconditional optimization. It is implemented in Matlab (<c>fminunc</c> command), Python scientific library SciPy, etc.</p>
+<p>Remark: the combination of ideas of Broyden's method and line search, with some modifications, is known as the <url href="https://en.wikipedia.org/wiki/Broyden%E2%80%93Fletcher%E2%80%93Goldfarb%E2%80%93Shanno_algorithm">BFGS algorithm</url>, which is widely used for gradient-based unconstrained optimization. It is implemented in Matlab (<c>fminunc</c> command), Python scientific library SciPy, etc.</p>
  
 </exercises>
 
