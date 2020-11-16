@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<chapter xml:id="chapter-linear-programming" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+<title>Linear Programming</title>
+
+
+    <introduction>
+        <p> A special but very important case of constrained optimization is minimizing a linear function on a set that is described by a set of linear inequalities or equations (a <term>convex polyhedron</term>). A large number of applied problems, for example in economics, can be modeled by a linear programming problem. 
+      </p>
+    </introduction>
+
+
+<section xml:id="section-linear-programming-introduction">
+<title>Introduction to linear programming</title>
+
+<p>If we want to maximize the function <m>f(\mathbf x) = x_1+2x_2-5x_3</m> subject to constraints 
+<m>0\le x_1\le x_2\le x_3\le 10</m> and <m>2x_3 - x_1\ge 3</m>. This is a linear programming <term>(LP)</term> problem, since each constraint is a linear inequality and the objective function is linear. </p>
+
+<p>There are various <term>standard forms</term> to which linear programming problems can be transformed by  manipulations such as the following: 
+<ul>
+<li> An equality constraint can be expressed as the combination of <m>\le </m> and <m>\ge</m> constraints. </li> 
+<li> Any <m>\ge </m> constraint becomes <m>\le </m> after multiplication by <m>-1</m>.</li> 
+<li> Maximization of <m>f</m> is equivalent to minimization of <m>-f</m>. </li>
+</ul> 
+</p> 
+
+<p>Using the transformations described above, any LP can be expressed as: 
+<men xml:id="eq-standard-form-IR">
+\mathbf c^T \mathbf x\to \min  \quad \text{where } A\mathbf x \le \mathbf b
+</men>
+where the inequality between vectors <m>A\mathbf x \le \mathbf b</m> is understood as a system of linear inequalities: each component on the left is less than or equal to the corresponding component on the right. Compare this to how  <m>A\mathbf x  = \mathbf b</m> means a system of linear equations.</p>   
+
+<p>Sometimes it helps to introduce new variables in a LP problem. For example, some algorithms assume that the variables <m>x_k</m> are nonnegative, that is, they work with the problem stated as
+<men xml:id="eq-standard-form-IN">
+\mathbf c^T \mathbf x\to \min  \quad \text{where } A\mathbf x \le \mathbf b, \quad \mathbf x \ge 0
+</men>
+Yet others assume linear equations instead of inequalities: 
+<men xml:id="eq-standard-form-EN">
+\mathbf c^T \mathbf x\to \min  \quad \text{where } A\mathbf x = \mathbf b, \quad \mathbf x \ge 0
+</men>
+There are ways to convert between these (and other) <q>standard</q> forms, described below.</p> 
+
+<p>From <xref ref="eq-standard-form-IR" /> to <xref ref="eq-standard-form-IN" />: replace each variable <m>x_k</m> with the difference <m>x_k = x_k' - x_k''</m>, and require <m>x_k', x_k''</m> to be nonnegative. 
+Since every real number is the difference of two nonnegative numbers, this does not change the essence of the problem. In terms of <m>A, b</m>, this transformation keeps <m>\mathbf b</m> the same but doubles the size of <m>A</m> by appending <m>-A</m> to the right. </p> 
+
+<p>From <xref ref="eq-standard-form-IN" /> to <xref ref="eq-standard-form-IR" />: add linear inequalities of the form <m>-x_k \le 0</m>. This means appending <m>-I</m> to the bottom of matrix <m>A</m>, with zeros added to the bottom of vector <m>\mathbf b</m>.</p>
+
+<p>From <xref ref="eq-standard-form-IN" /> to <xref ref="eq-standard-form-EN" />: introduce 
+<term>slack variables</term> <m>z_k = b_k - (A\mathbf x)_k</m>. This replaces all linear inequalities
+<m>A\mathbf x\le \mathbf b</m> with nonnegativity constraints <m>\mathbf z\ge 0</m>. What remains is the definition of slack variables, which is a system of linear <em>equations</em>.</p> 
+
+<p>From <xref ref="eq-standard-form-EN" /> to <xref ref="eq-standard-form-IN" />: rewrite each linear equation as two linear inequalities. That is, a system of linear equations <m>A\mathbf x = \mathbf b</m> is equivalent to having two systems of linear inequalities: <m>A\mathbf x \le \mathbf b</m>  and <m>A\mathbf x \ge \mathbf b</m>. The latter system is rewritten as <m>(-A)\mathbf x \le -\mathbf b</m> and appended to the former.</p> 
+
+<p>In Matlab, the problem <xref ref="eq-standard-form-IR" /> is solved with 
+<cd>
+linprog(c, A, b)
+</cd>
+which returns the optimal <m>x</m>. </p>
+
+<example xml:id="example-solving-with-linprog">
+<title> A simple linear programming problem</title>
+<statement><p>Maximize <m>x_1+x_2</m> subject to constraints <m>x_1 + 2x_2 \le 4</m> and <m>3x_1 + x_2 \le 5</m>. </p> </statement>
+<solution><p>Rephrasing this as the minimization of <m>-x_1-x_2</m>, we see that the coefficient vector should be <c>[-1 -1]</c>. Executing  
+<cd>
+linprog([-1; -1], [1 2; 3 1], [4; 5])
+</cd>
+yields <c>[1.2; 1.4]</c>. (Try to visualize this problem and its solution.) </p> 
+</solution></example>
+
+<p><xref ref="example-solving-with-linprog" /> illustrates basic use of <c>linprog</c>. This command allows more parameters which express equality constraints and additional lower and upper bounds on the variables: see <c>help linprog</c>.  </p>
+
+<p>Octave-specific remark. The current version of Octave has a similar function <c>glpk</c> instead of <c>linprog</c>. The main difference is that <c>glpk(c, A, b)</c> solves <xref ref="eq-standard-form-EN" /> instead of <xref ref="eq-standard-form-IR" />. However, the fourth argument of <c>glpk</c> can be used to set lower bounds to <m>-\infty</m> instead of <m>0</m>, the fifth argument (for upper bounds) can be left empty <c>[]</c>, and the sixth argument is a string indicating the form of constraints, with letters 'U' for <m>\le</m>. So, 
+<xref ref="example-solving-with-linprog" /> with Octave would be
+<cd>
+glpk([-1; -1], [1 2; 3 1], [4; 5], [-Inf; -Inf], [], 'UU')
+</cd>
+See <c>help glpk</c> for more. </p> 
+
+<p>As an additional example, let us solve the problem at the beginning of this section. The objective function 
+<m>f(\mathbf x) = x_1+2x_2-5x_3</m> was to be maximized, so we minimize <m>-f</m> which means 
+<c>c = [-1; -2; 5]</c>. The constraints <m>0\le x_1\le x_2\le x_3\le 10</m> become 
+<m>-x_1\le 0</m>, <m>x_1-x_2\le 0</m>, <m>x_2-x_3\le 0</m>, and <m>x_3\le 10</m>. Finally, 
+<m>2x_3 - x_1\ge 3</m> becomes <m>x_1 - 2x_3 \le -3</m>. We arrive at a system of five linear constraints, summarized in <c>A, b</c> below:
+<cd>
+c = [-1; -2; 5];
+A = [-1 0 0; 1 -1 0; 0 1 -1; 0 0 1; 1 0 -2];
+b = [0; 0; 0; 10; -3];
+x = linprog(c, A, b);
+fprintf('Found x = (%g, %g, %g) with c*x = %g \n', x, c'*x) ;
+</cd>
+Note that <c>A*x</c> is the vector <c>[0; -1.5; 0; 1.5; -3]</c> where three of components are equal to the components of <c>b</c> and the others are strictly less. The equality means that the corresponding constraints, such as <m>-x_1 \le 0</m>, are <term>active</term> at the optimal point: the point pushes against them. 
+The constraints <m>x_1\le x_2</m> and <m>x_3\le 10</m> are <term>inactive</term> at this point: they hold as strict inequalities. The solution would stay the same if the inactive constraints were removed. </p> 
+
+<p>The following terms may appear in error messages or warnings issued by <c>linprog</c> or its analogues in other software.
+<ul>
+<li>A <term>feasible point</term> is a vector <m>x</m> that satisfies the constraints. The set of all such points is the feasible set.</li>
+<li>A problem is <term>infeasible</term> if there are no feasible points. (Example: <m>x_1\ge 2</m>, <m>x_2\ge 2</m>, <m>x_1+x_2\le 3</m>.) Such a problem has no solution.</li>
+<li> A problem is <term>unbounded</term> if the objective function takes arbitrarily small values on the feasible set (in case of minimization) or arbitrarily large values (in case of maximization). Such a problem has no solution.</li> 
+<li>If the feasible set is nonempty and bounded, the problem surely has a solution. But it is possible to have an unbounded feasible set on which the objective function is bounded: recall <xref ref="example-solving-with-linprog" />.</li>
+</ul>
+</p>
+
+<p>Applied LP problems tend to have many variables and constraints, and a lot of work went into developing refining its solution methods such as the simplex method (walking along the edges of the feasible set) and interior point methods (moving through the interior of the feasible set toward its boundary).</p>
+
+</section>
+
+<section xml:id="section-linear-programming-duality">
+<title>Duality in linear programming</title>
+
+<p>The main differences between the standard forms of LP problems can be summarized as: 
+<ul>
+<li>Constraints: <em>I</em>nequalities or <em>E</em>quations</li>
+<li>Variables: <em>R</em>eal or <em>N</em>onnegative</li>
+</ul>
+Other differences: minimization vs maximization, inequalities <m>\le </m> vs <m>\ge </m>, are relatively minor: changing the signs of <m>A, \mathbf b</m>, or <m>\mathbf c</m> takes care of those variations. So, one can imagine four major types of LP problems: IR, IN, ER, and EN. However, <q>ER</q> type problems are not really interesting, because a system of linear equations with real variables determines a hyperplane, and the restriction of a  linear function to a hyperplane is either unbounded or constant. This leaves us with three types: IR, IN, EN, the examples of which are given by <xref ref="eq-standard-form-IR" />, <xref ref="eq-standard-form-IN" />, and <xref ref="eq-standard-form-EN" />, respectively.</p>
+
+<p> This section will describe how each LP problem has a <term>dual</term> LP problem. Specifically:
+<ul>
+    <li>A problem of type IR has a dual of type EN</li>
+    <li>A problem of type EN has a dual of type IR</li>
+    <li>A problem of type IN has a dual of type IN</li>
+</ul>
+In general, the dual of the dual problem is the original (<term>primal</term>) problem. The IN-IN duality is symmetric while IR-EN duality is asymmetric. </p> 
+
+<p>Specifically, symmetric duality states that the dual of  
+<men xml:id="eq-standard-form-IN-1">
+\mathbf c^T \mathbf x\to \max  \quad \text{where } A\mathbf x \le \mathbf b, \quad \mathbf x \ge 0
+</men>
+is
+<men xml:id="eq-standard-form-IN-2">
+\mathbf b^T \mathbf y\to \min  \quad \text{where } A^T\mathbf y \ge \mathbf c, \quad \mathbf y \ge 0
+</men>
+Asymmetric duality states that the dual of 
+<men xml:id="eq-standard-form-IR-1">
+\mathbf c^T \mathbf x\to \max \quad \text{where } A\mathbf x \le \mathbf b
+</men>
+is
+<men xml:id="eq-standard-form-EN-1">
+\mathbf b^T \mathbf y\to \min  \quad \text{where } A^T\mathbf y = \mathbf c, \quad \mathbf y \ge 0
+</men>
+Note that in both cases, the variables and constraints trade places; the dual has as many constraints as the original problem had variables (not counting the nonnegativity requirements). Also, the dual of a maximization problem is a minimization problem (and the other way around).
+</p>
+
+<p><term>Strong Duality Theorem</term>: Suppose that the primal LP problem has an optimal solution <m>\mathbf x^*</m>. Then the dual problem has an optimal solution <m>\mathbf y^*</m> where <m>\mathbf c^T\mathbf x^*=\mathbf b^T\mathbf y^*</m>. Thus, although these problems have different objective functions, both objective functions have the same extreme (optimal) value.</p> 
+
+<p>Every feasible point <m>\mathbf x</m> of <xref ref="eq-standard-form-IN-1" /> gives a lower bound on its optimal value: that is, <m>\mathbf c^T \mathbf x^*\ge \mathbf c^T \mathbf x</m>. On the other hand, every   feasible point <m>\mathbf y</m> of <xref ref="eq-standard-form-IN-2" /> gives an <em>upper</em> bound on its optimal value: that is, <m>\mathbf b^T\mathbf y^* \le \mathbf b^T\mathbf y</m>. Since the optimal value (so far unknown) is the same for both problems, it is contained somewhere between known quantities 
+<m> \mathbf c^T \mathbf x</m> and <m>\mathbf b^T\mathbf y</m>. This leads to the idea of moving the points 
+<m>\mathbf x, \mathbf y</m> through the feasible sets so that the <em>duality gap</em>
+<m> \mathbf b^T\mathbf y - \mathbf c^T \mathbf x</m> is decreased. Once the gap reaches zero, we have the solution. Or, if the gap becomes extremely small, we have a point <m>\mathbf x</m> that is almost as good as the optimal one.</p>  
+
+<p>Without going into the detailed proof of the Strong Duality Theorem, here is a sketch for asymmetric duality. Suppose <m>\mathbf x^*</m> is an optimal point for <xref ref="eq-standard-form-IR-1" />. If <m>\mathbf y</m> is any feasible point of <xref ref="eq-standard-form-EN-1" />, then 
+<men xml:id="eq-lp-duality-sketch">
+\mathbf c^T \mathbf x^* = (A^T \mathbf y)^T \mathbf x^* = \mathbf y^T (A\mathbf x^*) \le \mathbf y^T \mathbf b
+= \mathbf b^T \mathbf y
+</men>    
+which shows that each value of the objective function of the dual problem gives an upper bound for the primal problem  (this part is the <q>weak duality theorem</q>). It remains to show that there exists <m>\mathbf y</m> for which equality holds in <xref ref="eq-lp-duality-sketch" />. </p>
+
+<p>Imagine applying force <m>\mathbf c</m> to the point <m>\mathbf x^*</m>: if it can be moved in this direction, the objective function will increase. Since such an increase is impossible, the force <m>\mathbf c</m> must be balanced by reaction forces of the <q>walls</q>, i.e., hyperplanes <m>(A\mathbf x)_k\le b_k</m>, which represent constraints. Only the <em>active</em> constraints, those for which <m>(A\mathbf x^*)_k = b_k</m>, are relevant here, since <m>\mathbf x^*</m> does not touch the hyperplanes of inactive constraints. The normal vectors of the constraint hyperplanes are given by the rows of <m>A</m>. Transposition makes <m>\mathbf c</m> a linear combination of the columns of <m>A^T</m> with nonnegative coefficients; moreover, the coefficients of inactive constraints are zero. This means 
+that <m>\mathbb c = A^T \mathbf y^*</m> for some vector <m>\mathbf y^*\ge 0</m> such that if <m>(A\mathbf x^*)_k\lt b_k</m> (inactive constraint) then <m>y^*_k=0</m>. Returning to <xref ref="eq-lp-duality-sketch" /> we see that with <m>\mathbf y=\mathbf y^*</m> it becomes an equality. </p>
+ 
+</section>
+
+
+<section xml:id="section-lp-duality-economic">
+<title>Intepretation of duality in microeconomics</title>
+
+<p>The following example is adapted from Wikipedia article <url href="https://en.wikipedia.org/wiki/Dual_linear_program">Dual linear program</url>, available under the <url href="https://en.wikipedia.org/wiki/Wikipedia:Text_of_Creative_Commons_Attribution-ShareAlike_3.0_Unported_License">Creative Commons Attribution-ShareAlike License</url>. </p> 
+
+<p>Consider a farmer who may grow wheat and barley with the set provision of some <m>L</m> land, <m>F</m> fertilizer and <m>P</m> pesticide. To grow one unit of wheat, one unit of land, <m>F_1</m> units of fertilizer and <m>P_1</m> units of pesticide must be used. Similarly, to grow one unit of barley, one unit of land, <m>F_2</m> units of fertilizer and <m>P_2</m> units of pesticide must be used.</p>
+
+<p>The primal problem would be the farmer deciding how much wheat (<m>x_1</m>) and barley (<m>x_2</m>) to grow if their sell prices are <m>S_1</m> and <m>S_2</m> per unit. The goal is to maximize the total revenue: 
+<me>S_1 x_1 + S_2 x_2 \to \max</me>
+subject to constraints:
+<ul>
+    <li><m>x_1 + x_2 \leq L</m> (cannot use more land than available)</li>
+    <li><m>F_1  x_1 + F_2  x_2 \leq F</m>  (cannot use more fertilizer than available)</li>
+    <li><m>P_1  x_1 + P_2  x_2 \leq P</m> (cannot use more pesticide than available)</li>
+<li><m>x_1, x_2 \geq 0</m> (cannot grow negative amounts)</li>
+</ul>
+</p>
+
+<p>For the dual problem assume that <m>y</m> unit prices for each of these means of production (inputs) are set by a planning board. The planning board's job is to minimize the total cost of procuring the set amounts of inputs while providing the farmer with a floor on the unit price of each of his crops (outputs), 
+<m>S_1</m> for wheat and <m>S_2</m> for barley. This corresponds to the following problem:
+minimize the total cost 
+<me>L y_L + F y_F + P y_P \to \min</me>
+subject to constraints:
+<ul>
+<li><m>y_L+F_1 y_F+P_1 y_P\geq S_1</m> (the farmer must receive at least <m>S_1</m> for each unit of wheat)</li>
+<li><m>y_L+F_2 y_F+P_2 y_P\geq S_2</m> (the farmer must receive at least <m>S_2</m> for each unit of barley)</li>
+<li><m>y_L, y_F, y_P\geq 0</m> (prices cannot be negative)</li>
+</ul> 
+</p>
+
+<p>In matrix form this becomes: minimize 
+<me>\begin{pmatrix} L &amp; F &amp; P \end{pmatrix} \begin{pmatrix} y_L \\ y_F \\ y_P \end{bmatrix} </me>
+subject to: 
+<me>\begin{pmatrix} 1 &amp; F_1 &amp; P_1 \\ 1 &amp; F_2 &amp; P_2 \end{pmatrix} \begin{bmatrix} y_L \\ y_F \\ y_P \end{pmatrix} \ge \begin{pmatrix} S_1 \\ S_2 \end{pmatrix}</me>
+and 
+<me>
+\begin{pmatrix} y_L \\ y_F \\ y_P \end{pmatrix} \ge 0.
+</me>
+</p>
+
+<p>The primal problem deals with physical quantities. With all inputs available in limited quantities, and assuming the unit prices of all outputs is known, what quantities of outputs to produce so as to maximize total revenue? The dual problem deals with economic values. With floor guarantees on all output unit prices, and assuming the available quantity of all inputs is known, what input unit pricing scheme to set so as to minimize total expenditure?</p>
+
+<p>To each variable in the primal space corresponds an inequality to satisfy in the dual space, both indexed by output type. To each inequality to satisfy in the primal space corresponds a variable in the dual space, both indexed by input type.</p>
+
+<p>The coefficients that bound the inequalities in the primal space are used to compute the objective in the dual space, input quantities in this example. The coefficients used to compute the objective in the primal space bound the inequalities in the dual space, output unit prices in this example.</p>
+
+<p>Both the primal and the dual problems make use of the same matrix. In the primal space, this matrix expresses the consumption of physical quantities of inputs necessary to produce set quantities of outputs. In the dual space, it expresses the creation of the economic values associated with the outputs from set input unit prices.</p>
+</section>
+
+
+<exercises xml:id="exercises-linear-programming">
+    <title>Homework</title>
+
+<exercise number="1" xml:id="exercise-linear-programming-1">
+<statement> <p>Use Matlab to solve the primal problem in <xref ref="section-lp-duality-economic" /> with the following data:
+<ul>
+    <li>Available amounts are <m>L = 900</m>, <m>F = 600</m>, <m>P = 250</m></li>
+    <li>Each unit of wheat requires <m>F_1 = 0.7</m> units of fertilizer and <m>P_1 = 0.2</m> units of pesticide</li>
+    <li>Each unit of barley requires <m>F_2 = 0.5</m> units of fertilizer and <m>P_2 = 0.3</m> units of pesticide</li>
+    <li>The sell prices are <m>S_1 = 60</m> for wheat and <m>S_2 = 70</m> for barley.</li>
+</ul>
+One way is to convert this LP problem to the form <xref ref="eq-standard-form-IR" /> (including the nonnegativity requirements in the system of linear inequalities) and apply <c>linprog(c, A, b)</c>. Another is to find from <c>help linprog</c> how to impose the lower bound of <m>0</m> on the variables.</p> 
+
+<p>In a comment, answer the questions: how should the land be used? What will the total revenue be? Will there be any leftover land, fertilizer, or pesticide, and if so, how much?</p> 
+</statement></exercise>
+
+
+<exercise number="2">
+<statement> <p>Use Matlab to solve the dual problem in <xref ref="section-lp-duality-economic" /> with the same data as in <xref ref="exercise-linear-programming-1" />. </p>
+<p>In a comment, answer the questions: What prices should the planning board set? What will the total cost be? 
+</p> 
+
+</statement></exercise>
+
+ 
+</exercises>
+
+</chapter>
+
+  
