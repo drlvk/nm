@@ -14,7 +14,7 @@
 <section xml:id="section-linear-programming-introduction">
 <title>Introduction to linear programming</title>
 
-<p>If we want to maximize the function <m>f(\mathbf x) = x_1+2x_2-5x_3</m> subject to constraints 
+<p>Suppose we want to maximize the function <m>f(\mathbf x) = x_1+2x_2-5x_3</m> subject to constraints 
 <m>0\le x_1\le x_2\le x_3\le 10</m> and <m>2x_3 - x_1\ge 3</m>. This is a linear programming <term>(LP)</term> problem, since each constraint is a linear inequality and the objective function is linear. </p>
 
 <p>There are various <term>standard forms</term> to which linear programming problems can be transformed by  manipulations such as the following: 
@@ -31,32 +31,32 @@
 </men>
 where the inequality between vectors <m>A\mathbf x \le \mathbf b</m> is understood as a system of linear inequalities: each component on the left is less than or equal to the corresponding component on the right. Compare this to how  <m>A\mathbf x  = \mathbf b</m> means a system of linear equations.</p>   
 
-<p>Sometimes it helps to introduce new variables in a LP problem. For example, some algorithms assume that the variables <m>x_k</m> are nonnegative, that is, they work with the problem stated as
+<p>Sometimes the nature of the problem requires the variables <m>x_k</m> to be nonnegative, which leads to
 <men xml:id="eq-standard-form-IN">
 \mathbf c^T \mathbf x\to \min  \quad \text{where } A\mathbf x \le \mathbf b, \quad \mathbf x \ge 0
 </men>
-Yet others assume linear equations instead of inequalities: 
+Or, one may have linear equations instead of inequalities: 
 <men xml:id="eq-standard-form-EN">
 \mathbf c^T \mathbf x\to \min  \quad \text{where } A\mathbf x = \mathbf b, \quad \mathbf x \ge 0
 </men>
-There are ways to convert between these (and other) <q>standard</q> forms, described below.</p> 
+One can convert between these three <q>standard</q> forms as follows.</p> 
 
 <p>From <xref ref="eq-standard-form-IR" /> to <xref ref="eq-standard-form-IN" />: replace each variable <m>x_k</m> with the difference <m>x_k = x_k' - x_k''</m>, and require <m>x_k', x_k''</m> to be nonnegative. 
-Since every real number is the difference of two nonnegative numbers, this does not change the essence of the problem. In terms of <m>A, b</m>, this transformation keeps <m>\mathbf b</m> the same but doubles the size of <m>A</m> by appending <m>-A</m> to the right. </p> 
+Since every real number is the difference of two nonnegative numbers, this does not change the essence of the problem. In terms of <m>A, b</m>, this transformation keeps <m>\mathbf b</m> the same but doubles the size of <m>A</m> by appending <m>-A</m> to the right. The vector <m>\mathbf c</m> is similarly doubled.</p> 
 
 <p>From <xref ref="eq-standard-form-IN" /> to <xref ref="eq-standard-form-IR" />: add linear inequalities of the form <m>-x_k \le 0</m>. This means appending <m>-I</m> to the bottom of matrix <m>A</m>, with zeros added to the bottom of vector <m>\mathbf b</m>.</p>
 
 <p>From <xref ref="eq-standard-form-IN" /> to <xref ref="eq-standard-form-EN" />: introduce 
-<term>slack variables</term> <m>z_k = b_k - (A\mathbf x)_k</m>. This replaces all linear inequalities
+<term>slack variables</term> <m>z_k = b_k - (A\mathbf x)_k</m>. Then replace all linear inequalities
 <m>A\mathbf x\le \mathbf b</m> with nonnegativity constraints <m>\mathbf z\ge 0</m>. What remains is the definition of slack variables, which is a system of linear <em>equations</em>.</p> 
 
 <p>From <xref ref="eq-standard-form-EN" /> to <xref ref="eq-standard-form-IN" />: rewrite each linear equation as two linear inequalities. That is, a system of linear equations <m>A\mathbf x = \mathbf b</m> is equivalent to having two systems of linear inequalities: <m>A\mathbf x \le \mathbf b</m>  and <m>A\mathbf x \ge \mathbf b</m>. The latter system is rewritten as <m>(-A)\mathbf x \le -\mathbf b</m> and appended to the former.</p> 
 
 <p>In Matlab, the problem <xref ref="eq-standard-form-IR" /> is solved with 
 <cd>
-linprog(c, A, b)
+x = linprog(c, A, b)
 </cd>
-which returns the optimal <m>x</m>. </p>
+which returns the optimal <m>\mathbf x</m>. One can get the optimal value of objective function with <c>c'*x</c>.</p>
 
 <example xml:id="example-solving-with-linprog">
 <title> A simple linear programming problem</title>
@@ -70,7 +70,7 @@ yields <c>[1.2; 1.4]</c>. (Try to visualize this problem and its solution.) </p>
 
 <p><xref ref="example-solving-with-linprog" /> illustrates basic use of <c>linprog</c>. This command allows more parameters which express equality constraints and additional lower and upper bounds on the variables: see <c>help linprog</c>.  </p>
 
-<p>Octave-specific remark. The current version of Octave has a similar function <c>glpk</c> instead of <c>linprog</c>. The main difference is that <c>glpk(c, A, b)</c> solves <xref ref="eq-standard-form-EN" /> instead of <xref ref="eq-standard-form-IR" />. However, the fourth argument of <c>glpk</c> can be used to set lower bounds to <m>-\infty</m> instead of <m>0</m>, the fifth argument (for upper bounds) can be left empty <c>[]</c>, and the sixth argument is a string indicating the form of constraints, with letters 'U' for <m>\le</m>. So, 
+<p><em>Octave-specific remark</em>. The current version of Octave has a similar function <c>glpk</c> instead of <c>linprog</c>. The main difference is that <c>glpk(c, A, b)</c> solves <xref ref="eq-standard-form-EN" /> instead of <xref ref="eq-standard-form-IR" />. However, the fourth argument of <c>glpk</c> can be used to set lower bounds to <m>-\infty</m> instead of <m>0</m>, the fifth argument (for upper bounds) can be left empty <c>[]</c>, and the sixth argument is a string indicating the form of constraints, with letters 'U' for <m>\le</m>. So, 
 <xref ref="example-solving-with-linprog" /> with Octave would be
 <cd>
 glpk([-1; -1], [1 2; 3 1], [4; 5], [-Inf; -Inf], [], 'UU')
@@ -193,9 +193,9 @@ subject to constraints:
 </p>
 
 <p>In matrix form this becomes: minimize 
-<me>\begin{pmatrix} L &amp; F &amp; P \end{pmatrix} \begin{pmatrix} y_L \\ y_F \\ y_P \end{bmatrix} </me>
+<me>\begin{pmatrix} L &amp; F &amp; P \end{pmatrix} \begin{pmatrix} y_L \\ y_F \\ y_P \end{pmatrix} </me>
 subject to: 
-<me>\begin{pmatrix} 1 &amp; F_1 &amp; P_1 \\ 1 &amp; F_2 &amp; P_2 \end{pmatrix} \begin{bmatrix} y_L \\ y_F \\ y_P \end{pmatrix} \ge \begin{pmatrix} S_1 \\ S_2 \end{pmatrix}</me>
+<me>\begin{pmatrix} 1 &amp; F_1 &amp; P_1 \\ 1 &amp; F_2 &amp; P_2 \end{pmatrix} \begin{pmatrix} y_L \\ y_F \\ y_P \end{pmatrix} \ge \begin{pmatrix} S_1 \\ S_2 \end{pmatrix}</me>
 and 
 <me>
 \begin{pmatrix} y_L \\ y_F \\ y_P \end{pmatrix} \ge 0.
