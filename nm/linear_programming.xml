@@ -162,7 +162,7 @@ that <m>\mathbb c = A^T \mathbf y^*</m> for some vector <m>\mathbf y^*\ge 0</m> 
 </section>
 
 
-<section xml:id="section-lp-duality-farming">
+<section xml:id="section-lp-duality-economic">
 <title>Interpretation of duality in microeconomics</title>
 
 <p>The following example is adapted from Wikipedia article <url href="https://en.wikipedia.org/wiki/Dual_linear_program">Dual linear program</url>, available under the <url href="https://en.wikipedia.org/wiki/Wikipedia:Text_of_Creative_Commons_Attribution-ShareAlike_3.0_Unported_License">Creative Commons Attribution-ShareAlike License</url>. </p> 
