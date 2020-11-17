@@ -162,8 +162,8 @@ that <m>\mathbb c = A^T \mathbf y^*</m> for some vector <m>\mathbf y^*\ge 0</m> 
 </section>
 
 
-<section xml:id="section-lp-duality-economic">
-<title>Intepretation of duality in microeconomics</title>
+<section xml:id="section-lp-duality-farming">
+<title>Interpretation of duality in microeconomics</title>
 
 <p>The following example is adapted from Wikipedia article <url href="https://en.wikipedia.org/wiki/Dual_linear_program">Dual linear program</url>, available under the <url href="https://en.wikipedia.org/wiki/Wikipedia:Text_of_Creative_Commons_Attribution-ShareAlike_3.0_Unported_License">Creative Commons Attribution-ShareAlike License</url>. </p> 
 
@@ -212,6 +212,70 @@ and
 </section>
 
 
+<section xml:id="section-lp-duality-transportation">
+<title>Duality in optimal transportation</title>
+
+<p>The book <em>Topics in Optimal Transportation</em> by <url href="https://en.wikipedia.org/wiki/C%C3%A9dric_Villani">Cédric Villani</url> presents the following illustration of duality, credited by the author to <url href="https://en.wikipedia.org/wiki/Luis_Caffarelli">Luis Caffarelli</url>. In this book the duality theorem is named after <url href="https://en.wikipedia.org/wiki/Leonid_Kantorovich">Leonid Kantorovich</url>. </p> 
+
+<blockquote> <p>Suppose for instance that you are both a mathematician and an industrialist, and want to transfer a huge amount of coal from your mines to your factories. You can hire trucks to do this transportation problem, but you have to pay them <m>c(X, Y)</m> for each ton of coal which is transported from place <m>X</m> to place <m>Y</m>. Both the amount of coal which you can extract from each mine, and the amount which each factory should receive, are fixed. As you are trying to [<ellipsis/>] minimize the price you have to pay, another mathematician comes to you and tells you: </p>
+<p><q>My friend, let me handle this for you: I will ship all your coal with my own trucks and you won't have to worry about what goes where. I will just set a price <m>\varphi(X)</m> for loading one ton of coal at place <m>X</m>, and a price <m>\psi(Y)</m> for unloading it at destination <m>Y</m>. I will set the prices in such a way that your financial interest will be to let me handle all your transportation! Indeed, you can check very easily that for any <m>X</m> and <m>Y</m>, the sum <m>\varphi(X)+\psi(Y)</m> will always be <m>\le c(X, Y)</m> (in order to achieve this goal, I am even ready to give financial compensations for some places, in the form of negative prices!)</q>.</p> 
+<p>Of course you accept the deal. Now, what Kantorovich's duality tells you is that if this shipper is clever enough, then he can arrange the prices in such a way that you will pay [<ellipsis/>] as much as you would have been ready to spend by the other method.</p>
+</blockquote>
+
+<p>What form of duality is this, and where do negative prices come from? This is an example of asymmetric duality, where the primal problem is of type EN (moving nonnegative amounts of coal, which must add up exactly to what is available or required), and the dual problem is of type IR (setting possibly negative prices, allowing for inequalities <m>\varphi(X)+\psi(Y) \le c(X, Y)</m>). Here is a concrete example with two coal mines and three factories: the amounts of production, consumption, and transportation costs per unit are stated on the diagram. </p>
+
+<figure xml:id="transportation-problem-svg"><image source="images/transportation_problem.svg" /> <caption>Optimal transportation problem with amounts and unit costs</caption></figure>
+
+<p>Let <m>x_1, x_2, x_3</m> be the amounts sent from Mine 1 to Factories 1, 2, 3. Also let <m>x_4, x_5, x_6</m> be the amounts sent from Mine 2 to Factories 1, 2, 3. The constraints can be expressed in matrix form as <m>A\mathbf x = \mathbf b</m> where 
+<me>
+A = \begin{pmatrix}
+1 &amp; 1 &amp; 1 &amp; 0 &amp; 0 &amp; 0 \\
+0 &amp; 0 &amp; 0 &amp; 1 &amp; 1 &amp; 1 \\
+1 &amp; 0 &amp; 0 &amp; 1 &amp; 0 &amp; 0 \\
+0 &amp; 1 &amp; 0 &amp; 0 &amp; 1 &amp; 0 \\
+0 &amp; 0 &amp; 1 &amp; 0 &amp; 0 &amp; 2 \\
+\end{pmatrix} \qquad  
+\mathbf b = \begin{pmatrix} 55 \\ 65 \\ 30 \\ 40 \\ 50 \end{pmatrix}
+</me>
+The coefficients of objective functions are the unit cost, <m>\mathbf c^T = (4, 4, 5, 3, 9, 9)</m>.  And of course, <m>\mathbf x\ge 0</m>: even if we wanted to allow factories to send excess coal back to a mine, this would not fit the LP model since the cost of such transportation would not be negative. </p>
+
+<p>To solve the linear program in Matlab, we use expanded syntax of <c>linprog</c>: 
+<cd>
+x = linprog(c, A, b, Aeq, beq, lb, ub);    
+</cd>
+where the additional parameters <c>Aeq</c>, <c>beq</c> express a linear system of <em>equality</em> constraints, and the vectors 
+<c>lb</c>, <c>ub</c> provide lower and upper bounds on the variables. In our case, we do not have any inequality constraints so the second and third arguments are empty. The last one is omitted since we do not have upper bounds.</p>
+<pre>
+A = [1 1 1 0 0 0; 0 0 0 1 1 1; 1 0 0 1 0 0; 0 1 0 0 1 0; 0 0 1 0 0 1];
+b = [55; 65; 30; 40; 50]; 
+c = [4; 4; 5; 3; 9; 9];
+x = linprog(c, [], [], A, b, zeros(6, 1));
+fprintf('Found x = (%g, %g, %g, %g, %g, %g) with total cost %g \n', x, c'*x);
+</pre>
+<p> The solution is pictured below.</p>
+
+<figure xml:id="transportation-solution-svg"><image source="images/transportation_solution.svg" /> <caption>Solution of the transportation problem</caption></figure>
+
+<p>According to <xref ref="section-linear-programming-duality" />, the dual problem is to maximize <m>\mathbf b^T \mathbf y</m> subject to the constraint <m>A^T \mathbf y\le \mathbf c</m>. The vector <m>\mathbf y</m> expresses the pricing policy of the second mathematician (or a shipping company): they charge <m>y_1, y_2</m> to load a unit of coal at Mines 1, 2, and also charge <m>y_3, y_4, y_5</m> to unload it at Factories 1, 2, 3. The constraint <m>A^T \mathbf y\le \mathbf c</m> is what the company needs to win your business, and the amount maximized, <m>\mathbf b^T \mathbf y</m>, is their total revenue. </p>
+<pre>
+y = linprog(-b, A', c);
+fprintf('Found y = (%g, %g, %g, %g, %g) with total revenue %g \n', y, b'*y);
+</pre>
+<p>The solution is pictured below. The costs <m>\mathbf c</m> are included to demonstrate that the constraints are satisfied. The message <q>Found y = (4, 8, -5, 0, 1) with total revenue 640</q> shows that the company will subsidize unloading at Factory 1 in order to maximize its revenue while undercutting any competition.</p>
+
+<figure xml:id="transportation-dual-svg"><image source="images/transportation_dual.svg" /> <caption>Solution of the dual problem</caption></figure>
+
+<p>If we required the loading/unloading prices to be nonnegative, the transportation company would not be able to realize the same revenue.</p>
+
+<pre>
+y = linprog(-b, A', c, [], [], zeros(5, 1));
+fprintf('Found y = (%g, %g, %g, %g, %g) with total revenue %g \n', y, b'*y);
+</pre>
+
+<p><q>Found y = (0, 3, 0, 4, 5) with total revenue 605</q></p>
+
+</section>
+
 <exercises xml:id="exercises-linear-programming">
     <title>Homework</title>
 
@@ -223,7 +287,7 @@ and
     <li>Each unit of barley requires <m>F_2 = 0.5</m> units of fertilizer and <m>P_2 = 0.3</m> units of pesticide</li>
     <li>The sell prices are <m>S_1 = 60</m> for wheat and <m>S_2 = 70</m> for barley.</li>
 </ul>
-One way is to convert this LP problem to the form <xref ref="eq-standard-form-IR" /> (including the nonnegativity requirements in the system of linear inequalities) and apply <c>linprog(c, A, b)</c>. Another is to find from <c>help linprog</c> how to impose the lower bound of <m>0</m> on the variables.</p> 
+One way is to convert this LP problem to the form <xref ref="eq-standard-form-IR" /> (including the nonnegativity requirements in the system of linear inequalities) and apply <c>linprog(c, A, b)</c>. Another is to follow the examples in <xref ref="section-lp-duality-transportation" /> (or read <c>help linprog</c>) and directly impose the lower bound of <m>0</m> on the variables.</p> 
 
 <p>In a comment, answer the questions: how should the land be used? What will the total revenue be? Will there be any leftover land, fertilizer, or pesticide, and if so, how much?</p> 
 </statement></exercise>
