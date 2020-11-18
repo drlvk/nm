@@ -102,6 +102,7 @@ along with MathBook XML.  If not, see <http://www.gnu.org/licenses/>.
             <xi:include href="./nelder_mead.xml" />
             <xi:include href="./constrained_optimization.xml" />
             <xi:include href="./linear_programming.xml" />
+            <xi:include href="./classification.xml" />
         </part>
 
     </book>

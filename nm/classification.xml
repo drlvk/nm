@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<chapter xml:id="chapter-classification" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+<title>Classification Problems</title>
+
+
+    <introduction>
+        <p> So far, our models for data were quantitative, trying to predict the amount of some quantity <m>y</m>. 
+        The problem changes when one tries to predict a categorical variable, which describes some feature in non-quantitative
+        terms (an email may be spam or not spam, for example). 
+      </p>
+    </introduction>
+
+
+<section xml:id="section-classification-logistic-regression">
+<title>Classification and logistic regression</title>
+
+<p> We focus on the case of two categories, represented by the binary outcome variable <m>z</m> attaining two possible values, <m>0</m> and <m>1</m>. The model may involve one or more explanatory variables <m>x_k</m>, and the goal is to predict the outcome based on these variables. Some examples:
+<ul>
+    <li>Explanatory variables: temperature, humidity, atmospheric pressure. Outcome: rain (1) or no rain (0).</li>
+    <li>Explanatory variables: patient's weight, height, age, activity level. Outcome: has diabetes (1) or not (0). </li>
+</ul>
+In the examples such as these, it is understood that the prediction may be far from certain. A way to think of such a model as assigning a probability of outcome (1), based on the data available. This leads to the idea of a model being a function that takes values between <m>0</m> and <m>1</m>. The standard logistic function (<xref ref="section-logistic-curve" />) has this property:
+<me>
+  \sigma(x) = \frac{1}{1+\exp(-x)}
+</me>  
+In order to include several explanatory variables <m>x_1, \dots, x_m</m> in this model, we use the composite function 
+<men xml:id="eq-multivariate-logistic">
+h_{\mathbf c}(\mathbf x) = \sigma\left(\sum_{k=1}^m c_k x_k\right) = \frac{1}{1+\exp\left(-\sum_{k=1}^m c_k x_k\right)}
+</men>
+where the coefficients <m>c_1, \dots, c_m</m> are to be determined by training the model on some data set with known outcomes.</p>
+
+<p>In <xref ref="chapter-nonlinear-least-squares" /> our training method was to minimize the sum of squares 
+<me>
+S(\mathbf c) = \sum_{j=1}^n (z_j - h_{\mathbf c}(\mathbf x_j))^2
+</me>
+However, in the context of probability there is a more natural method: maximizing the <term>likelihood</term> function. Think of <m>h_{\mathbf c}(\mathbf x_j)</m> as the probability that <m>z_j=1</m>, and therefore <m>1 - h_{\mathbf c}(\mathbf x_j)</m> is the probability that <m>z_j=0</m>. Assuming the independence of outcomes, the probability of observing the data that was actually observed is 
+<men xml:id="eq-likelihood-function">
+L(\mathbf c)   \prod_{z_j = 1}  h_{\mathbf c}(\mathbf x_j)  \cdot \prod_{z_j = 0} (1-h_{\mathbf c}(\mathbf x_j))
+</men>
+Since the outcomes <m>z_j</m> already occurred, this expression is not really the probability of a random event; it is the 
+<term>likelihood</term> of the parameters being <m>\mathbf c</m>. We want to maximize this likelihood. Since the product may be very small when there are many observations, it is easier to maximize the <term>log-likelihood</term>, the logarithm of <xref ref="eq-likelihood-function" />:
+<men xml:id="eq-log-likelihood-function">
+\log L(\mathbf c) = \sum_{z_j = 1} \log h_{\mathbf c}(\mathbf x_j)  + \sum_{z_j = 0} \log (1-h_{\mathbf c}(\mathbf x_j))
+</men>
+</p>
+
+<p>Once we find <m>\mathbf c</m> which maximizes <m>\log L</m>, the model can then be used to make predictions about unobserved outcomes on the basis of explanatory variables <m>\mathbf x</m>. If <m>h_{\mathbf c}(\mathbf x)</m> is close to <m>1</m>, we expect the outcome <m>z=1</m>; it is close to <m>0</m>, we expect the outcome <m>z=0</m>. The quantity <m>h_{\mathbf c}(\mathbf x)</m> may be interpreted as the probability of <m>z=1</m>, predicted by the model.</p>  
+
+<p>Example here.</p>
+
+</section>
+
+<section xml:id="section-classification-linear-programming">
+<title>Classification and linear programming</title>
+
+<p>Linear programming offers a very different, geometric approach to classification. Think of observations with <m>m</m> explanatory variables as  points in <m>\mathbb R^m</m>, which are colored (say, red or blue) according to their category. Our goal is to
+find a plane (or surface) that separates the points of different colors as cleanly as possible.</p>  
+
+<p>To help with visualization, consider the case <m>m=2</m> when the explanatory variables  <m>(x_1, x_2)</m> are more conveniently labeled <m>(x, y)</m>. We are looking for a line <m>y = ax+b</m> such that the points of one category are above it, and the points of other category are below it. If such a line exists, it is not unique, so we want to choose it to maximize the width of separation. That is, we look for maximal <m>w\ge 0</m> such that <m>y_j\ge ax_j + b + w</m> in the first set (above the line) and 
+<m>y_j\le ax_j +b - w</m> in the second set (below the line). This is a linear programming problem, with three variables <m>a, b, w</m>, objective function <m>w</m>, and the linear constraints stated above. </p>
+
+<p>Example here.</p> 
+
+<p>The same idea applies to separation by a curve (for example, a polynomial). </p>
+
+<example xml:id="example-separate-by-parabola">
+<title> Nonlinear separation</title>
+<statement><p> Find the best parabola separating  the points <m>(0,3)</m>, <m>(4,6)</m>, and <m>(7,4)</m> (the <q>top</q> group) from <m>(3,4)</m> and <m>(5,5)</m> (the <q>bottom</q> group). </p> 
+</statement>
+</example>
+
+<p>Complete separation of the categories may be impossible (which makes the linear programming problem infeasible, as Matlab would report). Perhaps some data points  have incorrect measurement values, or are mislabeled by category, or perhaps (quite likely) one simply cannot predict the outcome with certainty, based on the explanatory variables we have. In such a case we can still look for a separating line or curve, but the separation will be <em>incomplete</em>, with some points left on the <q>wrong</q> side. </p>
+
+<p>We look for a line that minimizes the sum of penalties, the penalty being the amount by which a point falls into the wrong group. Formally, we minimize <m>\sum p_j</m> where <m>p_j\ge 0</m> are the penalties, subject to constraints <m>y_j\ge ax_j + b - p_j</m> for points in the <q>top</q> category and <m>y_j \le ax_j + b + p_j</m> for points in the <q>bottom</q> category. This is still a linear programming problem, but there are more variables now: <m>a, b, p_1, \dots, p_n</m>, and the objective function is  <m>\sum p_j</m>. 
+</p>   
+
+<p>Example here.</p>
+ 
+
+</section>
+
+ 
+
+<exercises xml:id="exercises-classification">
+    <title>Homework</title>
+
+<exercise number="1">
+<statement> <p> Homework here. 
+</p></statement></exercise>
+ 
+</exercises>
+
+</chapter>
+
+  
