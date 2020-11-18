@@ -37,7 +37,7 @@ S(\mathbf c) = \sum_{j=1}^n (z_j - h_{\mathbf c}(\mathbf x_j))^2
 </me>
 However, in the context of probability there is a more natural method: maximizing the <term>likelihood</term> function. Think of <m>h_{\mathbf c}(\mathbf x_j)</m> as the probability that <m>z_j=1</m>, and therefore <m>1 - h_{\mathbf c}(\mathbf x_j)</m> is the probability that <m>z_j=0</m>. Assuming the independence of outcomes, the probability of observing the data that was actually observed is 
 <men xml:id="eq-likelihood-function">
-L(\mathbf c)   \prod_{z_j = 1}  h_{\mathbf c}(\mathbf x_j)  \cdot \prod_{z_j = 0} (1-h_{\mathbf c}(\mathbf x_j))
+L(\mathbf c)  = \prod_{z_j = 1}  h_{\mathbf c}(\mathbf x_j)  \cdot \prod_{z_j = 0} (1-h_{\mathbf c}(\mathbf x_j))
 </men>
 Since the outcomes <m>z_j</m> already occurred, this expression is not really the probability of a random event; it is the 
 <term>likelihood</term> of the parameters being <m>\mathbf c</m>. We want to maximize this likelihood. Since the product may be very small when there are many observations, it is easier to maximize the <term>log-likelihood</term>, the logarithm of <xref ref="eq-likelihood-function" />:
@@ -48,7 +48,7 @@ Since the outcomes <m>z_j</m> already occurred, this expression is not really th
 
 <p>Once we find <m>\mathbf c</m> which maximizes <m>\log L</m>, the model can then be used to make predictions about unobserved outcomes on the basis of explanatory variables <m>\mathbf x</m>. If <m>h_{\mathbf c}(\mathbf x)</m> is close to <m>1</m>, we expect the outcome <m>z=1</m>; it is close to <m>0</m>, we expect the outcome <m>z=0</m>. The quantity <m>h_{\mathbf c}(\mathbf x)</m> may be interpreted as the probability of <m>z=1</m>, predicted by the model.</p>  
 
-<p>Example here.</p>
+<p>Example to be added.</p>
 
 </section>
 
@@ -61,7 +61,7 @@ find a plane (or surface) that separates the points of different colors as clean
 <p>To help with visualization, consider the case <m>m=2</m> when the explanatory variables  <m>(x_1, x_2)</m> are more conveniently labeled <m>(x, y)</m>. We are looking for a line <m>y = ax+b</m> such that the points of one category are above it, and the points of other category are below it. If such a line exists, it is not unique, so we want to choose it to maximize the width of separation. That is, we look for maximal <m>w\ge 0</m> such that <m>y_j\ge ax_j + b + w</m> in the first set (above the line) and 
 <m>y_j\le ax_j +b - w</m> in the second set (below the line). This is a linear programming problem, with three variables <m>a, b, w</m>, objective function <m>w</m>, and the linear constraints stated above. </p>
 
-<p>Example here.</p> 
+<p>Example to be added.</p> 
 
 <p>The same idea applies to separation by a curve (for example, a polynomial). </p>
 
@@ -76,7 +76,7 @@ find a plane (or surface) that separates the points of different colors as clean
 <p>We look for a line that minimizes the sum of penalties, the penalty being the amount by which a point falls into the wrong group. Formally, we minimize <m>\sum p_j</m> where <m>p_j\ge 0</m> are the penalties, subject to constraints <m>y_j\ge ax_j + b - p_j</m> for points in the <q>top</q> category and <m>y_j \le ax_j + b + p_j</m> for points in the <q>bottom</q> category. This is still a linear programming problem, but there are more variables now: <m>a, b, p_1, \dots, p_n</m>, and the objective function is  <m>\sum p_j</m>. 
 </p>   
 
-<p>Example here.</p>
+<p>Example to be added.</p>
  
 
 </section>
@@ -87,7 +87,7 @@ find a plane (or surface) that separates the points of different colors as clean
     <title>Homework</title>
 
 <exercise number="1">
-<statement> <p> Homework here. 
+<statement> <p> Homework to be written. 
 </p></statement></exercise>
  
 </exercises>
