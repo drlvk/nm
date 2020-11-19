@@ -46,9 +46,43 @@ Since the outcomes <m>z_j</m> already occurred, this expression is not really th
 </men>
 </p>
 
-<p>Once we find <m>\mathbf c</m> which maximizes <m>\log L</m>, the model can then be used to make predictions about unobserved outcomes on the basis of explanatory variables <m>\mathbf x</m>. If <m>h_{\mathbf c}(\mathbf x)</m> is close to <m>1</m>, we expect the outcome <m>z=1</m>; it is close to <m>0</m>, we expect the outcome <m>z=0</m>. The quantity <m>h_{\mathbf c}(\mathbf x)</m> may be interpreted as the probability of <m>z=1</m>, predicted by the model.</p>  
+<p>Once we find <m>\mathbf c</m> which maximizes <m>\log L</m>, the model can then be used to make predictions about unobserved outcomes on the basis of explanatory variables <m>\mathbf x</m>. If <m>h_{\mathbf c}(\mathbf x)</m> is close to <m>1</m>, we expect the outcome <m>z=1</m>; it is close to <m>0</m>, we expect the outcome <m>z=0</m>. The quantity <m>h_{\mathbf c}(\mathbf x)</m> may be interpreted as the probability of <m>z=1</m>, predicted by the model. </p>  
 
-<p>Example to be added.</p>
+<p>Unless the explanatory variables <m>\mathbf</m> are centered (have zero mean), the exponential should include a constant term, as shown in the following example. </p> 
+
+<example xml:id="example-smoker-logistic-regression">
+<title> Smoking,  age and blood pressure</title>
+<statement><p> The following data, taken from Matlab's built-in <c>patient</c> data sample (<url href="https://www.mathworks.com/help/matlab/matlab_prog/split-data-into-groups-and-calculate-statistics.html">reference</url>), records the ages and systolic pressure of 10 smokers (<m>z=1</m>) and 12 nonsmokers (<m>z=0</m>). Train a logistic regression model on this data.</p>
+<pre>
+age1 = [38 33 39 48 32 27 44 28 30 45];
+sys1 = [124 130 130 130 124 123 128 129 127 134];
+age0 = [43 38 40 49 46 40 28 31 45 42 25 36];
+sys0 = [109 125 117 122 121 115 115 118 114 115 127 114];
+</pre>
+<p>Then test the model on the data set, generating predictions for the people based on their age and systolic pressure.</p>
+<pre>
+age = [38 45 30 48 48 25 44 49 45 48];
+sys = [138 124 130 123 129 128 124 119 136 114];
+</pre>
+<p>Finally, compare the model's prediction with actual smoker status.</p>
+<pre>
+actual = [1 0 0 0 0 1 1 0 1 0];
+</pre>
+</statement>
+<solution><p>We set up the log-likelihood function <c>LogL</c>, maximize it, and use the optimal parameters <c>cc</c> to predict the status of the 10 people who were not a part of the training set.</p>
+<pre>
+LogL = @(c) sum(log(1./(1+exp(-c(1)*age1-c(2)*sys1-c(3))))) + sum(log(1 - 1./(1+exp(-c(1)*age0-c(2)*sys0-c(3)))));
+cc = fminsearch(@(c) -LogL(c), [0; 0; 0]);
+
+age = [38 45 30 48 48 25 44 49 45 48];
+sys = [138 124 130 123 129 128 124 119 136 114];
+prediction = 1./(1+exp(-cc(1)*age-cc(2)*sys-cc(3)));
+actual = [1 0 0 0 0 1 1 0 1 0];
+disp([prediction' actual']);
+</pre>
+<p>Excluding the cases where prediction is a number close to <m>0.5</m> (which should be considered a <q>don't know</q> answer), the model got 6 out of 8 right.</p>
+</solution>
+</example>
 
 </section>
 
@@ -61,14 +95,37 @@ find a plane (or surface) that separates the points of different colors as clean
 <p>To help with visualization, consider the case <m>m=2</m> when the explanatory variables  <m>(x_1, x_2)</m> are more conveniently labeled <m>(x, y)</m>. We are looking for a line <m>y = ax+b</m> such that the points of one category are above it, and the points of other category are below it. If such a line exists, it is not unique, so we want to choose it to maximize the width of separation. That is, we look for maximal <m>w\ge 0</m> such that <m>y_j\ge ax_j + b + w</m> in the first set (above the line) and 
 <m>y_j\le ax_j +b - w</m> in the second set (below the line). This is a linear programming problem, with three variables <m>a, b, w</m>, objective function <m>w</m>, and the linear constraints stated above. </p>
 
-<p>Example to be added.</p> 
-
 <p>The same idea applies to separation by a curve (for example, a polynomial). </p>
 
 <example xml:id="example-separate-by-parabola">
-<title> Nonlinear separation</title>
-<statement><p> Find the best parabola separating  the points <m>(0,3)</m>, <m>(4,6)</m>, and <m>(7,4)</m> (the <q>top</q> group) from <m>(3,4)</m> and <m>(5,5)</m> (the <q>bottom</q> group). </p> 
+<title> Complete nonlinear separation</title>
+<statement><p> Find and plot the best parabola separating  the points <m>(0,3)</m>, <m>(4,6)</m>, and <m>(7,4)</m> (the <q>top</q> group) from <m>(3,4)</m> and <m>(5,5)</m> (the <q>bottom</q> group). </p> 
 </statement>
+
+<solution><p>We maximize <m>w</m> subject to constraints <m>y_j\ge ax_j^2 + bx_j + c + w</m> in the first group and 
+<m>y_j\le ax_j^2 + bx_j + c - w</m> in the second. Rewrite the constraints as 
+<me>
+ax_j^2 + bx_j + c + w \le y_j
+</me>
+in the first group and      
+<me>
+-ax_j^2 - bx_j - c + w \le -y_j
+</me>
+in the second. So, given the vectors <c>xt, yt</c> describing the first group and <c>xb, yb</c> for the second, we can form a system of linear inequalities <m>A\mathbf x\le \mathbf b</m>. </p>
+<pre>
+xt = [2; 4; 7];
+yt = [3; 6; 4];
+xb = [3; 5];
+yb = [4; 5];
+A = [xt.^2 xt xt.^0 xt.^0; -xb.^2 -xb -xb.^0 xb.^0];
+b = [yt; -yb];
+opt = linprog([0; 0; 0; -1], A, b);
+
+t = linspace(min([xt; xb]), max([xt; xb]), 1000);
+y = opt(1)*t.^2 + opt(2)*t + opt(3);
+plot(xt, yt, 'b*', xb, yb, 'r*', t, y, 'k')
+</pre>
+</solution>
 </example>
 
 <p>Complete separation of the categories may be impossible (which makes the linear programming problem infeasible, as Matlab would report). Perhaps some data points  have incorrect measurement values, or are mislabeled by category, or perhaps (quite likely) one simply cannot predict the outcome with certainty, based on the explanatory variables we have. In such a case we can still look for a separating line or curve, but the separation will be <em>incomplete</em>, with some points left on the <q>wrong</q> side. </p>
@@ -76,8 +133,41 @@ find a plane (or surface) that separates the points of different colors as clean
 <p>We look for a line that minimizes the sum of penalties, the penalty being the amount by which a point falls into the wrong group. Formally, we minimize <m>\sum p_j</m> where <m>p_j\ge 0</m> are the penalties, subject to constraints <m>y_j\ge ax_j + b - p_j</m> for points in the <q>top</q> category and <m>y_j \le ax_j + b + p_j</m> for points in the <q>bottom</q> category. This is still a linear programming problem, but there are more variables now: <m>a, b, p_1, \dots, p_n</m>, and the objective function is  <m>\sum p_j</m>. 
 </p>   
 
-<p>Example to be added.</p>
- 
+<example xml:id="example-separate-by-line">
+<title> Incomplete linear separation</title>
+<statement><p> Find and plot the best line that separates (probably not completely) 8 random points from 7 other random points, which are generated as follows:
+</p> 
+<pre>
+xt = randn(8, 1);
+yt = randn(8, 1) + 1;
+xb = randn(7, 1);
+yb = randn(7, 1);
+</pre>
+</statement> 
+<solution><p>We minimize <m>\sum w_j</m> subject to constraints <m>y_j\ge ax_j + b - w_j</m> in the first group and 
+<m>y_j\le ax_j + b + w_j</m> in the second. Rewrite the constraints as 
+<me>
+ax_j + b - w_j \le y_j
+</me>
+in the first group and      
+<me>
+-ax_j - b - w_j \le -y_j
+</me>
+in the second. We also require <m>w_j \ge 0</m>. 
+Given the vectors <c>xt, yt</c> describing the first group and <c>xb, yb</c> for the second, we can form a system of linear inequalities <m>A\mathbf x\le \mathbf b</m> and separately impose the nonnegativity requirement on <m>w_j</m> (though not on the 
+coefficients <m>a, b</m> of the line). </p>
+<pre>
+A = [xt xt.^0; -xb -xb.^0];
+n = numel(xt) + numel(xb);
+A = [A -eye(n)]; 
+b = [yt; -yb];
+opt = linprog([0; 0; ones(n, 1)], A, b, [], [], [-Inf; -Inf; zeros(n, 1)]);
+
+t = linspace(min([xt; xb]), max([xt; xb]), 1000);
+y = opt(1)*t + opt(2);
+plot(xt, yt, 'b*', xb, yb, 'r*', t, y, 'k')
+</pre>
+</solution></example>
 
 </section>
 
@@ -87,7 +177,7 @@ find a plane (or surface) that separates the points of different colors as clean
     <title>Homework</title>
 
 <exercise number="1">
-<statement> <p> Homework to be written. 
+<statement> <p> Modify <xref ref="example-separate-by-line" /> to separate the points (probably incompletely) by a parabola rather than by a line.
 </p></statement></exercise>
  
 </exercises>
