@@ -48,7 +48,7 @@ Since the outcomes <m>z_j</m> already occurred, this expression is not really th
 
 <p>Once we find <m>\mathbf c</m> which maximizes <m>\log L</m>, the model can then be used to make predictions about unobserved outcomes on the basis of explanatory variables <m>\mathbf x</m>. If <m>h_{\mathbf c}(\mathbf x)</m> is close to <m>1</m>, we expect the outcome <m>z=1</m>; it is close to <m>0</m>, we expect the outcome <m>z=0</m>. The quantity <m>h_{\mathbf c}(\mathbf x)</m> may be interpreted as the probability of <m>z=1</m>, predicted by the model. </p>  
 
-<p>Unless the explanatory variables <m>\mathbf</m> are centered (have zero mean), the exponential should include a constant term, as shown in the following example. </p> 
+<p>Unless the explanatory variables <m>\mathbf x</m> are <term>centered</term> (have zero mean by design), the exponential should include a constant term, as shown in the following example. </p> 
 
 <example xml:id="example-smoker-logistic-regression">
 <title> Smoking,  age and blood pressure</title>
@@ -99,7 +99,7 @@ find a plane (or surface) that separates the points of different colors as clean
 
 <example xml:id="example-separate-by-parabola">
 <title> Complete nonlinear separation</title>
-<statement><p> Find and plot the best parabola separating  the points <m>(0,3)</m>, <m>(4,6)</m>, and <m>(7,4)</m> (the <q>top</q> group) from <m>(3,4)</m> and <m>(5,5)</m> (the <q>bottom</q> group). </p> 
+<statement><p> Find and plot the best parabola separating  the points <m>(2,3)</m>, <m>(4,6)</m>, and <m>(7,4)</m> (the <q>top</q> group) from <m>(3,4)</m> and <m>(5,5)</m> (the <q>bottom</q> group). </p> 
 </statement>
 
 <solution><p>We maximize <m>w</m> subject to constraints <m>y_j\ge ax_j^2 + bx_j + c + w</m> in the first group and 
@@ -144,17 +144,17 @@ xb = randn(7, 1);
 yb = randn(7, 1);
 </pre>
 </statement> 
-<solution><p>We minimize <m>\sum w_j</m> subject to constraints <m>y_j\ge ax_j + b - w_j</m> in the first group and 
-<m>y_j\le ax_j + b + w_j</m> in the second. Rewrite the constraints as 
+<solution><p>We minimize <m>\sum p_j</m> subject to constraints <m>y_j\ge ax_j + b - p_j</m> in the first group and 
+<m>y_j\le ax_j + b + p_j</m> in the second. Rewrite the constraints as 
 <me>
-ax_j + b - w_j \le y_j
+ax_j + b - p_j \le y_j
 </me>
 in the first group and      
 <me>
--ax_j - b - w_j \le -y_j
+-ax_j - b - p_j \le -y_j
 </me>
-in the second. We also require <m>w_j \ge 0</m>. 
-Given the vectors <c>xt, yt</c> describing the first group and <c>xb, yb</c> for the second, we can form a system of linear inequalities <m>A\mathbf x\le \mathbf b</m> and separately impose the nonnegativity requirement on <m>w_j</m> (though not on the 
+in the second. We also require <m>p_j \ge 0</m>. 
+Given the vectors <c>xt, yt</c> describing the first group and <c>xb, yb</c> for the second, we can form a system of linear inequalities <m>A\mathbf x\le \mathbf b</m> and separately impose the nonnegativity requirement on <m>p_j</m> (though not on the 
 coefficients <m>a, b</m> of the line). </p>
 <pre>
 A = [xt xt.^0; -xb -xb.^0];
@@ -167,6 +167,7 @@ t = linspace(min([xt; xb]), max([xt; xb]), 1000);
 y = opt(1)*t + opt(2);
 plot(xt, yt, 'b*', xb, yb, 'r*', t, y, 'k')
 </pre>
+<p>The reason that the presence of penalties changes the matrix as <c>A = [A -eye(n)];</c> is that we subtract <m>p_1</m> from the first inequality, <m>p_2</m> from the second, and so on. The penalties make it possible for all the constraints to be satisfied, but their sum <m>p_1+\cdots+p_n</m> needs to be minimized. In this example, the variables are <m>a, b, p_1, \dots, p_n</m> and accordingly, the coefficients of the objective function are <m>0, 0, 1, \dots, 1</m>.</p>
 </solution></example>
 
 </section>
