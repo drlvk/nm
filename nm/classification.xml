@@ -111,20 +111,29 @@ in the first group and
 <me>
 -ax_j^2 - bx_j - c + w \le -y_j
 </me>
-in the second. So, given the vectors <c>xt, yt</c> describing the first group and <c>xb, yb</c> for the second, we can form a system of linear inequalities <m>A\mathbf x\le \mathbf b</m>. </p>
+in the second. Also, <m>w\ge 0</m> is required by the geometric meaning of <m>w</m> as the <q>width</q> of separation. 
+Given the vectors <c>xt, yt</c> describing the first group and <c>xb, yb</c> for the second, we can form a system of linear inequalities <m>A\mathbf x\le \mathbf b</m> as below </p>
 <pre>
 xt = [2; 4; 7];
 yt = [3; 6; 4];
 xb = [3; 5];
 yb = [4; 5];
-A = [xt.^2 xt xt.^0 xt.^0; -xb.^2 -xb -xb.^0 xb.^0];
-b = [yt; -yb];
+A = [xt.^2 xt xt.^0 xt.^0; -xb.^2 -xb -xb.^0 xb.^0; 0 0 0 -1];
+b = [yt; -yb; 0];
 opt = linprog([0; 0; 0; -1], A, b);
 
 t = linspace(min([xt; xb]), max([xt; xb]), 1000);
 y = opt(1)*t.^2 + opt(2)*t + opt(3);
 plot(xt, yt, 'b*', xb, yb, 'r*', t, y, 'k')
 </pre>
+<p>Instead of including <m>-w \le 0</m> as one of the inequalities in the system <m>A\mathbf x\le b</m>, we can impose this constraint separately as a lower bound in <c>linprog</c>.</p> 
+<pre>
+A = [xt.^2 xt xt.^0 xt.^0; -xb.^2 -xb -xb.^0 xb.^0];
+b = [yt; -yb];
+opt = linprog([0; 0; 0; -1], A, b, [], [], [-Inf; -Inf; -Inf; 0]);
+</pre>
+<p>The result is the same. With either version of the code, if the data points are changed so that there is no parabola that separates them completely, we get the message <q>No feasible solution found.
+Linprog stopped because no point satisfies the constraints.</q></p>
 </solution>
 </example>
 
