@@ -224,7 +224,7 @@ and
 
 <p>What form of duality is this, and where do negative prices come from? This is an example of asymmetric duality, where the primal problem is of type EN (moving nonnegative amounts of coal, which must add up exactly to what is available or required), and the dual problem is of type IR (setting possibly negative prices, allowing for inequalities <m>\varphi(X)+\psi(Y) \le c(X, Y)</m>). Here is a concrete example with two coal mines and three factories: the amounts of production, consumption, and transportation costs per unit are stated on the diagram. </p>
 
-<figure xml:id="transportation-problem-svg"><image source="images/transportation_problem.eps" /> <caption>Optimal transportation problem with amounts and unit costs</caption></figure>
+<figure xml:id="transportation-problem-svg"><image source="images/transportation_problem.png" /> <caption>Optimal transportation problem with amounts and unit costs</caption></figure>
 
 <p>Let <m>x_1, x_2, x_3</m> be the amounts sent from Mine 1 to Factories 1, 2, 3. Also let <m>x_4, x_5, x_6</m> be the amounts sent from Mine 2 to Factories 1, 2, 3. The constraints can be expressed in matrix form as <m>A\mathbf x = \mathbf b</m> where 
 <me>
@@ -254,7 +254,7 @@ fprintf('Found x = (%g, %g, %g, %g, %g, %g) with total cost %g \n', x, c'*x);
 </pre>
 <p> The solution is pictured below.</p>
 
-<figure xml:id="transportation-solution-svg"><image source="images/transportation_solution.eps" /> <caption>Solution of the transportation problem</caption></figure>
+<figure xml:id="transportation-solution-svg"><image source="images/transportation_solution.png" /> <caption>Solution of the transportation problem</caption></figure>
 
 <p>According to <xref ref="section-linear-programming-duality" />, the dual problem is to maximize <m>\mathbf b^T \mathbf y</m> subject to the constraint <m>A^T \mathbf y\le \mathbf c</m>. The vector <m>\mathbf y</m> expresses the pricing policy of the second mathematician (or a shipping company): they charge <m>y_1, y_2</m> to load a unit of coal at Mines 1, 2, and also charge <m>y_3, y_4, y_5</m> to unload it at Factories 1, 2, 3. The constraint <m>A^T \mathbf y\le \mathbf c</m> is what the company needs to win your business, and the amount maximized, <m>\mathbf b^T \mathbf y</m>, is their total revenue. </p>
 <pre>
@@ -263,7 +263,7 @@ fprintf('Found y = (%g, %g, %g, %g, %g) with total revenue %g \n', y, b'*y);
 </pre>
 <p>The solution is pictured below. The costs <m>\mathbf c</m> are included to demonstrate that the constraints are satisfied. The message <q>Found y = (4, 8, -5, 0, 1) with total revenue 640</q> shows that the company will subsidize unloading at Factory 1 in order to maximize its revenue while undercutting any competition.</p>
 
-<figure xml:id="transportation-dual-svg"><image source="images/transportation_dual.eps" /> <caption>Solution of the dual problem</caption></figure>
+<figure xml:id="transportation-dual-svg"><image source="images/transportation_dual.png" /> <caption>Solution of the dual problem</caption></figure>
 
 <p>If we required the loading/unloading prices to be nonnegative, the transportation company would not be able to realize the same revenue.</p>
 
