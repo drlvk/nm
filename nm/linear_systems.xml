@@ -260,7 +260,7 @@ we get the solution <c>[-9.3333; 9.6667; 0.0000]</c> which is quite different. N
 </question> 
 
 <question><title>Testing for invertibility with determinant or rank</title>
-<p>Linear algebra says that an <m>n\times n</m> matrix <m>A</m> is singular (non-invertible) if and only if <m>\det A = 0</m>, if and only if <m>\rank A \lt n</m>. But in computational practice these two tests for invertibility can give different results. Consider the diagonal matrix with entries <m>10^{16}</m> and <m>1</m>.</p>
+<p>Linear algebra says that an <m>n\times n</m> matrix <m>A</m> is singular (non-invertible) if and only if <m>\det A = 0</m>, if and only if <m>\operatorname{rank} A \lt n</m>. But in computational practice these two tests for invertibility can give different results. Consider the diagonal matrix with entries <m>10^{16}</m> and <m>1</m>.</p>
 <pre>
 A = [1e16 0; 0 1];
 disp(det(A))
