@@ -41,9 +41,6 @@ along with MathBook XML.  If not, see <http://www.gnu.org/licenses/>.
 <pretext xmlns:xi="http://www.w3.org/2001/XInclude" xml:lang="en-US">
 <!-- <pretext xmlns:xi="http://www.w3.org/2001/XInclude" xml:lang="fr-FR"> -->
 
-<docinfo>
-    <rename element="chapter">Lecture</rename>
-</docinfo>
    
     <book xml:id="numerical-methods">
         <title>Numerical Methods with Programming</title> 
