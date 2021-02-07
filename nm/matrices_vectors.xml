@@ -189,7 +189,8 @@ disp(log10(pi))	 % the base-10 logarithm of pi
 </cd>
 Clicking <q>Run</q> or pressing <kbd>F5</kbd> runs the entire script. But clicking <q>Run Section</q> or pressing <kbd>Ctrl</kbd>+<kbd>Enter</kbd> runs only the current selection. </p>
 
-<p>For Octave users: currently Octave does not have <q>Run Section</q> but it has <q>Run Selection</q> (<kbd>F9</kbd> instead), which executes the currently selected part of code.</p> 
+<p>For Octave users: currently Octave does not have <q>Run Section</q> but it has <q>Run Selection</q> 
+(<kbd>F9</kbd>) which executes the currently selected part of code.</p> 
 </section>
 
 <section xml:id="examples-matrices-vectors">
