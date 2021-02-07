@@ -168,6 +168,29 @@ disp(B)
 
 </section>
 
+<section xml:id="section-comments-sections">
+<title>Comments and sections in a script</title>  
+
+<p>Any text after percent sign <c>%</c> is treated as a <term>comment</term>. A comment can appear on its own line or at the end of a line with code. 
+<cd>
+a = 3;
+% let's increase a by 1
+a = a + 1;  % now a is equal to 4 
+</cd>
+</p>
+
+<p>A line that begins with two percent signs <c>%%</c> begins a new <term>section</term> of Matlab script:
+<cd>
+%% problem 1
+disp(log(pi))    % the natural logarithm of pi
+
+%% problem 2
+disp(log10(pi))	 % the base-10 logarithm of pi
+</cd>
+Clicking <q>Run</q> or pressing <kbd>F5</kbd> runs the entire script. But clicking <q>Run Section</q> or pressing <kbd>Ctrl</kbd>+<kbd>Enter</kbd> runs only the current selection. </p>
+
+<p>For Octave users: currently Octave does not have <q>Run Section</q> but it has <q>Run Selection</q> (<kbd>F9</kbd> instead), which executes the currently selected part of code.</p> 
+</section>
 
 <section xml:id="examples-matrices-vectors">
 
@@ -272,13 +295,12 @@ The first line creates an 8<times/>8 matrix of zeros. The second works with the 
 x = (first 5 digits of your SUID);
 y = (all entries of x except first); 
 z = (all entries of x except last);
-u = (the average of vectors y and z);
-v = (the scalar product of y and z);
+u = (the sum of vectors y and z);
+v = (the dot product of vectors y and z);
 </pre>
-<p>Then display the vectors u and v using 
-	<c>disp</c>.</p>
+<p>Then display <c>u</c> and <c>v</c> using <c>disp</c>.</p>
 <p>
-Note that <c>y</c> and <c>z</c> must be computed from the vector x, not entered number-by-number. 
+Note that <c>y</c> and <c>z</c> must be computed from the vector <c>x</c>, not entered number-by-number. 
 </p>        </statement>
     </exercise>
 
@@ -287,14 +309,14 @@ Note that <c>y</c> and <c>z</c> must be computed from the vector x, not entered 
             <p>Write a script that does the following: 
 <ol label="(a)">
 <li> Let <c>A</c> be some 3 by 3 matrix filled with numbers 1,2,<ellipsis/>,9</li>
-<li> Let <c>x</c> be the product of A and a row vector with all entries equal to 1 (think about the correct order of multiplication).</li> 
-<li> Let <c>y</c> be the product of A and a column vector with all entries equal to 1.</li>
+<li> Let <c>x</c> be the product of <c>A</c> and a row vector with all entries equal to 1 (think about the correct order of multiplication).</li> 
+<li> Let <c>y</c> be the product of <c>A</c> and a column vector with all entries equal to 1.</li>
 </ol>
 
 When uploading your script to Blackboard, leave a comment with answers to the following questions: 
 <ol label="(a)">
-<li> What is the meaning of the entries of x? In other words, what information about A do we get from the entries of x?</li>
-<li> What is the meaning of the entries of y? </li>
+<li> What is the meaning of the entries of <c>x</c>? In other words, what information about <c>A</c> do we get from the entries of <c>x</c>?</li>
+<li> What is the meaning of the entries of <c>y</c>? </li>
 </ol>
 </p>
         </statement>
