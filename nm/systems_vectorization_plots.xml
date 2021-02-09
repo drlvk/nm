@@ -264,10 +264,11 @@ plot(x, y)
 
     <exercise number="1">
         <statement>
-<p>Consider the following relations: <m>F_0=1</m>, <m>F_1=1</m>, <m>F_2 = F_0+F_1</m>, <m>F_3=F_1+F_2</m>, and so on until <m>F_{6} = F_4+F_5</m>. (These are the first 7 Fibonacci numbers). 
-<ol label="(a)">
-<li> Write down a linear system that expresses these relations in matrix form <m>Af =b</m>. Here, <m>A</m> will be a 7<times/>7 matrix and <m>b</m> a column vector. </li>
-<li> Write a Matlab script that creates this matrix <m>A</m> and vector <m>b</m>, then solves the linear system to find the Fibonacci numbers.</li>
+<p>The Fibonacci numbers <m>F_n</m> are defined by the following relations: <m>F_1=1</m>, <m>F_2=1</m>, then <m>F_3 = F_1+F_2</m>, <m>F_4 = F_2 + F_3</m>, and so on: every number is the sum of two previous ones, <m>F_n = F_{n-2}+F_{n-1}</m>. We can consider these relations as a system of linear equations with unknowns <m>F_1, \dots, F_n</m> (to see this, move all the unknowns to the left, leaving constant terms on the right).</p>
+
+<p> <ol label="(a)">
+<li>Find the first 30 Fibonacci numbers using Matlab's linear solver <c>A\b</c>. To achieve this, you will first need to create a <m>30\times 30</m> matrix of the linear system and then create a column vector <c>b</c> where the first two coordinates are <m>1</m> and the rest are <m>0</m>. The commands <c>eye</c>, <c>diag</c>, <c>ones</c>, and <c>zeros</c> will help. </li>
+<li>Using the same method, find the first 30 <q>generalized Fibonacci numbers</q> that begin with <m>a, b</m> instead of <m>1, 1</m>. Use the first two nonzero digits of your SUID number as the starting values <m>a, b</m>. (For example, if your SUID begins with 2067... then <m>a=2</m>, <m>b=6</m>.)</li> 
 </ol>
 </p>
         </statement>
@@ -285,7 +286,7 @@ plot(x, y)
 \end{pmatrix}
 </me>
 Use a regularly-spaced vector, transpose, and <c>sqrt</c> to create <m>b</m>.</li>
-<li>Plot  the solution <m>y</m> against the vector <m>x</m> of 10 equally spaced entries, beginning with 0 and ending with 1. The <c>linspace</c> command will be useful.
+<li>Plot the solution <m>y</m> against the vector <m>x</m> of 10 equally spaced numbers, beginning with 0 and ending with 1. The <c>linspace</c> command will be useful.
 </li></ol></p>
 </statement>
     </exercise> 
