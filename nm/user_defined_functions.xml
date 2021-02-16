@@ -102,15 +102,11 @@ function z = goldenratio()
 end 
 </pre>
     <p>One can use this function same as others: <c>x = goldenratio();</c> or <c>disp(goldenratio())</c>.</p>
-    <p>Back in the days when Matlab was designed, the convention was to put every function in a separate <q>M-file</q> named as that function: for example, <c>goldenratio.m</c>. Today, tying the name of a function to the name of a file in which it is contained seems strange but Matlab still insists on this. Fortunately, it allows us to have multiple functions in the same script file, with the following constraints:
-<ul><li>The first function is named as the file itself. This function gets executed when we click Run or press <kbd>F5</kbd>.</li><li>If a script contains named functions, all of its code must be within some function. </li></ul>
-This means that if a script contains named functions, and is saved in a file named <c>hw5.m</c>, it must begin with <c>function hw5()</c>, for example:</p>
+    <p>Back in the days when Matlab was designed, the convention was to put every named function in a separate <q>M-file</q> named as that function: for example, <c>goldenratio.m</c>. Modern versions allow multiple named functions appear in the same file, along with code using those functions. However, one arbitrary restriction remains: <q>Function definitions in a script must appear at the end of the file.</q> For example, the following is allowed: 
     <pre>
-function hw5()
-    x = 0.3;
-    y = 12;
-    disp(agm(x, y, 1e-6))
-end
+x = 0.3;
+y = 12;
+disp(agm(x, y, 1e-6))
 
 function z = agm(x, y, tol) 
    while abs(x - y) &gt;= tol
@@ -122,7 +118,8 @@ function z = agm(x, y, tol)
    z = x;
 end
 </pre>
-    <p>Here the first (main) function is executed: it assigns values to x and y, and then calls another function to compute their AGM.</p>
+but moving the first three lines (top-level code) after the named function would result in an error. </p>
+
     <p>Anonymous functions, described in <xref ref="section-anonymous-functions"/>, have no such restrictions.</p>
     <example>
       <title>Smallest prime that is greater than a given number</title>
@@ -228,7 +225,7 @@ Prove that the following inequality holds for every positive integer <m>n</m>:
 <me>
 |\sin(1) + \sin(2) + \cdots + \sin(n)| \le 2
  </me>
-Why does this explain the observation in <xref ref="example-mean-sine"/>? </p>
+How does this explain the observation in <xref ref="example-mean-sine"/>? </p>
       </statement>
       <hint>
         <p> Multiply the sum of sines by <m>\sin(1/2)</m> and use the formula 
@@ -254,14 +251,12 @@ plot(t, f(t.^2, sin(t)))
 <me>2\cos(2\cos (2\cos (2\cos x))))</me>
 Use this function to plot several of these iterates on the interval <m>[0, 2]</m> as shown below.</p>
         <pre>
-function hw5()
-    x = linspace(0, 2, 2000);   
-    hold on
-    for n = [4 5 30 31]
-        plot(x, cositer(x, n))
-    end
-    hold off
+x = linspace(0, 2, 2000);   
+hold on
+for n = [4 5 30 31]
+    plot(x, cositer(x, n))
 end
+hold off
 
 function y = cositer(x, n)
    (your function goes here)
