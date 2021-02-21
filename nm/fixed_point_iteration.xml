@@ -55,7 +55,7 @@ According to the above, iteration of <m>g</m> may converge to an attracting poin
     <li> <m>x - f(x) = x</m> </li>
     <li> <m>x - 3 f(x)^3 = x</m> </li>
 </ul>
-and so on. Although the fixed points are the same each case (they are the roots of <m>f</m>), their classification may be different. For example, consider <m>f(x) = x^3 + 4x -5</m>. We know it has a root at <m>x=1</m>. If we try to rewrite the equation <m>f(x) = 0</m> as <m>x^3 + 5x - 5 = x</m> the fixed point at 1 is repelling because <m>(x^3+5x -5)' = 3x^2 + 5</m> has modulus <m>8>1</m>. Another rewrite is <m>(5-x^3)/4 = x</m>. This one works because the derivative of <m>(5-x^3)/4</m> is <m>-3x^2/4</m> with absolute value of <m>3/4</m> at <m>x=1</m>. The denominator 4 helped reduced the derivative here. 
+and so on. Although the fixed points are the same each case (they are the roots of <m>f</m>), their classification may be different. For example, consider <m>f(x) = x^3 + 4x -5</m>. We know it has a root at <m>x=1</m>. If we try to rewrite the equation <m>f(x) = 0</m> as <m>x^3 + 5x - 5 = x</m> the fixed point at 1 is repelling because <m>(x^3+5x -5)' = 3x^2 + 5</m> has modulus <m>8>1</m>. Another rewrite is <m>(5-x^3)/4 = x</m>. This one works because the derivative of <m>(5-x^3)/4</m> is <m>-3x^2/4</m> with absolute value of <m>3/4</m> at <m>x=1</m>. The denominator <m>4</m>  reduced the derivative here. 
 </p>
 
 <example xml:id="example-solve-fixed-point-iteration"><title>Rewrite and solve by fixed-point iteration</title>
@@ -184,7 +184,7 @@ After 7 steps got 1
 <p>Write a script that solves the equation <m>e^x + \log x = n</m> using the fixed point iteration. Here <m>n</m> is the number formed by the first two digits of your SUID.</p>
  
 <p>In order to use the fixed point method, you need to rewrite the given equation as <m>g(x) = x</m>.  There are several ways to do this, try at least two different ones, or as many as are needed until a root is found. Starting from some value of <m>x</m>, such as <m>x=10</m>, below, run fixed point iteration until either it converges to a root, or the number of iterations becomes extremely large. The script should display either <q>Root found at x = ... after ... steps</q> or 
-<q>Failed to converge</q>. When submitting homework on Blackboard, add a comment with the different functions <m>g</m> you tried, and what the outcome was.</p>
+<q>Failed to converge</q>. Add a comment with the different functions <m>g</m> you tried, and what the outcome was.</p>
 </statement>
 </exercise>
  

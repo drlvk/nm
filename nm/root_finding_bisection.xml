@@ -29,14 +29,14 @@ returns <c>x=-28.9631</c>. In reality, <m>e^{-x^2} = 0</m> has no solutions, and
 <section xml:id="section-meaning-numeric-solution">
 <title>The meaning of a numeric solution</title>
 
-<p>In what sense do we expect the equation <m>f(x)=0</m> to hold? Because of the round-off errors (<xref ref="section-round-off"/>), we wlll not necessarily get 0 when plugging in some number x. For example, if <c>f = @(x) x^2-2;</c> then we would expect <c>f(sqrt(2))</c> to be 0, but actually <c>f(sqrt(2))</c> produces <c>4.4409e-16</c>, a small but nonzero number. We could ask for <c>abs(f(x))</c> to be small, for example <c>abs(f(x)) &lt; eps</c> where the Matlab command <c>eps</c> returns <c>2^{-52}</c>, the amount of round-off error one can expect for numbers of size about 1. But there are two issues with this approach:
+<p>In what sense do we expect the equation <m>f(x)=0</m> to hold? Because of the round-off errors (<xref ref="section-round-off"/>), we wlll not necessarily get 0 when plugging in some number x. For example, if <c>f = @(x) x^2-2;</c> then we would expect <c>f(sqrt(2))</c> to be 0, but actually <c>f(sqrt(2))</c> produces <c>4.4409e-16</c>, a small but nonzero number. We could ask for <c>abs(f(x))</c> to be small, for example <c>abs(f(x)) &lt; eps</c> where the Matlab command <c>eps</c> returns <m>2^{-52}</m>, the amount of round-off error one can expect for numbers of size about 1. But there are two issues with this approach:
 <ol>
 <li>The error in computing <c>f(x)</c> may be much larger than <c>eps</c>, as round-off errors may accumulate.</li>
 <li>Very small value of <c>f(x)</c> do not mean that <c>x</c> is near a root of function <c>f</c>: for example, the function <c>f = @(x) exp(-x^2);</c> has 
 <c>abs(f(7)) &lt; eps</c>, but the equation <m>f(x)=0</m> has  no solutions at all. </li>
 </ol> </p>
 
-<p>A more robust approach is to look not for a single number but for an <em>interval</em> <m>[a, b]</m> that is known to contain a root of function <m>f</m>. If the interval is small enough, it does not really matter where in the interval the solution is. How small is small enough? There is no universal answer. For many practical purposes, <m>b-a \lt 10^{-6}</m> is good enough. Or we may want <m>b-a \lt 10^{-12}</m> to get a more accurate answer. This makes sense when the root itself is not extremely large or extremely small. But when the root is of size <m>10^{20}</m> we cannot possibly hope to get an interval of length <m>10^{-6}</m> around it, or even of length 1. Indeed, the comparison <c>10^20 + 1 == 10^(20)</c> evaluates as True in Matlab, meaning that it cannot tell these numbers apart because of the limitation of computer arithmetic. </p> 
+<p>A more robust approach is to look not for a single number but for an <em>interval</em> <m>[a, b]</m> that is known to contain a root of function <m>f</m>. If the interval is small enough, it does not really matter where in the interval the solution is. How small is small enough? There is no universal answer. For many practical purposes, <m>b-a \lt 10^{-6}</m> is good enough. Or we may want <m>b-a \lt 10^{-12}</m> to get a more accurate answer. This makes sense when the root itself is not extremely large or extremely small. But when the root is of size <m>10^{20}</m> we cannot possibly hope to get an interval of length <m>10^{-6}</m> around it, or even of length 1. Indeed, the comparison <c>10^20 + 1 == 10^20</c> evaluates as True in Matlab, meaning that it cannot tell these numbers apart because of the limitation of computer arithmetic. </p> 
 
 <p> For the reason mentioned in the previous paragraph, the Matlab command <c>eps(x)</c> gives the smallest possible size of an interval including <c>x</c> that can be expressed in its arithmetic. For example, <c>eps(10^20)</c> returns 16384, indicating we cannot expect an interval around <m>10^{20}</m> to be smaller than 16384. When looking for a root, a reasonable approach is to consider an interval <m>[a, b]</m> <q>small enough</q> when <c>b - a &lt; 100*eps(a)</c> where the factor 100 allows for accumulation of round-off errors during the computation.</p> 
  </section>
@@ -102,7 +102,7 @@ fprintf('Found a root x = %.12g\n', (a+b)/2);
    <li><term>quadratically convergent</term> if <m>\epsilon_{n+1} \le M\epsilon_n^2</m> with some constant <m>M</m></li>
    <li><term>convergent with order <m>p</m></term> if <m>\epsilon_{n+1} \le M\epsilon_n^p</m> with some constants <m>M</m>, <m>p > 0</m>. </li>
 </ul>
-Since for the bisection method <m>\epsilon_{n+1} = \frac{1}{2}\epsilon_n</m>m the  
+Since for the bisection method <m>\epsilon_{n+1} = \frac{1}{2}\epsilon_n</m>, the  
   bisection method is linearly convergent.</p>  
 
 </section>
@@ -205,12 +205,10 @@ end
         <statement>
 <p>Write a Matlab script which finds and prints <em>both</em> roots of the equation <m>30x e^{10x} = -1</m>, using the bisection of the bracketing interval found in <xref ref="example-bracketing-30x-exp" />. To avoid duplicating code, write a named function <c>bisection(f, a, b)</c> which takes the function and a bracketing interval as arguments and returns a root by using the algorithm in <xref ref="section-bisection-method" />. The script could look as follows. </p> 
 <pre>
-function hw7()
-    f = @(x) 30*x*exp(10*x) + 1;
-    root1 = bisection(f, -1, -0.1);
-    root2 = ...   
-    fprintf('Found roots at %.12g and %.12g\n', root1, root2)
-end
+f = @(x) 30*x*exp(10*x) + 1;
+root1 = bisection(f, -1, -0.1);
+root2 = ...   
+fprintf('Found roots at %.12g and %.12g\n', root1, root2)
 
 function x = bisection(f, a, b)
     ...
