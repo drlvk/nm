@@ -78,6 +78,7 @@ In Matlab this norm can be computed in several ways:
 <li><c>sqrt(sum(v.^2))</c></li>
 <li><c>sqrt(v'*v)</c> when <c>v</c> is a column vector</li>  
 <li><c>sqrt(v*v')</c> when <c>v</c> is a row vector</li>
+<li><c>sqrt(dot(v, v))</c></li>
 <li><c>norm(v)</c></li>
 </ul> 
 The last way is easiest. </p>
@@ -86,7 +87,7 @@ The last way is easiest. </p>
 <example xml:id="example-least-squares-norm-residual">
     <title>The least-squares solution and the norm of residual vector</title>
 <statement>
-    <p>Find the least-squares solution <m>x</m> and the norm of residual vector $<m>Ax-b</m> for the system with the matrix
+    <p>Find the least-squares solution <m>x</m> and the norm of residual vector <m>Ax-b</m> for the system with the matrix
     <me>A = \begin{pmatrix} 1 \amp 2 \\ 4 \amp 3  \\ 5\amp  6 \end{pmatrix} </me> and with <me>b = \begin{pmatrix} 7 \\ 8 \\ 9\end{pmatrix} </me>
     </p>
 </statement>
@@ -176,7 +177,7 @@ disp(A\b)
 <me>\begin{pmatrix}1\amp 2 \amp 3 \\ 4 \amp 5 \amp 6 \\ 7 \amp 8 \amp 9 \end{pmatrix}x= \begin{pmatrix} 10 \\ 11 \\ 12 \end{pmatrix}</me>
 to <xref ref="example-system-free-variable"/>. Does it have the same solution?</p></statement>
 <solution>
-<p>This new system as one more equation, but it is redundant: if you multiply the second line by 2 and subtract the first line, the result is the 3rd line. So, this system is <em>mathematically</em> equivalent to the previous one. Yet, the Matlab solution is different.</p>
+<p>This new system has one more equation, but it is redundant: if you multiply the second line by 2 and subtract the first line, the result is the 3rd line. So, this system is <em>mathematically</em> equivalent to the previous one. Yet, the Matlab solution is different.</p>
 <pre>
 A = [1 2 3; 4 5 6; 7 8 9];
 b = [10; 11; 12];
@@ -190,7 +191,7 @@ When solving it, we get a warning message: <q>Matrix is close to singular or bad
 </section>
 
 <section xml:id="section-round-off">
-<title>The effect of round-off-errors</title>
+<title>The effect of round-off errors</title>
 
 <p>The round-off errors made by a computer are usually very small: for example, 
 <cd>0.1 + 0.2 - 0.3</cd>
@@ -309,23 +310,33 @@ x_1 -2 x_2 + 3x_3 - x_4 \amp =  -3  \\
         <statement>
 <p>Write a function <c>linearfit</c> that takes arguments <c>x</c> and <c>y</c> (vectors of the same size) and returns two numbers <c>c</c> and <c>d</c>, coefficients of the best-fitting line <m>y=cx+d</m>. Then apply it to the population of your hometown during years 1980, 1985, ..., 2010, 2015. (The data should be easy to find online; if not, use a larger nearby town). The code could look like this.</p> 
 <pre>
-function hw6()
-  x =  1980:5:2015;  % years  
-  y =                % population of your hometown in these years 
-  [c, d] = linearfit(x, y);            % find the coefficient of linear fit
-  xx = linspace(min(x), max(x), 500);  % to be used for plotting the line
-  plot(x, y, 'r*', xx, c*xx + d, 'b')  % plot red points and blue line
-end
+x =  1980:5:2015;  % years  
+y =                % population of your hometown in these years 
+[c, d] = linearfit(x, y);            % find the coefficient of linear fit
+xx = linspace(min(x), max(x), 500);  % to be used for plotting the line
+plot(x, y, 'r*', xx, c*xx + d, 'b')  % plot red points and blue line
 
 function [k, c] = linearfit(x,y)
   ... set up and solve an overdetermined system, 
   ... then assign c and d based on its solution
 end
 </pre>
-<p>The character <c>%</c> is used for inserting comments in Matlab code: everything after it to the end of the line is ignored.</p>
 </statement>
 </exercise>
- 
+
+    <exercise number="3">
+        <statement>
+<p>Write a script that:
+<ol label="(a)">
+    <li>Creates a matrix <m>A</m> of size <m>20\times 20</m> according to the formula <m>A_{ij} = 1/(i+j-1)</m>. (This will require a double loop)</li>
+    <li>Creates a column vector <m>b</m> with <m>20</m> elements which alternate like <m>(c, 0, c, 0, c, 0, \dots)</m>. Here <m>c</m> is the first digit of your SUID.</li>
+    <li>Computes the solution of <m>Ax=b</m> and displays the norm of the difference between <m>Ax</m> and <m>b</m>.</li>
+</ol>
+ </p>
+ <p><em>Remark</em>. The matrix <m>A</m> is invertible, is not very large, and does not have any extremely large or extremely small entries: they are all between <m>0.025</m> and <m>1</m>. Yet, it is so close to being singular that the solution of this linear system is likely to be pure noise due to round-off errors.</p>
+</statement>
+</exercise>
+
 </exercises>
 
 </chapter>
