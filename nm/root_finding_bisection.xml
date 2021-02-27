@@ -196,7 +196,7 @@ end
 
     <exercise number="1">
         <statement>
-<p> For the function <m>f(x) = \log(x^2 + 1/2)  + 9x^4 </m>, use  the derivative <m>f'</m> determine the number of roots and find a bracketing interval for each of them. (No programming is needed.)
+<p> For the function <m>f(x) = \log(x^2 + 1/2)  + 9x^4 </m>, use  the derivative <m>f'</m> determine the number of roots and find a bracketing interval for each of them. (No programming is needed. Here, as in Matlab and in most mathematical texts, <m>\log</m> means the natural logarithm, base <m>e</m>.)
 </p>
 </statement>
 </exercise>

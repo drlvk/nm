@@ -185,6 +185,8 @@ After 7 steps got 1
  
 <p>In order to use the fixed point method, you need to rewrite the given equation as <m>g(x) = x</m>.  There are several ways to do this, try at least two different ones, or as many as are needed until a root is found. Starting from some value of <m>x</m>, such as <m>x=10</m>, below, run fixed point iteration until either it converges to a root, or the number of iterations becomes extremely large. The script should display either <q>Root found at x = ... after ... steps</q> or 
 <q>Failed to converge</q>. Add a comment with the different functions <m>g</m> you tried, and what the outcome was.</p>
+
+<p>Here, as in in Matlab and in most mathematical texts, <m>\log</m> means the natural logarithm, base <m>e</m>.</p>
 </statement>
 </exercise>
  
