@@ -197,7 +197,7 @@ Since the factor <m>p</m> itself goes to zero, the secant method has faster than
  
 <p>Introduce a relaxation parameter <m>\omega</m> in your script to help it converge. What value of <m>\omega</m> achieves convergence? Be careful: <m>\omega</m> should be small, but if it is too small, the algorithm will fail to converge because it takes too long.</p> 
 
-<p>When submitting homework on Blackboard, comment on what values of <m>\omega</m> you found to be too large for convergence, what value was too small for convergence, and what value achieved convergence.</p>
+<p>Include a comment on what values of <m>\omega</m> you found to be too large for convergence, what value was too small for convergence, and what value achieved convergence.</p>
 </statement>
 </exercise>
  
