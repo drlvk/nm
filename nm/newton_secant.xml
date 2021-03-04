@@ -182,9 +182,9 @@ Since the factor <m>p</m> itself goes to zero, the secant method has faster than
 
     <exercise number="1">
         <statement>
-<p> (Theoretical problem.) Suppose that Newton's method is used to solve <m>f(x)=0</m> with <m>f(x) = e^x + e^{-x} - 2</m>. Show that the function <m>g(x)=x-f(x)/f'(x)</m> (extended by <m>g(0)=0</m>) has a nonzero derivative at <m>0</m> by computing the limit of <m>g(x)/x</m> as <m>x\to 0</m>. </p>
+<p> (Theoretical problem.) Suppose that Newton's method is used to solve <m>f(x)=0</m> with <m>f(x) = e^x + e^{-x} - 2</m>. Show that the function <m>g(x)=x-f(x)/f'(x)</m> (extended by <m>g(0)=0</m>) has a nonzero derivative at <m>0</m>. (Hence, <m>0</m> is not a superattracting point for Newton's method in this example.) </p>
 </statement>
-<hint><p>Hint: To simplify <m>f(x)/f'(x)</m>, you can multiply the numerator and denominator by <m>e^x</m> and recognize that they both can be factored.</p> </hint>
+<hint><p>Hint: To simplify <m>f(x)/f'(x)</m>, you can multiply the numerator and denominator by <m>e^x</m> and recognize that they both can be factored. One possible approach to computing <m>g'(0)</m> is to take the limit of <m>g(x)/x</m> as <m>x\to 0</m> using L'Hospital's rule. </p> </hint>
 </exercise>
 
     <exercise number="2">
