@@ -214,7 +214,7 @@ legend('original', 'symmetric', 'extrapolated')
 </solution></example>  
 
 <question><title>What makes the error smaller in some places?</title>
-<p>As we see in <xref ref="differentiation1-png" />, the size of error suddently becomes much smaller in certain parts of the interval. What is special about those places that makes the approximation more accurate? </p>
+<p>As we see in <xref ref="example-plot-log-difference" />, the size of error suddently becomes much smaller in certain parts of the interval. What is special about those places that makes the approximation more accurate? </p>
 <hint><p>Recall the connection with Taylor series: the error term involves derivatives of higher order.</p></hint>
 </question> 
 
