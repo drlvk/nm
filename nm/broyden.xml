@@ -115,7 +115,7 @@ It looks messy, but at least the derivation was logical. </p>
    <title> Use Broyden's method to find all roots of a cubic polynomial</title>
 <statement><p> Redo <xref ref="example-durand-kerner-solve" /> using Broyden's method instead of Newton's method. 
 </p> </statement>
-<solution><p>We have the same vector functionto be equated to zero
+<solution><p>We have the same vector function to be equated to zero
 <me> \mathbf F(\mathbf x) = \begin{pmatrix} x_1+x_2+x_3 +2  \\ 
 x_1x_2 + x_1x_3 + x_2x_3 + 7 \\
 x_1x_2x_3 + 1
@@ -143,8 +143,7 @@ end
 if k &lt; max_tries
     fprintf('Found a solution after %d steps:\n', k);
     disp(x)
-    disp('The value F(x)')
-    disp(F(x))
+    fprintf('The norm of F(x) is %g\n', norm(F(x)))
 else
     disp('Failed to converge')
 end

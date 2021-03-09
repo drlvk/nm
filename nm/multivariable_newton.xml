@@ -138,8 +138,7 @@ end
 if k &lt; max_tries
     fprintf('Found a solution after %d steps:\n', k);
     disp(x)
-    disp('The value F(x)')
-    disp(F(x))
+    fprintf('The norm of F(x) is %g\n', norm(F(x)))
 else
     disp('Failed to converge')
 end
@@ -152,7 +151,7 @@ end
 <section xml:id="section-multivariate-newton-method-issues">
 <title>Potential issues</title>
 
-<p>All of the issues of single-variable method in <xref ref="section-newton-method-issues" /> are present here as well. In particular, the problem with derivative <m>f'(x)</m> being zero (or close to it) now becomes the problem with the Jacobian matrix <m>J</m> being singular (not invertible) or close to being such. This is when Matlab displays the warning <q> Matrix is close to singular or badly scaled. Results may be inaccurate.</q> Note that despite this warning, the final outcome may be an accurate solution.  Indeed, the issue with solving the linear system for <m>\mathbf h</m> may result in a wrong value of <m>\mathbf h</m> at some step. But this only means that at that particular step, the algorithm jumps where it should not have. It may still converge to a solution afterwards if at the new value of <m>\mathbf x</m> the Jacobian matrix behaves better. The script in <xref ref="example-multivariate-newton-solve" /> displays the value <m>\mathbf F(\mathbf x)</m> at the end as a reassurance that the method indeed found a solution, despite the possible problems at intermediate steps.</p>
+<p>All of the issues of single-variable method in <xref ref="section-newton-method-issues" /> are present here as well. In particular, the problem with derivative <m>f'(x)</m> being zero (or close to it) now becomes the problem with the Jacobian matrix <m>J</m> being singular (not invertible) or close to being such. This is when Matlab displays the warning <q> Matrix is close to singular or badly scaled. Results may be inaccurate.</q> Note that despite this warning, the final outcome may be an accurate solution.  Indeed, the issue with solving the linear system for <m>\mathbf h</m> may result in a wrong value of <m>\mathbf h</m> at some step. But this only means that at that particular step, the algorithm jumps where it should not have. It may still converge to a solution afterwards if at the new value of <m>\mathbf x</m> the Jacobian matrix behaves better. The script in <xref ref="example-multivariate-newton-solve" /> displays the norm of <m>\mathbf F(\mathbf x)</m> at the end as a reassurance that the method indeed found a solution, despite the possible problems at intermediate steps.</p>
 
 <p>A new issue is the <term>scaling</term> of variables. When the components of unknown vector have very different orders of magnitude, it is hard to understand what changes are significant or not. Suppose we are solving a system involving the distance and speed of <url href="https://en.wikipedia.org/wiki/New_Horizons">New Horizons probe</url> which is traveling at the speed of about 14 km/s and has distance about <m>6.43\times 10^9</m> km from the Sun (as of 2020). So the vector we work with will look like <c>[14; 6.43e9]</c>. The difference between this vector and, for example, <c>[20; 6.43e9]</c> looks relatively small: the difference has norm about <m>10^{-9}</m> times the norm of the original vector, one billionth. But of course the difference between 14 and 20 is quite significant. To avoid this, one should try to use units in which the quantities involved have about the same order of magnitude. For New Horizons, one could measure distance in astronomical units (AU) which makes it about 43. So the vector becomes <c>[14; 43]</c> which is much better numerically.</p>  
 </section>

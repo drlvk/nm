@@ -2,7 +2,7 @@
 
 <chapter xml:id="chapter-numerical-differentiation" xmlns:xi="http://www.w3.org/2001/XInclude">
 
-<title>Numerical Differentiation</title>
+<title>Numerical differentiation</title>
 
 
     <introduction>
@@ -78,8 +78,15 @@ ans = 0
 <me>
 \frac{\sqrt{x+h} - \sqrt{x}}{h} = 	\frac{(\sqrt{x+h} - \sqrt{x})(\sqrt{x+h} + \sqrt{x})}{h(\sqrt{x+h} + \sqrt{x})} = \frac{x+h-x}{h(\sqrt{x+h} + \sqrt{x})} = \frac{1}{\sqrt{x+h} + \sqrt{x}} 
 </me>
-Algebraically these expressions are identical, but in Matlab, <c>1/(sqrt(x+h) + sqrt(x))</c> produces accurate answer <c>5.0000e-04</c> for any of the above values of <m>h</m>. 
-Matlab also has some built-in logic for avoiding loss of significance in two frequently encountered situations: 
+Algebraically these expressions are identical, but in Matlab, <c>1/(sqrt(x+h) + sqrt(x))</c> produces accurate answer <c>5.0000e-04</c> for any of the above values of <m>h</m>. </p>
+
+<p>An important case of such rearrangement in the quadratic formula: its familiar form 
+<me>
+x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
+</me>
+leads to loss of significance when <m>b</m> is much larger than <m>ac</m>. (Why is this, and how can we avoid the issue?)</p>
+
+<p>Matlab also has some built-in logic for avoiding loss of significance in two frequently encountered situations: 
 <m>e^{x} - 1</m> and <m>\log (1+x)</m> when <m>x\approx 0</m>. These are the functions <c>expm1</c> and <c>log1p</c>. To see the difference, compare the results of <c>(exp(x)-1)/x</c> and <c>expm1(x)/x</c> when <c>x=1e-20</c>.
 </p>  
 </section>
@@ -188,35 +195,23 @@ disp(g(1e-9))
 
 <example xml:id="example-plot-log-difference">
    <title> Compare the accuracy of three approximations to <m>f'</m></title>
-<statement><p>Consider the function <m>f(x) = \sin x</m> on the interval <m>[0, 5]</m>. Compare the accuracy of the three approximations to its derivative (<xref ref="eq-diff-f1" />, <xref ref="eq-diff-f1-symm" />, <xref ref="eq-symm-extrapolated" />) by plotting the <em>base 10 logarithm</em> of the error for each of them. Use <m>h = 0.1</m>.</p></statement>
+<statement><p>Consider the function <m>f(x) = \sin x</m> on the interval <m>[0, 5]</m>. Compare the accuracy of the three approximations to its derivative (<xref ref="eq-diff-f1" />, <xref ref="eq-diff-f1-symm" />, <xref ref="eq-symm-extrapolated" />) by plotting the error for each of them on the logarithmic scale (with <c>semilogy</c>). Use <m>h = 0.1</m>.</p></statement>
 <solution> <pre> 
 f = @(x) sin(x);
 fp = @(x) cos(x);
 
 x = linspace(0, 5, 500);
 h = 0.1;
-
-original = (f(x+h) - f(x))/h;
-symmetric = (f(x+h) - f(x-h))/(2*h);
-extrapolated = 2*(f(x+h) - f(x-h))/(3*h) - (f(x+2*h) - f(x-2*h))/(12*h);
+orig = (f(x+h) - f(x))/h;
+symm = (f(x+h) - f(x-h))/(2*h);
+extr = 2*(f(x+h) - f(x-h))/(3*h) - (f(x+2*h) - f(x-2*h))/(12*h);
 exact = fp(x);
 
-hold on 
-plot(x, log10(abs(original - exact)))
-plot(x, log10(abs(symmetric - exact)))
-plot(x, log10(abs(extrapolated - exact)))
+semilogy(x, abs(orig-exact), x, abs(symm-exact), x, abs(extr-exact))
 legend('original', 'symmetric', 'extrapolated')
-hold off
 </pre>
-<p>The result, shown below, indicates that the error is about <m>10^{-1}</m> for the original formula (from the definition of derivative), about <m>10^{-3}</m> for the symmetric formula, and about <m>10^{-6}</m> for the extrapolated formula.</p>
-
-<figure xml:id="differentiation1-png"><image source="images/differentiation1.png" /> <caption>Comparison of errors</caption></figure> 
-
-<p>Note that Matlab's command <c>semilogy</c> can be used to plot on logarithmic scale directly, for example
-<cd>semilogy(x, abs(original - exact))</cd>
-has the same result as 
-<cd>plot(x, log10(abs(original - exact)))</cd>
-</p></solution></example>  
+<p>The result indicates that the error is about <m>10^{-1}</m> for the original formula (from the definition of derivative), about <m>10^{-3}</m> for the symmetric formula, and about <m>10^{-6}</m> for the extrapolated formula.</p>
+</solution></example>  
 
 <question><title>What makes the error smaller in some places?</title>
 <p>As we see in <xref ref="differentiation1-png" />, the size of error suddently becomes much smaller in certain parts of the interval. What is special about those places that makes the approximation more accurate? </p>
