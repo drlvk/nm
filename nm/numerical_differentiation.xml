@@ -30,12 +30,12 @@ where the error term <m>e</m> is a function of <m>h</m>. The accuracy of approxi
 
 <example xml:id="example-error-diff-f1">
   <title>Find the order of error of approximation to <m>f'</m> </title>
-<statement><p>Find the order of error of the formuls <xref ref="eq-diff-f1" />.</p></statement> 
+<statement><p>Find the order of error of the formula <xref ref="eq-diff-f1" />.</p></statement> 
 <solution><p>
 <ul>
 <li>With <m>f(x) = x^0</m> we get <m>f'(x) = 0</m> and <m>\frac{f(x+h)-f(x)}{h}=0</m>, so the error term is zero for this function. </li>
 <li>With <m>f(x) = x^1</m> we get <m>f'(x) = 1</m> and <m>\frac{f(x+h)-f(x)}{h}=\frac{h}{h}=1</m>, so the error term is zero for this function. </li>
-<li>With <m>f(x) = x^2</m> we get <m>f'(x) = 2x</m> and <m>\frac{f(x+h)-f(x)}{h}=\frac{x^2+2xh+h^2}{h}=2x + h</m>, so the error term for this function is <m>h^1</m>. </li>
+<li>With <m>f(x) = x^2</m> we get <m>f'(x) = 2x</m> and <m>\frac{f(x+h)-f(x)}{h}=\frac{x^2+2xh+h^2-x^2}{h}=2x + h</m>, so the error term for this function is <m>h^1</m>. </li>
 </ul>
 In conclusion, the formula has order of error 1.</p></solution></example>
 
@@ -80,11 +80,30 @@ ans = 0
 </me>
 Algebraically these expressions are identical, but in Matlab, <c>1/(sqrt(x+h) + sqrt(x))</c> produces accurate answer <c>5.0000e-04</c> for any of the above values of <m>h</m>. </p>
 
+<example xml:id="example-quadratic-formula-variants">
 <p>An important case of such rearrangement in the quadratic formula: its familiar form 
-<me>
+<men xml:id="eq-quad-variant-1">
 x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
-</me>
-leads to loss of significance when <m>b</m> is much larger than <m>ac</m>. (Why is this, and how can we avoid the issue?)</p>
+</men>
+leads to loss of significance when <m>b</m> is much larger than <m>ac</m>. The following code erroneously returns <c>0</c> as a root of the quadratic equation <m>x^2+10^9x+1=0</m>.</p> 
+<pre>
+>> a=1; b=1e9; c=1;
+>> (-b+sqrt(b^2-4*a*c))/(2*a)
+ans = 0
+</pre>
+<p>The alternative form of <xref ref="eq-quad-variant-1" /> is
+<men xml:id="eq-quad-variant-2">
+x = \frac{2c}{-b \mp \sqrt{b^2 - 4ac}}
+</men>
+where the signs <m>\mp</m> indicate that the root we would get with <m>+</m> in <xref ref="eq-quad-variant-1" /> is obtained with <m>-</m> in <xref ref="eq-quad-variant-2" />. To compute both roots without loss of significance, one uses both formulas <xref ref="eq-quad-variant-1" /> and <xref ref="eq-quad-variant-2" />  with the sign opposite to the sign of <m>b</m>.</p>
+<pre>
+>> (2*c)/(-b-sqrt(b^2-4*a*c))
+ans = -1.0000e-09
+>> r = roots([1 1e9 1]); r(2)
+ans = -1.0000e-09
+</pre>
+<p>As this sample shows, Matlab takes the numerically safe approach in its <c>roots</c> function for finding roots of polynomials.</p> 
+</example>
 
 <p>Matlab also has some built-in logic for avoiding loss of significance in two frequently encountered situations: 
 <m>e^{x} - 1</m> and <m>\log (1+x)</m> when <m>x\approx 0</m>. These are the functions <c>expm1</c> and <c>log1p</c>. To see the difference, compare the results of <c>(exp(x)-1)/x</c> and <c>expm1(x)/x</c> when <c>x=1e-20</c>.
@@ -102,7 +121,7 @@ f'(x) \approx \frac{f(x+h)-f(x-h)}{2h}
 
 <example xml:id="example-error-diff-f1-symm">
   <title>Order of error of symmmetric difference approximation to <m>f'</m> </title>
-<statement><p>Find the order of error of the formuls <xref ref="eq-diff-f1-symm" />.</p></statement> 
+<statement><p>Find the order of error of the formula <xref ref="eq-diff-f1-symm" />.</p></statement> 
 <solution><p>
 <ul>
 <li>With <m>f(x) = x^0</m> we get <m>f'(x) = 0</m> and <m>\frac{f(x+h)-f(x-h)}{2h}=0</m>, so the error term is zero for this function. </li>
