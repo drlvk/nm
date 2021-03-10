@@ -81,6 +81,8 @@ ans = 0
 Algebraically these expressions are identical, but in Matlab, <c>1/(sqrt(x+h) + sqrt(x))</c> produces accurate answer <c>5.0000e-04</c> for any of the above values of <m>h</m>. </p>
 
 <example xml:id="example-quadratic-formula-variants">
+	<title>Two forms of the quadratic formula </title>
+<statement>
 <p>An important case of such rearrangement in the quadratic formula: its familiar form 
 <men xml:id="eq-quad-variant-1">
 x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
@@ -103,6 +105,7 @@ ans = -1.0000e-09
 ans = -1.0000e-09
 </pre>
 <p>As this sample shows, Matlab takes the numerically safe approach in its <c>roots</c> function for finding roots of polynomials.</p> 
+</statement>
 </example>
 
 <p>Matlab also has some built-in logic for avoiding loss of significance in two frequently encountered situations: 
