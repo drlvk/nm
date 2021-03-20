@@ -74,7 +74,7 @@ This means that if we want to calculate, for example, <m>\int_0^\infty 1/(x^3+4)
 
 <p>One difference is the right hand side of the system which we use to solve for the weights <m>w_k</m>. For Gauss-Legendre integration we have <m>\int_{-1}^1 x^p\,dx = (1-(-1)^{p+1})/(p+1)</m> there. For Gauss-Laguerre integration we have <m>\int_{0}^\infty x^p e^{-x}\,dx</m> which takes a but more work. Integration by parts helps:
 <me>
-\int_{0}^\infty x^p e^{-x}\,dx -x^pe^{-x}\bigg|_{x=0}^{x\to\infty} - \int_{0}^\infty p x^{p-1} (-e^{-x})\,dx 
+\int_{0}^\infty x^p e^{-x}\,dx = -x^pe^{-x}\bigg|_{x=0}^{x\to\infty} - \int_{0}^\infty p x^{p-1} (-e^{-x})\,dx 
 = p \int_{0}^\infty x^{p-1} e^{-x}\,dx
 </me>
 which shows, by induction, that <m>\int_{0}^\infty x^p e^{-x}\,dx = p!</m>.</p> 

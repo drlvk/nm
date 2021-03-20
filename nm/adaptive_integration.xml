@@ -106,7 +106,7 @@ end
 <p>If one uses an absolute error bound like <c>abs(I1 - I2) &lt; 1e-6</c>, there is another issue. We do not know how many subintervals will be used in the process, so even if each of them contributes an error of less than <m>10^{-6}</m>, the total may be significantly higher. </p>
 
 <p>A third approach is to enforce enforce error bound <em>relative to the size of interval</em>, for example <c>abs(I1 - I2) &lt; 1e-6 * (b-a)</c>. This avoids the issue with functions that are problematic and small, such as 
-<m>f(x) = \sqrt{x}</m> near <m>0</m>. But it runs into the same issue with functions that are problematic and large, such as  <m>f(x) = 1/\sqrt{x}</m> near <m>0</m>. Here the integral is </p> 
+<m>f(x) = \sqrt{x}</m> near <m>0</m>. But it runs into the same issue with functions that are problematic and large, such as  <m>f(x) = 1/\sqrt{x}</m> near <m>0</m>. </p> 
 
 <p>A combination approach, such as <c>abs(I1 - I2) &lt; 1e-6 * (b-a) + 1e-9</c>, allows the process to stop if the difference became small relative to interval size or just very small in absolute terms. This allows the subdivision to end even for functions like <m>f(x) = 1/\sqrt{x}</m>.</p>    
 
@@ -121,7 +121,8 @@ end
 <cd>y = f([a, (a+b)/2, b]);</cd>
 and obtain both trapezoidal and Simpson's rules from the vector <c>y</c>. This property of two rules being <em>nested</em> (evaluation points of one rule are contained in the other) is valuable for speeding up the computation.</p>
 
-<p>Since the Gauss integration rule is the most accurate of those we discussed, one may decide to use it for both <m>I_1</m> and <m>I_2</m>, just with different number of evaluation points, perhaps <m>n</m> and <m>2n</m>. A downside is that Gauss evaluation points are not nested. In practice, the Gauss rule is used for <m>I_1</m> and the Kronrod rule (also based on orthogonal polynomials, but beyond our scope) is used for <m>I_2</m>. The Kronrod rule is designed to include all of the points used by the Gauss rule, and some additional ones. A popular choice, e.g., in TI graphing calculators, is (G7, K15), meaning 7-point Gauss rule combined with 15-point Kronrod rule. For an illustration of adaptive integration in Python module SciPy, see <url href="https://calculus7.org/2018/10/27/numerical-integration-visualized/">this blog post</url>: it shows that Scipy uses (G10, K21) combination.</p>
+<p>Since the Gauss integration rule is the most accurate of those we discussed, one may decide to use it for both <m>I_1</m> and <m>I_2</m>, just with different number of evaluation points, perhaps <m>n</m> and <m>2n</m>. A downside is that Gauss evaluation points are not nested. In practice, the Gauss rule is used for <m>I_1</m> and the Kronrod rule (also based on orthogonal polynomials, but beyond our scope) is used for <m>I_2</m>. The Kronrod rule is designed to include all of the points used by the Gauss rule, and some additional ones. A popular choice, e.g., in TI graphing calculators, is (G7, K15), meaning 7-point Gauss rule combined with 15-point Kronrod rule. For an illustration of adaptive integration in Python module SciPy, 
+see <url href="https://calculus7.wordpress.com/2018/10/27/numerical-integration-visualized/">this blog post</url>: it shows that SciPy uses (G10, K21) combination.</p>
 
 </section>
 
