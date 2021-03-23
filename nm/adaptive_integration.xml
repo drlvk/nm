@@ -142,10 +142,8 @@ see <url href="https://calculus7.wordpress.com/2018/10/27/numerical-integration-
 <answer><p>When implementing Gauss rules on a general interval <m>[a, b]</m>, it helps to introduce the 
 midpoint <m>c = (a+b)/2</m> and half-length <m>k = (b-a)/2</m>. This is because the rule was originally designed for <m>[-1, 1]</m> and the linear function from <m>[-1, 1]</m> to <m>[a, b]</m> is <m>kx+c</m>. The coefficient <m>k</m> will appear in the formulas due to the change of variable formula.</p>
 <pre>
-function adaptive_example()
-    f = @ (x) x.^(-1/2);
-    fprintf('The integral is %.6f\n', adaptive(f, 0, 9));
-end
+f = @ (x) x.^(-1/2);
+fprintf('The integral is %.6f\n', adaptive(f, 0, 9));
 
 function I = adaptive(f, a, b)
     c = (a+b)/2;
