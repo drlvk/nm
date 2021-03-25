@@ -198,17 +198,12 @@ The phase plot  may be preferable when the system does not involve time directly
 
     <exercise number="1">
         <statement>
-<p>(Theoretical) Show that the midpoint ODE method, described by <xref ref="eq-ode-corrector-midpoint" />, has the same order of accuracy as the trapezoidal ODE method: its cumulative error is proportional to <m>h^2</m>.</p>
+<p>(Theoretical) Rewrite the second-order equation <m>y'' + yy' - ty^3 = e^{-t}</m> as a system of two first-order equations.</p>
 </statement></exercise>
 
     <exercise number="2">
         <statement>
-<p>(Theoretical) Rewrite the second-order equation <m>y'' + yy' - ty^3 = e^{-t}</m> as a system of two first-order equations.</p>
-</statement></exercise>
-
-    <exercise number="3">
-        <statement>
-<p> Use the midpoint method with step size <m>h=0.01</m> to solve the autonomous system 
+<p> Use the <em>midpoint method</em> <xref ref="eq-ode-corrector-midpoint" /> with step size <m>h=0.01</m> to solve the autonomous system 
 <md>
 <mrow>y_1' \amp = y_2</mrow>
 <mrow>y_2' \amp = -y_1 - y_2^3</mrow>
