@@ -30,7 +30,7 @@ The constants <m>\beta,\gamma</m> are the <term>parameters</term> of this system
 <cd>
 [t, y] = ode45(rhs, [a, b], y0);  
 </cd>
-where <c>rhs</c> is the right hand side of the ODE system,  <c>[a, b]</c> is the interval on which solution must be found, and <c>y0</c> is the initial condition at the left endpoint of that interval. The initial condition can be a single number (when solving a single equation) or a vector (when solving a system). It is preferable to use a row vector for <c>y0</c> when solving a system, because of how the solution is presented by <c>ode45</c>: see below. Note that <c>rhs</c> must take two variables in this order: <c>rhs = @(t, y) ...</c> even if the system does not involve time (is autonomous). </p>
+where <c>rhs</c> is the right hand side of the ODE system,  <c>[a, b]</c> is the interval on which solution must be found, and <c>y0</c> is the initial condition at the left endpoint of that interval. The initial condition can be a single number (when solving a single equation) or a vector (when solving a system). It is preferable to use a row vector for <c>y0</c> when solving a system, because of how the solution is presented by <c>ode45</c>: see below. Note that <c>rhs</c> must take two variables in this order: <c>rhs = @(t, y) ...</c> even if the system does not involve time (is autonomous). The output of function <c>rhs</c> must be a column vector (it can be a single number if we are solving one equation).</p>
 
 <p>The solver returns a vectors of t-values and a vector or matrix of y-values. It is a matrix if we solve a system; in this case <c>y(:,1)</c> approximates the first unknown function, <c>y(:,2)</c> the second, and so on. The time series of the solution is obtained with <c>plot(t, y)</c>. </p>
 
