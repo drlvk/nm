@@ -15,8 +15,9 @@
 <section xml:id="section-monomial-basis">
 <title>Interpolation in the monomial basis</title>
 
-<p>Given <m>n</m> data points <m>(x_k, y_k)</m> with <m>k=1, \dots, n</m>, where all <m>x_k</m> are different, we are looking for a polynomial <m>p</m> of degree <m> \lt n</m> such that <m>p(x_k) = y_k</m> for  <m>k=1, \dots, n</m>. 
-A straightforward way is to do this is to write <m>p(x) = \sum_{j=0}^{n-1} c_j x^j</m> and solve a linear system for <m>c_j</m>; it has <m>n</m> equations with <m>n</m> unknowns. But this process is both slow and numerically fragile; the matrix of the linear system is likely to be ill-conditioned. And even if we could find the coefficients of monomials <m>x_j</m> easily, we do not necessarily want to, for the following reason. </p>  
+<p>Given <m>n</m> data points <m>(x_k, y_k)</m> with <m>k=1, \dots, n</m>, where all <m>x_k</m> are different, we are looking for a polynomial <m>p</m> of degree <m> \lt n</m> such that <m>p(x_k) = y_k</m> for  <m>k=1, \dots, n</m>. Such <em>interpolating polynomial</em> exists and is unique. Existence will be shown below, and uniqueness is a consequence of the fact that a polynomial of degree less than <m>n</m> cannot have <m>n</m> distinct zeros. Outside of exceptional cases, the interpolating polynomial will have degree <m>n-1</m>. The main question is how to construct it.</p>
+
+<p>A straightforward way is to do this is to write <m>p(x) = \sum_{j=0}^{n-1} c_j x^j</m> and solve a linear system for <m>c_j</m>; it has <m>n</m> equations with <m>n</m> unknowns. But this process is both slow and numerically fragile; the matrix of the linear system is likely to be ill-conditioned. And even if we could find the coefficients of monomials <m>x_j</m> easily, we do not necessarily want to, for the following reason. </p>  
 
 <p>We are used to seeing polynomials written in terms of the <term>monomial basis</term> <m>x^0, x^1, \dots, x^d</m>, that is, as a linear combination of the monomials. But this basis is ill-suited for numerical computations away from the point <m>x=0</m>. For example, consider the simple polynomial <m>p(x) = (x-7)^{15}</m>. If we expand it in the monomial basis and then try to compute its values on the interval <m>[6, 8]</m>, the result will be disappointing. In the code below, <c>c</c> is a vector of coefficients; the ellipsis notation allows it to by split between lines for readability. </p>
 <pre>
@@ -51,16 +52,29 @@ They are constructed so that <m>\ell_k(x_j)=0</m> when <m>j\ne k</m> and <m>\ell
 </men>
 which obviously satisfies <m>p(x_k)=y_k</m>. The coefficients of interpolating polynomial in this basis are just the given <m>y</m>-values.</p> 
 
-<p>For the sake of efficiency and numerical stability, the evaluation of <m>p</m> can be arranged as follows. Since the denominators in <xref ref="eq-lagrange-basis" /> do not involve <m>x</m>, they can be computed in advance. Specifically, we compute <q>barycentric weights</q>
+<question><title>Sum of Lagrange basis polynomials</title>
+<p>What is the sum of all Lagrange basis polynomials, that is, <m>\ell_1+\ell_2+\cdots+\ell_n</m>? 
+</p>
+</question> 
+
+
+<p>For the sake of efficiency and numerical stability, the evaluation of <m>p</m> can be arranged as follows. Since the denominators in <xref ref="eq-lagrange-basis" /> do not involve <m>x</m>, they can be computed in advance. Introduce <q>barycentric weights</q>
 <men xml:id="eq-barycentric-weights">
 w_k = \prod_{j\ne k} (x_k-x_j)^{-1} 
 </men>
-and then the polynomial <m>p</m> can be computed as the quotient of two rational functions:
+which are related to Lagrange basis polynomials as <m>\ell_k(x) = w_k  \prod_{j\ne k} (x-x_j)</m>. Rewrite <xref ref="eq-lagrange-poly" /> as a quotient 
+<men xml:id="eq-lagrange-poly-as-quotient">
+  p(x) = \frac{\sum_{k=1}^n y_k\ell_k(x)}{\sum_{k=1}^n \ell_k(x)}
+= \frac{\sum_{k=1}^n y_k w_k \prod_{j\ne k} (x-x_j) }{\sum_{k=1}^n w_k \prod_{j\ne k} (x-x_j)}
+</men>
+Finally, divide the numerator and denominator by the product of all <m>(x-x_j)</m> to conclude that  
+the Lagrange interpolating polynomial <m>p</m> can be computed as:
 <men xml:id="eq-lagrange-poly-barycentric">
   p(x) = \frac{\sum_{k=1}^n y_k w_k(x-x_k)^{-1}}{ \sum_{k=1}^n w_k (x-x_k)^{-1} } 
 </men>
-The advantage of <xref ref="eq-lagrange-poly-barycentric" /> over the original form is that we avoid a large number of multiplications involving <m>(x-x_j)</m> for every point <m>x</m>. A slight disadvantage is that one cannot plug in <m>x=x_k</m> into <xref ref="eq-lagrange-poly-barycentric" />, but we know that <m>p(x_k)=y_k</m> anyway.</p>
-
+The idea of computing a polynomial as the quotient of two rational functions is counterintuitive. 
+But the formula <xref ref="eq-lagrange-poly-barycentric" /> wins over the original formula <xref ref="eq-lagrange-poly" /> in terms of numerical stability and computational speed, because it avoids a large number of multiplications involving <m>(x-x_j)</m> for every point <m>x</m>. A slight disadvantage of <xref ref="eq-lagrange-poly-barycentric" /> is that one cannot plug in <m>x=x_k</m> into <xref ref="eq-lagrange-poly-barycentric" />, but we know that <m>p(x_k)=y_k</m> anyway.</p>
+ 
 
 <example xml:id="example-lagrange-polynomial">
   <title>Plot the Lagrange polynomial through 10 points</title>
