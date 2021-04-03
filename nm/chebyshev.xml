@@ -139,7 +139,7 @@ end
 
 p = @(t) (y.*w*(t - x').^(-1)) ./ (w*(t - x').^(-1));
 t = linspace(min(x)-0.01, max(x)+0.01, 1000);
-plot(x, y, 'r*', t, p(t))
+plot(t, p(t), x, y, 'r*')
 </pre>
 </answer></example> 
 
@@ -207,9 +207,9 @@ w(end) = w(end)/2;
 
 p = @(t) (y.*w*(t - x').^(-1)) ./ (w*(t - x').^(-1));
 t = linspace(a-0.01, b+0.01, 1000);
-plot(x, y, 'r*', t, f(t), 'k', t, p(t), 'b', 'LineWidth', 2)
+plot(x, y, 'k*', t, f(t), 't', t, p(t), 'b')
 </pre>
-<p>The plot includes the points of interpolation as red asterisks, the original function is a black curve, and the interpolating polynomial as a blue curve. Often the blue curve follows the black one so precisely that it covers it completely. </p> 
+<p>The plot includes the points of interpolation as black asterisks, the original function is a red curve, and the interpolating polynomial as a blue curve. Often the blue curve follows the red one so precisely that it covers it completely. </p> 
   </answer></example>
 
 </section>
