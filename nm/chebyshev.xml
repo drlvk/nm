@@ -166,6 +166,8 @@ x = cos(linspace(0, pi, n+1));
 While the midpoint projections (Chebyshev points of the first kind) are the <em>roots</em> of polynomials 
 <m>T_n</m>, the points <xref ref="eq-chebyshev-extrema" /> are the <em>extreme points</em> of <m>T_n</m>. Indeed, the identity <xref ref="eq-chebyshev-cosine" /> says that <m>T_n</m> attains extreme values <m>\pm 1</m> when <m>\cos (n\theta) = \pm 1</m>, hence <m>\theta = \pi k/n</m>, hence <m>x = \cos(\pi k/n)</m>.  </p>
 
+<p>Note that in this section, unlike the previous ones, we have <m>n+1</m> points of interpolation, rather than <m>n</m>. This is more convenient notation-wise, similarly to how the Trapezoidal rule with <m>n</m> subintervals uses <m>n+1</m> points of evaluation, while the Midpoint rule with the same subintervals uses <m>n</m> points. </p>
+
 <p>An advantage of using Chebyshev extreme points <xref ref="eq-chebyshev-extrema" /> as the points of interpolation is that one does not need to compute the weights like we did in <xref ref="example-lagrange-polynomial-chebyshev" />. For this specific choice of points, the weights 
 in the barycentric formula <xref ref="eq-lagrange-poly-barycentric" /> turn out to be 
 <men xml:id="eq-weights-chebyshev">
@@ -179,8 +181,7 @@ where primes over summation signs mean that the terms with <m>k=0, n</m> should 
 <me>
  x_k = \frac{b-a}{2}  \cos(\pi k/n) + \frac{a+b}{2}
 </me>
-Note that the function <m>p</m> is in fact a polynomial of degree <m>n</m>, even if the formula does not look like it. The straightforward way of expressing a polynomial of high degree, as a sum of powers with constant coefficients, is likely to cause numerical issues, while the barycentric formula <xref ref="eq-chebyshev-interp-extreme" /> is numerically stable. </p>
-
+Note that the function <m>p</m> is in fact a polynomial of degree <m>n</m>, even if the formula does not look like it. The straightforward way of expressing a polynomial of high degree, as a sum of powers with constant coefficients, is likely to cause numerical issues (see <xref ref="section-monomial-basis" />), while the barycentric formula <xref ref="eq-chebyshev-interp-extreme" /> is numerically stable. </p>
 
 <example xml:id="example-chebyshev-extreme-interpolation">
   <title>Interpolate through Chebyshev extreme points</title>
@@ -192,10 +193,10 @@ Note that the function <m>p</m> is in fact a polynomial of degree <m>n</m>, even
   <li> <m>f(x) = \sin(x^2)</m> on <m>[0, 5]</m></li>
   <li> <m>f(x) = \operatorname{sign} x</m> on <m>[-1, 1]</m></li>
 </ul>
-by a polynomial of degree <m>n=20</m> (or another degree if you prefer). </p></statement>
+Use <m>20</m> Chebyshev extreme points (or more if you prefer). </p></statement>
 <answer><pre>
 f = @(x) 1./(x.^2+1);  % or another f 
-n = 20;   % or another n 
+n = 19;   % there will be n+1 = 20 points
 a = -5;   % or another a
 b = 5;    % or another b
 
