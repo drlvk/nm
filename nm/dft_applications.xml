@@ -173,22 +173,26 @@ g = cf(1:m)*cos(k'*x*pi/L);
 
     <exercise number="1">
         <statement>
-<p>  Instead of deciding in advance how many coefficients to discard, it is usually preferable to maintain some degree of quality of the image. This is often measured in terms of <q>energy</q>, defined as the sum of squares of absolute values of Fourier coefficients. That, is to have 95% quality, we want to keep enough Fourier coefficients so that the sum of their squares is at least 95% of the total sum of squares. Equivalently, we discard the coefficients that contribute 5% of the energy.</p> 
+<p>  Instead of deciding in advance how many coefficients to discard, it is usually preferable to maintain some degree of quality of the image. This is often measured in terms of <q>energy</q>, defined as the sum of squares of absolute values of Fourier coefficients (except the constant one). That, is to have 95% quality, we want to keep enough Fourier coefficients so that the sum of their squares is at least 95% of the total sum of squares. Equivalently, we discard the coefficients that contribute 5% of the energy.</p> 
 
-<p>The goal of this exercise is to modify <xref ref="example-compress-image" /> so that the input value is quality <c>q</c> such as 95 or 98, and the image in <xref ref="winter-png" /> is compressed based on the energy consideration. </p>
+<p>The goal of this exercise is to modify <xref ref="example-compress-image" /> so that the input value is quality <c>q</c> such as 90 or 95, and the image in <xref ref="winter-png" /> is compressed based on the energy consideration. </p>
 
-<p>Suggestions: sort the Fourier coefficients from smallest to largest using 
+<p>Suggestions: sort the Fourier coefficients from largest to smallest using 
 <cd>
-sorted = sort(abs(fc(:)));    
+sorted = sort(abs(fc(:)), 'descend');  
+</cd>
+and remove the largest of them (the constant term):
+<cd>
+sorted = sorted(2:end);  
 </cd>
 The total energy is 
 <cd>
 total = sum(sorted.^2); 
 </cd>
-The key point is to write a while loop that sums the squares of the elements of <c>sorted</c> array until they reach the desired proportion of the total energy. When the loop exits, you will know what threshold value 
+The key step is writing a loop that sums the squares of the elements of <c>sorted</c> array until the sum reaches the desired proportion of the total energy. When the loop exits, you will know what threshold value 
 <c>thr</c> should be used for truncating Fourier coefficients.</p>
 
-<p>Compare the quality of compressed image with <c>q = 98</c>, <c>q = 95</c>, and <c>q = 90</c>.</p> 
+<p>Compare the quality of compressed image with <c>q = 90</c>, <c>q = 80</c>, and <c>q = 70</c>. In addition to showing the compressed image, the script should display the percentage of Fourier coefficients that were kept as non-zero values: for example, <c>100*numel(nonzeros(fc))/numel(fc)</c>. </p> 
 </statement></exercise>
    
  

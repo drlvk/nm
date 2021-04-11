@@ -155,19 +155,19 @@ n = 9;
 z = f((0:n-1)/n);
 c = fft(z);
 k = 0:n-1;
-p = c/n*exp(2*pi*1i*k'*t);
+p = @(t) c/n*exp(2*pi*1i*k'*t);
 
 t = linspace(0, 1, 1000);
 hold on
 plot(f(t))
-plot(p, 'r')
+plot(p(t), 'r')
 plot(z, 'k*')
 hold off  
 </pre>
 <p>The problem is that our formula for <c>p</c> involves complex exponential functions with <q>frequencies</q> 
 <m>k=0, 1, \dots, 9</m> which is not how trigonometric polynomials <xref ref="eq-trigonometric-polynomial-complex" /> normally look. The high frequencies create the oscillatory behavior which, while matching the data, does not create a reasonable interpolant.</p>
 
-<p>A key term here is <term>aliasing</term>, which is the fact that different trigonometric (or complex exponential) functions may coincide when restricted to a discrete grid of points (<url href="https://en.wikipedia.org/wiki/Aliasing#/media/File:AliasingSines.svg">illustration</url>). Specifically, 
+<p>A key term here is <term>aliasing</term>, which is the fact that different trigonometric (or complex exponential) functions may coincide when restricted to a discrete grid of points (<url href="https://commons.wikimedia.org/wiki/File:AliasingSines.svg">illustration</url>). Specifically, 
 <me>
 \exp(2\pi i k t)  = \exp(2\pi i (k-n) t), \quad t = 0, 1/n, 2/n, \dots, 1
 </me>
@@ -182,7 +182,34 @@ k = [0 1 2 3 4 -4 -3 -2 -1];
 Replacing <c>k = 0:n-1</c> in the above code with <c>k = [0:(n-1)/2 (1-n)/2:-1];</c> corrects the issue. </p> 
 
 <p>The previous paragraph operates with an odd number <m>n</m> which is more natural in this context because trigonometric polynomials <xref ref="eq-trigonometric-polynomial-complex" /> normally contain an odd number of terms. But what if we are given an even number of points to interpolate through, such as 10? It is not clear whether to keep <m>k=n/2</m> as positive: <c>k=[0:n/2 1-n/2:-1]</c> or to move it to negative: 
-<c>k=[0:n/2-1  -n/2:-1]</c>. Neither version works well. Their average does work; essentially, the term with <m>k=n/2</m> should be split into two. To avoid this complication, we stick to odd <m>n</m>.</p> 
+<c>k=[0:n/2-1  -n/2:-1]</c>. The symmetric approach is to split the term with <m>k=n/2</m> in two, like this:  
+<cd>
+c = [c(1:n/2-1) c(n/2)/2 c(n/2)/2 c(n/2+1:end)];
+k = [0:n/2 -n/2:-1];
+</cd>
+To avoid this complication, we stick to odd <m>n</m> (number of interpolation points) in this section.</p> 
+
+<p>The same approach works for interpolating real-valued data with a trigonometric function. The main difference is in plotting the real-valued periodic function: we want the horizontal axis to represent <m>t</m> while the vertical axis shows the values of the function.</p>
+
+
+<example xml:id="example-real-trigonometric-interpolation">
+  <title> Interpolation by a real trigonometric polynomial</title> 
+<statement><p>Plot a trigonometric polynomial with period <m>1</m> which attains prescribed (random) real values at the points <m>0, 0.2, 0.4, 0.6, 0.8</m>. </p> 
+</statement>
+<answer><p>Here <m>n=5</m> (the number of interpolation points), and <c>z = rand(1, n)</c> (real numbers). 
+Theoretically, the interpolating polynomial will be real-valued but due to limited precision, some small imaginary component may appear. So we should take the real part <c>real(p(t))</c>.</p> 
+<pre>
+n = 5;
+z = rand(1, n);
+c = fft(z);
+k = [0:(n-1)/2 (1-n)/2:-1];
+p = @(t) c/n*exp(2*pi*1i*k'*t);
+
+t = linspace(0, 1, 1000);
+plot(t, real(p(t)), (0:n-1)/n, z, 'r*')
+</pre>
+<p>Note that <m>p(1)=p(0)</m> by construction.</p>
+</answer> </example> 
 
 </section>
 
@@ -191,14 +218,14 @@ Replacing <c>k = 0:n-1</c> in the above code with <c>k = [0:(n-1)/2 (1-n)/2:-1];
 
     <exercise number="1">
         <statement>
-<p> (Theoretical) Suppose <m>n</m> is an odd positive integer and that the numbers <m>z_0, \dots, z_{n-1}</m> are real and satisfy the symmetry condition <m>z_{n-\ell} = z_\ell</m> for <m>\ell=1, \dots, n-1</m>. Show that the Discrete Fourier Transform 
-<xref ref="eq-fourier-coefficients-discrete" /> also has real values.</p> 
+<p> Modify <xref ref="example-real-trigonometric-interpolation" /> to create and plot two real trigonometric polynomials <m>p</m> such that the values <m>p(0), p(1/9), \dots, p(8/9)</m> are the 9 digits of your SUID number. One polynomial should use the aliased reconstruction formula <c>k = [0:(n-1)/2 (1-n)/2:-1];</c> and the others the non-aliased formula <c>k = 0:n-1</c>. Which one creates a more natural curve through given points?  
+</p> 
 </statement></exercise>
   
     <exercise number="2">
         <statement>
 <p> Choose some complex numbers <m>z_0, z_1, \dots, z_{n-1}</m> (with odd <m>n</m>) so that connecting them in this order (and connecting <m>z_{n-1}</m> to <m>z_0</m>) one gets a closed curve similar to letter B. 
-Then use Discrete Fourier Transform to plot a trigonometric polynomial interpolating these numbers. Does its plot look like letter B? </p> 
+Then use Discrete Fourier Transform to plot a complex trigonometric polynomial interpolating these numbers. Does its plot look like letter B? </p> 
 </statement></exercise>
  
 </exercises>
