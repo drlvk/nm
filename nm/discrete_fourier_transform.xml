@@ -104,7 +104,7 @@ its sampled values <m>z_k = f(k/n)</m>, <m>k=0, 1, \dots, n-1</m>. The discrete 
 <xref ref="eq-inner-product" /> is 
 <men xml:id="eq-inner-product-discrete">
 \langle f, g \rangle_d =  \sum_{\ell=0}^{n-1}f(\ell/n)\overline{g(\ell/n)}
-=  \sum_{k=0} z_\ell \overline{w_\ell}
+=  \sum_{\ell=0}^{n-1} z_\ell \overline{w_\ell}
 </men>
 The functions <m>f_k = \exp(2\pi i k)</m>, <m>k=0, \dots, n-1</m>, are orthogonal with respect to this inner product. (Not orthonormal, as <m>\langle f_k, f_k\rangle = n</m>.) Note we only need <m>n</m> of these functions (why?). 
 </p>
