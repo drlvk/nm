@@ -80,29 +80,77 @@ Thus, we can fit a linear function to the values <m>\log(y_k/(1-y_k))</m> and th
   <title>Fit a logistic function to Covid data</title> 
 <statement><p>There were at least 121 reported Covid infections among SU students between October 8 and October 26. The following are the cumulative counts of people recovered, day by day, starting with October 9.
 <cd>
-y = [1 1 1 5 8 10 27 44 62 93 101 110 112 115 116 117 118 120]';  
+R = [1 1 1 5 8 10 27 44 62 93 101 110 112 115 116 117 118 120]';  
 </cd>
-Consider these as proportions of the total <q>population</q> of 121 and fit a logistic function to these proportions. </p> 
+Fit a logistic function to these <em>proportion</em> of the total <q>population</q> of 121 that recovered on each day. </p> 
 </statement>
-<solution><p>The vector <c>y</c> is already defined above, but we need to compute proportions <c>p = y/121</c> and transform them by <c>yt = log(p./(1-p))</c>. Then the usual linear regression is applied. </p>
+<solution><p>We need to compute proportions <c>y = R/121</c> and transform them by <c>yt = log(y./(1-y))</c>. Then the usual linear regression is applied. </p>
 <pre> 
-x = (1:numel(y))';  
-p = y/121;
-yt = log(p./(1-p));
+x = (1:numel(R))';  
+y = R/121;
+yt = log(y./(1-y));
 X = x.^(0:1); 
 beta = X\yt;
 f = @(x) 1 ./ (1 + exp(-(x.^(0:1))*beta));
 
 t = linspace(min(x), max(x), 1000)';
-plot(t, f(t), 'b', x, p, 'r*')
-</pre></solution></example>
+plot(t, f(t), 'b', x, y, 'r*')
+</pre>
+<p>Here the logistic function is written as <m>1/(1+\exp(-\beta_1 - \beta_2 x))</m> with parameters <m>\beta_1, \beta_2</m> contained in the vector <c>beta</c>.</p>
+</solution></example>
 
-<p> The outcome of <xref ref="example-best-fit-logistic" /> is not entirely satisfactory. The logit transformation emphasizes the values near 0 and 1, and de-emphasizes those in between. We will revisit logistic fit later.</p> 
+<p> The result in <xref ref="example-best-fit-logistic" /> is not entirely satisfactory. The logit transformation over-emphasizes the values near 0 and 1, and de-emphasizes those in between. One way to address this issue is to introduce weights, which we do in next section.</p> 
 </section> 
 
 
+<section xml:id="section-weighted-least-squares">
+<title>Weighted least squares</title>
+
+<p>When we solve an overdetermined linear system <m>Az=b</m> as <c>z = A\b</c>, the result is the least squares solution which minimizes the sum <men xml:id="eq-penalty-lsq">\sum_k ((Az)_k-b_k)^2</men> (the penalty). For example, the difference of <m>0.1</m> between <m>(Az)_k</m> and <m>b_k</m> contributes <m>0.01</m> to the penalty, no matter what <m>k</m> is. 
+But in some contexts we may want to treat different data points differently:
+<ul>
+  <li>We are more certain about some of the numbers <m>b_k</m> than others. </li>
+  <li>Some of the numbers are much larger than others, and we expect the absolute errors for them to be larger.</li>
+  <li>We applied some transformation to the data, like in the previous sections.</li>
+</ul>
+In such cases we may want to introduce <em>weights</em> <m>w_k</m> (some positive numbers) and minimize the sum 
+<men xml:id="eq-penalty-lsq-weights">\sum_k ((Az)_k-b_k)^2 w_k^2</men> instead of <xref ref="eq-penalty-lsq" />. Larger weights mean that we penalize the residuals (the differences between the model and the data) more. 
+To solve this Weighted Least Squares problem in Matlab, we only need to multiply the first equation in <m>Az=b</m>
+by <m>w_1</m>, the second by <m>w_2</m>, and so on. To do this, arrange the weights into a column vector <c>w</c> and let <cd>z = (A.*w)\(b.*w);</cd> where the array operations <c>.*</c> take care of multiplying each equation by its weight.
+</p>
+
+<p>Weights can be used to mitigate the distortion caused by data transformation of the form <m>\hat y = T(y)</m>. 
+Indeed, the application of <m>f</m> magnifies the errors by the factor of <m>|T'(y)|</m>. If this is undesirable, we should use the weights <m>w_k = 1/|T'(y_k)|</m> to compensate. </p>
+
+<p>In <xref ref="example-best-fit-logistic" /> we used the logic transformation <m>T(y) = \log(y/(1-y)) = \log(y) - \log(1-y)</m>. Its derivative is <me>T'(y) = \frac{1}{y} + \frac{1}{1-y} = \frac{1}{y(1-y)}</me>. This is a positive quantity, so the weights should be <m>w_k = y_k(1-y_k)</m>. </p>
+
+
+<example xml:id="example-weighted-fit-logistic">
+  <title>Use weighted least squares to fit a logistic function</title> 
+<statement><p>Improve the solution of <xref ref="example-best-fit-logistic" /> by using weights to compensate for data transformation. Compare the results to the previous ones. </p></statement>
+<solution><p>We continue the code from <xref ref="example-best-fit-logistic" /> by adding the following lines.</p>
+<pre> 
+w = y.*(1-y);            % weights 
+beta = (X.*w)\(yt.*w);   % weighted least squares solution
+f = @(x) 1 ./ (1 + exp(-(x.^(0:1))*beta));
+figure();
+plot(t, f(t), 'b', x, y, 'r*')
+title('Weighted Least Squares')
+</pre>
+<p>The first two lines compute new parameters <m>\beta_1, \beta_2</m> for logistic function <m>1/(1+\exp(-\beta_1 - \beta_2 x))</m>, using weights. The rest proceeds as before. The plot is shown on a new figure. </p>
+</solution></example>
+
+<p>Note that we do not <em>always</em> want to compensate for data transformation by using weights <m>w_k = 1/|T'(y_k)|</m>. Linear regression works best if the standard deviation of different values <m>y_k</m> (assumed to include random errors) is about the same. When the values grow exponentially and are measured with the same relative accuracy, the standard deviation will grow with the values. In this case, the logarithmic transformation 
+<m>T(y)=\log y</m> may help with non-linearity of the model <em>and</em> with the uniformity of standard deviations.
+</p>
+</section>
+
+
+
 <section xml:id="section-example-implicit-equation">
-<title>Fitting an ellipse to data points</title>
+<title>Fitting an implicit equation</title>
+
+<p>This is an optional section, feel free to skip it.</p> 
 
 <p>Not all data points represent a function of the form <m>y = f(x)</m>. They may happen to accumulate along some closed curve such as an ellipse. General implicit equation of an ellipse is 
 <men xml:id="eq-ellipse-implicit">
@@ -126,7 +174,7 @@ fimplicit(@(x, y) ..., [xmin xmax ymin ymax])
 </cd>
 where the first argument is the implicit equation (something equated to 0), and the second is the plot window.</p>
 </statement>
-<solution><p>The vector <c>y</c> is already defined above, but we need to compute proportions <c>p = y/133</c> and transform them by <c>yt = log(p/(1-p))</c>. Then the usual linear regression is applied. </p>
+<solution>
 <pre> 
 X = [x.^2 x.*y y.^2 x y];
 b = X\ones(7, 1);
@@ -171,21 +219,13 @@ as a vector of 4 numbers, however. </p>
 y = [5 5 4 5 9 25 45 65 77 87 87 89 97 101 90 74 57 26 20 13 12 12 13]'; 
 </cd>
 The x-values can be <c>x = (1:23)'</c>. Try to fit a <q>bell-shaped</q> Gaussian function 
-<m>y = \exp(Ax^2+Bx+C)</m> (where <m>A\lt 0</m>) to the data. This can be done by the logarithmic transform 
-<c>yt = log(y)</c> followed by fitting a quadratic function to transformed data in the usual way, via the matrix 
-<c>X = x.^(0:2)</c>. Having found the parameters <c>beta</c>, we get a suitable function
-<c>f = @(x) exp(x.^(0:2)*beta)</c> which should be plotted together with the data points. 
+<m>y = \exp(Ax^2+Bx+C)</m> (where <m>A\lt 0</m>) to the data. This can be done by the logarithmic transformation 
+<c>yt = log(y)</c> followed by fitting a quadratic function to <c>yt</c>. Fit a quadratic function by solving a system with the matrix <c>X = x.^(0:2)</c>, without weights. Having found the parameters <c>beta</c>, we get a suitable function <c>f = @(x) exp(x.^(0:2)*beta)</c> which should be plotted together with the data points. 
 </p></statement></exercise>
 
 <exercise number="3">
         <statement>
-<p> As an alternative to <xref ref="exercise-transforming-data-2" />, one may try to model the same data 
-by a rational function of the form <m>y = 1/(Ax^2 + Bx+ C)</m>. (Indeed, the graph of function <m>y=1/(x^2+1)</m> 
-also looks bell-shaped.) Try following the process of  <xref ref="exercise-transforming-data-2" /> by transforming data <c>yt = 1./y</c>, fitting a quadratic function, and plotting the reciprocal of that function. What goes wrong? </p>
-
-<p>Then try the following fix to the issue encountered in the previous paragraph. 
-Following the logic of <xref ref="example-best-fit-ellipse" />, rewrite the equation 
-<m>y = 1/(Ax^2 + Bx+ C)</m> as <m>Ax^2 y + Bxy + Cy = 1</m> and find the optimal <m>A, B, C</m> using least squares. Unlike <xref ref="example-best-fit-ellipse" />, you do not need <c>fimplicit</c> to plot this function since the function <m>y = 1/(Ax^2 + Bx+ C)</m> can be plotted directly (note that you will need <c>1./(...)</c> rather than <c>1/(...)</c> to compute the reciprocals in a vectorized way.) Plot the function together with the data points. Does it fit better or worse than the Gaussian function in <xref ref="exercise-transforming-data-2" />? 
+<p> Repeat <xref ref="exercise-transforming-data-2" />, using weights as explained in <xref ref="section-weighted-least-squares" />. Does the new curve fit better or worse than the curve in <xref ref="exercise-transforming-data-2" />? 
 </p></statement></exercise>
  
 </exercises>
