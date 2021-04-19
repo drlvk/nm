@@ -115,14 +115,13 @@ But in some contexts we may want to treat different data points differently:
 </ul>
 In such cases we may want to introduce <em>weights</em> <m>w_k</m> (some positive numbers) and minimize the sum 
 <men xml:id="eq-penalty-lsq-weights">\sum_k ((Az)_k-b_k)^2 w_k^2</men> instead of <xref ref="eq-penalty-lsq" />. Larger weights mean that we penalize the residuals (the differences between the model and the data) more. 
-To solve this Weighted Least Squares problem in Matlab, we only need to multiply the first equation in <m>Az=b</m>
-by <m>w_1</m>, the second by <m>w_2</m>, and so on. To do this, arrange the weights into a column vector <c>w</c> and let <cd>z = (A.*w)\(b.*w);</cd> where the array operations <c>.*</c> take care of multiplying each equation by its weight.
-</p>
+To solve this <em>weighted least squares</em> problem in Matlab, we need to multiply the first equation in <m>Az=b</m>
+by <m>w_1</m>, the second by <m>w_2</m>, and so on. To do this, arrange the weights into a column vector <c>w</c> and let <cd>z = (A.*w)\(b.*w)</cd>. The array operations <c>.*</c> take care of multiplying each equation by its weight.</p>
 
 <p>Weights can be used to mitigate the distortion caused by data transformation of the form <m>\hat y = T(y)</m>. 
-Indeed, the application of <m>f</m> magnifies the errors by the factor of <m>|T'(y)|</m>. If this is undesirable, we should use the weights <m>w_k = 1/|T'(y_k)|</m> to compensate. </p>
+Indeed, the application of <m>T</m> magnifies the errors around <m>y=y_k</m> by the factor of <m>|T'(y_k)|</m>. If this is undesirable, we should use the weights <m>w_k = 1/|T'(y_k)|</m> to compensate. </p>
 
-<p>In <xref ref="example-best-fit-logistic" /> we used the logic transformation <m>T(y) = \log(y/(1-y)) = \log(y) - \log(1-y)</m>. Its derivative is <me>T'(y) = \frac{1}{y} + \frac{1}{1-y} = \frac{1}{y(1-y)}</me>. This is a positive quantity, so the weights should be <m>w_k = y_k(1-y_k)</m>. </p>
+<p>In <xref ref="example-best-fit-logistic" /> we used the logit transformation <m>T(y) = \log(y/(1-y)) = \log(y) - \log(1-y)</m>. Its derivative is <me>T'(y) = \frac{1}{y} + \frac{1}{1-y} = \frac{1}{y(1-y)}</me>. This is a positive quantity, so we do not need absolute value; the weights are simply <m>w_k = y_k(1-y_k)</m>. </p>
 
 
 <example xml:id="example-weighted-fit-logistic">
