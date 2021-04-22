@@ -21,7 +21,7 @@
     <li>Explanatory variables: temperature, humidity, atmospheric pressure. Outcome: rain (1) or no rain (0).</li>
     <li>Explanatory variables: patient's weight, height, age, activity level. Outcome: has diabetes (1) or not (0). </li>
 </ul>
-In the examples such as these, it is understood that the prediction may be far from certain. A way to think of such a model as assigning a probability of outcome (1), based on the data available. This leads to the idea of a model being a function that takes values between <m>0</m> and <m>1</m>. The standard logistic function (<xref ref="section-logistic-curve" />) has this property:
+In the examples such as these, it is understood that the prediction may be far from certain. A way to think of such a model as assigning a probability of outcome (1), based on the data available. This leads to the idea of a model being a function that takes values between <m>0</m> and <m>1</m>. The standard logistic function (<xref ref="section-using-fminsearch-curvefit" />) has this property:
 <me>
   \sigma(x) = \frac{1}{1+\exp(-x)}
 </me>  
