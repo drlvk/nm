@@ -194,7 +194,7 @@ disp(ts')
 
     <exercise number="1">
         <statement>
-<p> Modify <xref ref="example-training-testing" /> so that it runs a loop <c>for n=1:7</c> and within that loop, <m>R^2</m> is computed for each <m>n</m>. The code should find the value of <m>n</m> with maximal <m>R^2</m>, display this <m>R^2</m> value, and plot the graph of polynomial with optimal <m>n</m>. </p></statement> </exercise>
+<p> Modify <xref ref="example-training-testing" /> so that it runs a loop over degrees from 1 to 7 and within that loop, <m>R^2</m> is computed for each degree <m>d</m>. The code should find the value of <m>d</m> with maximal <m>R^2</m>, display this <m>R^2</m> value, and plot the graph of polynomial with optimal <m>d</m>. </p></statement> </exercise>
   
 <exercise number="2">
         <statement>
@@ -203,8 +203,8 @@ disp(ts')
 y = [5 5 4 5 9 25 45 65 77 87 87 89 97 101 90 74 57 26 20 13 12 12 13]'; 
 </cd>
 A good choice for x-values is <c>x = (-11:11)'</c> because centering the interval at 0 improves the performance of the monomial basis. </p>
-<p> Write a script that takes degree <m>n</m> as input, fits a polynomial of degree <m>n</m> to the data, displays the
-t-statistic for the leading coefficient as in <xref ref="example-t-statistics-parameters" />, and plots the polynomial together with the data points. What value of <m>n</m> works best for this data, based on the t-statistic and the plot? </p></statement></exercise>
+<p> Write a script that takes degree <m>d</m> as input, fits a polynomial of degree <m>d</m> to the data, displays the
+t-statistic for the leading coefficient as in <xref ref="example-t-statistics-parameters" />, and plots the polynomial together with the data points. What value of <m>d</m> works best for this data, based on the t-statistic and the plot? </p></statement></exercise>
 
  
 </exercises>

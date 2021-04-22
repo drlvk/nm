@@ -14,7 +14,7 @@
 <section xml:id="section-example-exponential-fit">
 <title>Exponential fit</title>
 
-<p>Exponential growth is modeled by a function of the form <m>f(x) = ae^{bt}</m>. Suppose we have some data 
+<p>Exponential growth is modeled by a function of the form <m>f(x) = ae^{bx}</m>. Suppose we have some data 
 <m>(x_k, y_k)</m>, <m>k=1, \dots, n</m>, and think that it describes exponential growth (which naturally occurs in ecology and epidemiology). A direct attempt to minimize the sum of differences squared: 
 <men xml:id="eq-sum-squares-exponential">
   \sum_{k=1}^n \left(y_k - ae^{bx_k}\right)^2 \to \min 
@@ -66,11 +66,11 @@ plot(t, f(t), 'b', x, y, 'r*')
 
 <p>If we simplify the SIR model (<xref ref="section-ode-epidemiology" />) by removing the recovering process, the proportion of infected people in the population grows according to the ODE <m>y' = c y(1-y)</m> with some coefficient <m>c</m>. This ODE has an explicit solution 
 <men xml:id="eq-logistic-function">
-y = \frac{1}{1 + a e^{-kt}}
+y(x) = \frac{1}{1 + a e^{-kx}}
 </men>
 with <m>a, k > 0</m> depending on coefficient <m>c</m> (which we usually don't know in practice) and the initial condition <m>y(0)</m> (which we might not know either). But if we can collect some data, we can fit a logistic function <xref ref="eq-logistic-function" /> to it. As written, the model includes parameters <m>a, k</m> in a nonlinear way. But applying the <q>logit</q> transformation <m>\log(y/(1-y))</m> we obtain 
 <men xml:id="eq-logistic-function-logit">
-\log \frac{y}{1-y} = kt - \log a
+\log \frac{y}{1-y} = kx - \log a
 </men>
 Thus, we can fit a linear function to the values <m>\log(y_k/(1-y_k))</m> and then apply the inverse of the transformation <m>z = \log(y/(1-y))</m>, which is <m>y = 1 / (1+e^{-z})</m>. </p>
 

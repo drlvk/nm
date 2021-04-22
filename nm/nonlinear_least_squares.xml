@@ -70,29 +70,63 @@ fminsearch(@(b) b(1)^2 + b(2)^4 + 3*b(1) - b(2), [1; 2])
 finds the minimum of <m>b_1^2 + b_2^4 + 3b_1 - b_2</m> (using letter b to shorten the formula, as usually our parameters are called <m>\beta_1, \beta_2,\dots</m>.) Note that the function being minimized still has only one  argument, but this argument is now a vector. </p> 
 
 
+<p>Since the choice of initial point is an important step, we need a way to choose reasonable values of the parameters. 
+To do this, let us take a closer look at the logistic curve <xref ref="eq-general-logistic-curve" />. The meaning of parameter <m>A</m> is not very intuitive, which motivates the following  <em>equivalent form</em> of the function:  
+<men xml:id="eq-logistic-curve-shift">
+ y = \frac{M}{1 + e^{-(x-a)/s}}
+</men>
+Note that this curve is obtained from the <term>standard logistic function</term>
+<me>
+  \sigma(x) = \frac{1}{1+e^{-x}}
+</me> 
+with
+<ul>
+<li> vertical stretching by factor <m>M</m>;</li>
+<li> shift to the right by <m>a</m> units;</li>
+<li> horizontal stretching by factor <m>s</m>.</li>
+</ul>
+(<url href="https://en.wikipedia.org/wiki/Logistic_function">Reference and plot</url>.)</p>
+
+<p>Since the standard logistic function rises from 0 to 1 and has maximal slope when <m>x=0</m>, we can relate  parameters <m>a, M, s</m> directly to shape of the curve: 
+<ul>
+<li> <m>a</m> is the x-value at which the curve has the steepest slope;</li>
+<li> <m>M</m> is the amount by which the curve rises;</li>
+<li> <m>s</m> measures its horizontal size; the curve is essentially flat outside of the interval
+<m>[a-5s, a+5s]</m>. </li> 
+</ul>
+</p>
+
 <example xml:id="example-best-fit-logistic-nls">
   <title>Fit a logistic function to Covid data</title> 
 <statement><p> Fit a general logistic curve to the data in <xref ref="example-best-fit-logistic" /> without variable transformations.</p></statement> 
 <solution><p>Once we have the data <c>x, y</c>, we can set up the sum-of-squares function <c>S</c> according to
  <xref ref="eq-sum-logistic-residuals" />. The parameters are to be represented by the components 
- <c>b(1), b(2), b(3)</c> in some order (I use the alphabetical order <m>A, M, r</m>). The parameters should be positive, so perhaps <c>[1; 1; 1]</c> can be our initial point. The orientation of data vectors 
+ <c>b(1), b(2), b(3)</c> in some order (I use the order <m>M, a, s</m>). First, use a mindless guess for initial point, <c>[0; 0; 1]</c>. The orientation of data vectors 
 <c>x, y</c> does not matter here since we no longer make a linear system out of them. </p>
 <pre>
 y = [1 1 1 5 8 10 27 44 62 93 101 110 112 115 116 117 118 120];
 x = 1:numel(y);  
- 
-f = @(x, b) b(2)./(1+b(1)*exp(-b(3)*x));                  % the model equation
-opt = fminsearch(@(b) sum((y - f(x, b)).^2), [1; 1; 1]);  % optimal b
+
+f = @(x, b) b(1)./(1 + exp(-(x-b(2))/b(3)));     % the model equation
+opt = fminsearch(@(b) sum((y - f(x, b)).^2), [0; 0; 1]); % optimal (?) b
 
 t = linspace(min(x), max(x), 1000)';
 plot(t, f(t, opt), 'b', x, y, 'r*')
+disp(opt)
 </pre>
 <p>The two middle lines describe the logic of the method: set up a model as a function of 
 explanatory variable(s) <c>x</c> and parameter(s) <c>b</c>, then minimize the sum of squares of the 
 deviations <c>y - f(x, b)</c>. Finally, the optimal (?) values of parameter <c>b</c> are used to plot the best-fitting curve. </p>
 
-<p>The above code fails, as is often the case with multivariable optimization. We should think of a better way to choose the initial point than just <c>[1; 1; 1]</c>. For example, the second parameter is the carrying capacity, and this is clearly at least as large as 120. An initial point like <c>[1; 100; 1]</c> does the job. Note that the fit is much better than what we achieved in <xref ref="example-best-fit-logistic" />.</p></solution></example>
+<p>The above code fails, as is often the case with multivariable optimization. We should think of a better way to choose the initial point. For example, the first parameter <m>M</m> is the carrying capacity, and this is clearly at least as large as 120. The second parameter is the <m>x</m>-coordinate of its center which looks like 10. And the third parameter is about a tenth of the horizontal span of the non-flat part, maybe 2. 
+An initial point like <c>[120; 10; 2]</c> does the job. Note that the fit is much better than what we achieved in <xref ref="example-best-fit-logistic" />.</p></solution></example>
 
+<p>The <c>fminsearch</c> optimization includes limits on the number of function evaluations, and on the number of iterations that it can do before stopping. If you get a warning that the process stopped because of these limits, try increasing them. For example, 
+<cd>
+options = optimset('MaxFunEvals', 10000, 'MaxIter', 10000);
+opt = fminsearch(..., options);
+</cd>
+The first line creates a <q>structure</q> (which would be called a <q>dictionary</q> in some languages) which records the options for the optimization algorithm. </p>
 </section>
 
 
@@ -104,9 +138,9 @@ deviations <c>y - f(x, b)</c>. Finally, the optimal (?) values of parameter <c>b
 <p>The theory of partial differential equations tells us that if a substance diffuses from a point source at 
 <m>(u, v)</m> under somewhat idealized conditions (ignoring currents, decay, etc) then its concentration after some time will be expressed by the two-dimensional Gaussian function 
 <men xml:id="eq-2d-gaussian">
-z = A\exp\left(-C((x-u)^2 + (y-v)^2)\right)
+z = A\exp\left(-((x-u)^2 + (y-v)^2)/s\right)
 </men>
-Here <m>A, C</m> are the shape parameters of the Gaussian (describing how tall and wide it is) and <m>(u, v)</m> are its location parameters (where it is centered). We are really interested in the latter, but all four will need to be determined by the nonlinear least squares process.</p> 
+Here <m>A, s</m> are the shape parameters of the Gaussian (describing how tall and wide it is) and <m>(u, v)</m> are its location parameters (where it is centered). We are really interested in the latter, but all four will need to be determined by the nonlinear least squares process.</p> 
 
 <p>One can visualize the above as surface-fitting: given the points <m>(x_k, y_k, z_k)</m> we seek to fit a surface of type <xref ref="eq-2d-gaussian" /> to them, with the ultimate goal of locating the center of that Gaussian. Suppose the data is as follows.</p>
 <pre>
@@ -121,80 +155,51 @@ z = [3 9 8 4 6 9 8 3 6 6 5];
 </p></statement>
 <solution><p>The problem is solved in three lines: model function, optimization, output. The components of vector <c>b</c> below represent the parameters  <m>A, C, u, v</m> in this order.</p>
 <pre>
-f = @(x, y, b) b(1)*exp(-b(2)*((x-b(3)).^2 + (y-b(4)).^2));
+f = @(x, y, b) b(1)*exp(-((x-b(3)).^2 + (y-b(4)).^2)/b(2));
 opt = fminsearch(@(b) sum((z - f(x, y, b)).^2), [1; 1; 1; 1]);
-fprintf('The source is located near (%g, %g) \n', opt(3:4))
+fprintf('The source is located near (%g, %g) \n', opt(3:4));
 </pre>
 </solution></example>
 
 </section>
 
-
-<section xml:id="section-logistic-curve">
-<title>A closer look at the logistic curve</title>
-
-<p>This section takes another look at the logistic function <xref ref="eq-general-logistic-curve" /> in preparation for the homework assignment. The meaning of parameter <m>A</m> is not very intuitive, which motivates the following  <em>equivalent form</em> of the function:  
-<men xml:id="eq-logistic-curve-shift">
- y = \frac{M}{1 + e^{-r(x-a)}}
-</men>
-(so, <m>A = e^{ra}</m>.) Note that this curve is obtained from the <term>standard logistic function</term>
-<me>
-  \sigma(x) = \frac{1}{1+e^{-x}}
-</me> 
-with
-<ul>
-<li> vertical stretching by factor <m>M</m>;</li>
-<li> shift to the right by <m>a</m> units;</li>
-<li> horizontal compression by factor <m>r</m>.</li>
-</ul>
-(<url href="https://en.wikipedia.org/wiki/Logistic_function">Reference and plot</url>.)</p>
-
-<p>Since the standard logistic function rises from 0 to 1 and has maximal slope when <m>x=0</m>, we can relate  parameters <m>a, M, r</m> directly to shape of the curve: 
-<ul>
-<li> <m>a</m> is the x-value at which the curve has the steepest slope;</li>
-<li> <m>M</m> is the amount by which the curve rises;</li>
-<li> <m>r</m> measures its steepness; the curve is essentially flat outside of the interval
-<m>[a-5/r, a+5/r]</m>. </li> 
-</ul>
-</p>
-
-</section>
-
-
-
+ 
 
 <exercises xml:id="exercises-nonlinear-least-squares">
     <title>Homework</title>
 
     <exercise number="1">
         <statement>
-<p> Consider the count of world-wide Covid cases (<url href="https://www.nytimes.com/interactive/2020/world/coronavirus-maps.html">source</url>):</p>
+<p> Consider the count of world-wide Covid cases (<url href="https://www.nytimes.com/interactive/2020/world/coronavirus-maps.html">source</url>) from Fall 2020:</p>
 
 <figure xml:id="covid-world-png"><image source="images/covid_world.png" /> <caption>New reported cases</caption></figure>
 
-<p>The graph shows three stages of accelerated growth: March-April, June-July, and October; the third one is ongoing. Since the total reflects the spread of disease in different regions, it is natural that it looks like the sum of different logistic curves. </p> 
+<p>The graph shows three stages of accelerated growth: March-April, June-July, and from October onward. Since the total reflects the spread of disease in different regions, it is natural that it looks like the sum of different logistic curves. </p> 
 
-<p>Accordingly, we should model this by the sum of three logistic curves. 
-To reduce the amount of data, we use the 7-day averages reported on the 1st, 11th, and 21th of every month, from March 1 to October 21. These 24 data values (measured in thousands) are below.</p>
+<p>Accordingly, we try modeling this by the sum of three logistic curves. 
+To reduce the amount of data, we use the 7-day averages reported on the 1st, 11th, and 21th of every month, from March 1 to November 21. These 27 data values (measured in thousands) are below.</p>
 <pre>
-y = [1 4 21 67 80 79 77 85 94 110 126 148 180 205 230 257 259 254 265 267 292 295 337 389];  
+y = [1 4 21 67 80 79 77 85 94 110 126 148 180 205 230 257 259 254 265 267 292 295 337 389 503 573 588];  
 </pre>
 <p>The corresponding x-values are simply <c>x = 1:numel(y)</c>. Run <c>plot(x, y, '*')</c> to visualize the data: this will help with choosing initial parameters, as described below.
 </p>
 
 <p>High-dimensional optimization is difficult, and <c>fminsearch</c> will need your help in the form of a good initial point (<c>ones(9, 1)</c> is not good enough). The logistic equation <xref ref="eq-logistic-curve-shift" /> leads to the 9-parameter model
 <men xml:id="eq-sum-logistic-curves">
- y = \frac{M_1}{1 + e^{-r_1 (x-a_1)}} + \frac{M_2}{1 + e^{-r_2 (x-a_2)}} + \frac{M_3}{1 + e^{-r_3 (x-a_3)}}
+ y = \frac{M_1}{1 + e^{-(x-a_1)/s_1}} + \frac{M_2}{1 + e^{-(x-a_2)/s_2}} + \frac{M_3}{1 + e^{-(x-a_3)/s_3}}
 </men>
 Reasonable initial guesses would be: 
 <ul>
 <li> <m>a_1, a_2, a_3</m> are the x-values of places where the three <q>waves</q> are the steepest </li>
-<li> <m>M_1, M_2, M_3</m> are the sizes of the three waves</li>
-<li> <m>r_1, r_2, r_3</m> could be set to 1</li>
+<li> <m>M_1, M_2, M_3</m> are the sizes of the three waves (how much each of them adds to the total)</li>
+<li> <m>s_1, s_2, s_3</m> are about a tenth of the non-flat span of the wave.</li>
 </ul>
 </p>
 
-<p>Follow the examples such as <xref ref="example-best-fit-logistic-nls" /> in plotting the best-fitting curve together with the data. Since the main interest in building a model like this is to predict future development, extend the curve by two months into the future (this means 6 units on x-axis). What does it predict for December 21?</p> </statement></exercise>
+<p>Follow the examples such as <xref ref="example-best-fit-logistic-nls" /> in plotting the best-fitting curve together with the data. Since the main interest in building a model like this is to predict future development, extend the curve by a month into the future (this means 3 units on x-axis). What does it predict for December 21?</p> 
+
+
+</statement></exercise>
  
 </exercises>
 
