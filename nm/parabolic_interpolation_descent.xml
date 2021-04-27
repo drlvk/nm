@@ -155,15 +155,9 @@ into the loop in <xref ref="example-simplest-form-gradient-descent" /> (where?).
     <title>Homework</title>
 
 <exercise number="1">
-<statement> <p> (Theoretical) Show that no fixed value <m>\beta > 0</m> can make the gradient descent converge for the function <m>f(x) = |x|^{3/2}</m>.</p>
-
-<p>(Note that <m>f</m> is differentiable, with <m>f'(x) = (3/2)\sqrt{x}</m> for <m>x\ge 0</m> and 
-<m>f'(x) = -(3/2)\sqrt{-x}</m> for <m>x\le 0</m>.)</p></statement></exercise>
- 
-<exercise number="2">
 <statement> <p>Parabolic interpolation is also useful when applied just once, without iteration. For example, after evaluating <m>f</m> on a grid <m>x_1, \dots, x_n</m> and choosing <m>k</m> with smallest <m>f(x_k)</m> (i.e., brute force minimization) we can get a more precise location of the minimum with parabolic interpolation through the points <m>(x_j, f(x_j))</m>, <m>j=k-1, k, k+1</m>.</p> 
 
-<p>Write a script that applies the above idea to the function <m>f(x) = \sin (x)</m> on the interval <m>[0, 7]</m>. Use <m>n=100</m> points for brute force minimization, locating a grid point <m>x_k</m> with the smallest function value <m>f(x_k)</m>. Then find a more precise point of minimum <m>x^*</m> using parabolic interpolation. Since the exact point of minimum is <m>3\pi/2</m>,  the script should display the differences <m>|x_k - 3\pi/2|</m> and <m>|x^* - 3\pi/2|</m> to illustrate the benefit of parabolic interpolation. </p></statement></exercise>
+<p>Write a script that applies the above idea to the function <m>f(x) = \sin (x)</m> on the interval <m>[0, 7]</m>. Use <m>n=100</m> points for brute force minimization, locating a grid point <m>x_k</m> with the smallest function value <m>f(x_k)</m>. Then find a more precise point of minimum <m>x^*</m> using parabolic interpolation <em>once</em>. Since the exact point of minimum is <m>3\pi/2</m>,  the script should display the differences <m>|x_k - 3\pi/2|</m> and <m>|x^* - 3\pi/2|</m> to illustrate the improvement achieved with parabolic interpolation. </p></statement></exercise>
 
  
 </exercises>

@@ -19,7 +19,7 @@
   y' = ry(1-y/M)
 </men>
 which means the growth, initially exponential, is eventually constrained by the <term>carrying capacity</term> 
-<m>K</m>. The general solution of <xref ref="eq-logistic-ode-growth" /> is 
+<m>M</m>. The general solution of <xref ref="eq-logistic-ode-growth" /> is 
 <men xml:id="eq-general-logistic-curve">
  y = \frac{M}{1 + Ae^{-rx}}
 </men>
