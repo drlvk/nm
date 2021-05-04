@@ -17,14 +17,13 @@
 <p>The intuitive picture of steepest descent (the gradient method) is a drop of water sliding down the graph of a function under the force of gravity: the water follows the steepest way down. The intuition of the Nelder-Mead method is a geometric shape like a triangle or a tetrahedron tumbling down a sloped surface. In two dimensions, the shape is a triangle, in three dimensions it is a tetrahedron; in <m>n</m> dimensions it is an <m>n</m>-dimensional <term>simplex</term>, meaning <m>n+1</m> points that are not contained in any hyperplane. 
 To keep the explanation simple, we focus on the case <m>n=2</m>. </p>
  
-<p>Given a triangle <m>ABC</m> in <m>xy</m>-plane, we evaluate the function <m>f</m> at its vertices. The vertex with the largest value of <m>f</m> (for example, <m>C</m>) <em>might</em> get replaced by its reflection. One could imagine reflecting <m>C</m> about the opposite side <m>AB</m> by dropping a perpendicular line from <m>C</m> onto <m>AB</m> and following it. However, this kind of reflection is not invariant under linear transformations of <m>xy</m> plane, such as the scaling of coordinates. The Nelder-Mead method uses reflection about the midpoint of <m>AB</m> which can be expressed in vector form as
+<p>Given a triangle <m>ABC</m> in <m>xy</m>-plane, we evaluate the function <m>f</m> at its vertices. The vertex with the largest value of <m>f</m> (for example, <m>C</m>) <em>might</em> get replaced by its reflection. One could imagine reflecting <m>C</m> about the opposite side <m>AB</m> by dropping a perpendicular line from <m>C</m> onto <m>AB</m> and following it. However, this kind of reflection is not invariant under linear transformations of <m>xy</m> plane, such as the scaling of coordinates. The Nelder-Mead method uses reflection about the midpoint of <m>AB</m>. The midpoint can be computed as <m>M = (A+B)/2</m>, and then the reflected point is
 <men xml:id="eq-nm-reflection">
-R = A + B - C = (A+B+C) - 2C
+R = 2M - C 
 </men>
-The second version is slightly easier to code, see below. 
 </p>
 
-<p>However, it would be pointless to replace <m>C</m> by <m>R</m> if this did not make the function smaller. So the replacement only happens if <m>f(R)\lt f(C)</m>. Otherwise the program stops and reports the midpoint <m>(A+B+C)/3</m> of the last computed triangle as an approximate point of minimum. This is a <q>reflection-only</q> version of the Nelder-Mead method.</p> 
+<p>However, it would be pointless to replace <m>C</m> by <m>R</m> if this did not make the function smaller. So the replacement only happens if <m>f(R)\lt f(C)</m>. Otherwise the program stops and reports the center <m>(A+B+C)/3</m> of the last computed triangle as an approximate point of minimum. This is a <q>reflection-only</q> version of the Nelder-Mead method.</p> 
 
 
 <example xml:id="example-reflection-nelder-mead">
@@ -50,7 +49,8 @@ for k = 1:max_tries
     path(:, k) = mean(T, 2);
     values = [f(T(:,1)) f(T(:,2)) f(T(:,3))];
     [fmax, ind] = max(values);
-    R = sum(T, 2) - 2*T(:, ind);
+    M = (sum(T, 2) - T(:, ind))/2;  % midpoint of opposite side
+    R = 2*M - T(:, ind);
     if f(R) &lt; fmax
         T(:, ind) = R;
     else 
@@ -97,12 +97,13 @@ path = zeros(2, max_tries);
 
 for k = 1:max_tries
     path(:, k) = mean(T, 2);
-    if max(abs(T - path(:, k))) &lt; 1e-6
+    if max(abs(T - mean(T, 2))) &lt; 1e-6
         break     % stop, the triangle is small enough
     end
     values = [f(T(:,1)) f(T(:,2)) f(T(:,3))];
     [fmax, ind] = max(values);
-    R = sum(T, 2) - 2*T(:, ind);
+    M = (sum(T, 2) - T(:, ind))/2;
+    R = 2*M - T(:, ind);
     if f(R) &lt; fmax
         T(:, ind) = R;
     else 
@@ -133,9 +134,9 @@ we find the search usually fails. The moving triangle has to become very small t
 <p>The reason for the lack of success with Rosenbrock's function is that the version of Nelder-Mead method described in <xref ref="section-nelder-mead-contract" />  does not allow the triangle to change its <em>shape</em> to fit the geometry of the graph. A long narrow valley calls for a long narrow triangle.</p>  
 
 <p>The process of changing the shape of the triangle is <em>expansion</em>, which is introduced as an alternative to reflection from <xref ref="section-nelder-mead-reflect" />. Suppose that the current triangle qualifies for reflection: for example, <m>C</m> is the point with largest value, and <m>f(R) \lt f(C)</m>. Consider 
-the possibility of replacing <m>C</m> with a point <m>E</m> that lies beyong <m>R</m>, thus making the triangle longer. The point <m>E</m> is determined by the following equation, which  shows that it is as far from <m>R</m> as <m>R</m> is from the center of reflection <m>(A+B)/2</m>: 
+the possibility of replacing <m>C</m> with a point <m>E</m> that lies beyong <m>R</m>, thus making the triangle longer. The point <m>E</m> is determined by the following equation, which shows that it is as far from <m>R</m> as <m>R</m> is from the center of reflection <m>M</m>: 
 <me> 
- E = \frac{3}{2}(A+B) - 2C =  1.5 (A+B+C) - 3.5 C
+ E = R + (R-M) = 2R - M
 </me>
 If <m>f(E) \lt f(R)</m>, then we replace <m>C</m> with <m>E</m> rather than <m>R</m>. In other words, the <q>highest</q> vertex of the triangle is replaced by whichever of <m>E, R</m> is lower. </p>
 
@@ -159,18 +160,19 @@ path = zeros(2, max_tries);
 
 for k = 1:max_tries
     path(:, k) = mean(T, 2);
-    if max(abs(T - path(:, k))) &lt; 1e-6
+    if max(abs(T - mean(T, 2))) &lt; 1e-6
         break
     end
     values = [f(T(:,1)) f(T(:,2)) f(T(:,3))];
     [fmax, ind] = max(values);
-    R = sum(T, 2) - 2*T(:, ind);
+    M = (sum(T, 2) - T(:, ind))/2;
+    R = 2*M - T(:, ind);
     if f(R) &lt; fmax
-        E = 1.5*sum(T, 2) - 3.5*T(:, ind);  % consider expansion
+        E = 2*R - M;                    % consider expansion
         if f(E) &lt; f(R)
-            T(:, ind) = E;                  % choose to expand
+            T(:, ind) = E;              % choose to expand
         else
-            T(:, ind) = R;                  % choose to reflect
+            T(:, ind) = R;              % choose to reflect
         end
     else 
         [fmin, ind] = min(values);
@@ -197,18 +199,106 @@ fminsearch(f, randn(2, 1), options)
 </p>
 </section>
 
+<section xml:id="section-nelder-mead-ndim">
+<title>Nelder-Mead method in higher dimensions</title>
+
+<p>The code in <xref ref="example-rce-nelder-mead" /> works only for functions of two variables but it can be adapted for <m>n</m>-dimensional optimization. Instead of the initial triangle 
+<cd>
+A = randn(2, 1);
+B = A + [1; 0];
+C = A + [0; 1];
+T = [A B C];
+</cd>
+we create initial <m>n</m>-dimensional simplex using implicit array expansion:
+<cd>
+A = randn(n, 1);
+T = [A A+eye(n)];
+</cd>
+The search path will be <c>path = zeros(n, max_tries)</c> which we will only use for visualization when <m>n=2, 3</m>. 
+</p>
+
+<p>The line <c>values = [f(T(:,1)) f(T(:,2)) f(T(:,3))]</c> resists vectorization unless we rewrite <c>f</c> (which we probably should not do because in practice, the objective function is user-provided code). So it becomes a loop:
+<cd>
+values = zeros(n+1, 1);
+for j = 1:n+1
+    values(j) = f(T(:, j));
+end    
+</cd>
+The remaining adjustments are small: the midpoint of opposite side is now <c>M = (sum(T, 2) - T(:, ind))/n</c> but the formulas for reflection <m>R</m>, expansion <m>E</m>, and contraction remain the same. 
+The plot of search path and formatting of text output need cosmetic changes, as shown in the following example.</p> 
+
+<example xml:id="example-rce-nelder-mead-ndim">
+<title> Implementing the Nelder-Mead method in higher dimensions </title>
+<statement><p>Generalize <xref ref="example-rce-nelder-mead" /> to higher dimensions. Use it to minimize the 3-variable Rosenbrock function <m>(x_1-1)^2 + 100(x_1^2-x_2)^2 + 100(x_2^2-x_3)^2</m>. </p> </statement>
+<solution><p>The code collects the lines from the previous paragraphs.</p>
+<pre>
+f = @(x) (x(1)-1)^2 + 100*(x(1)^2 - x(2))^2 + 100*(x(2)^2 - x(3))^2;
+n = 3;             % number of variables 
+A = randn(n, 1);
+T = [A, A+eye(n)];
+max_tries = 10000;
+path = zeros(n, max_tries);
+
+for k = 1:max_tries
+    path(:, k) = mean(T, 2);
+    if max(abs(T - mean(T, 2))) &lt; 1e-6
+        break
+    end
+    values = zeros(n+1, 1);
+    for j = 1:n+1
+        values(j) = f(T(:, j));
+    end
+    [fmax, ind] = max(values);
+    M = (sum(T, 2) - T(:, ind))/n;
+    R = 2*M - T(:, ind);
+    if f(R) &lt; fmax
+        E = 2*R - M;  
+        if f(E) &lt; f(R)
+            T(:, ind) = E;
+        else
+            T(:, ind) = R;
+        end
+    else 
+        [fmin, ind] = min(values);
+        T = (T + T(:, ind))/2;
+    end
+end
+
+if n == 2
+    plot(path(1, 1:k), path(2, 1:k), '-+')
+elseif n == 3
+    plot3(path(1, 1:k), path(2, 1:k), path(3, 1:k), '-+')
+end
+
+if k &lt; max_tries
+    x = mean(T, 2);
+    fprintf('Found x with f(x) = %g after %d steps\n x =', f(x), k);
+    disp(x');
+else
+    disp('Failed to converge')
+end
+</pre></solution>
+</example>
+</section>
+
 <exercises xml:id="exercises-nelder-mead">
     <title>Homework</title>
 
 <exercise number="1">
-<statement> <p> The stopping condition of the method in <xref ref="example-rce-nelder-mead" /> is that 
+<statement> <p> Apply the code in <xref ref="example-rce-nelder-mead" /> to <term>Easom function</term>
+<me>
+f(x_1, x_2) = -\cos x_1 \cos x_2 \exp(-(x_1-\pi)^2-(x_2-\pi)^2)
+</me>    
+The global minimum is <m>(\pi, \pi)</m> with <m>f(\pi, \pi)=-1</m> but it is difficult to find because the function has many local minima and its landscape does not naturally lead to the global minimum. If you run <xref ref="example-rce-nelder-mead" /> five times (simply pressing <kbd>F5</kbd> repeatedly), how many times does it converge to the global minimum? 
+</p>
+
+<p>To improve the situation, add a <term>stochastic</term> (random) step to the minimization process, as an alternative to contraction. That is, when the algorithm in <xref ref="example-rce-nelder-mead" /> wants to contract the triangle, try the following point first. 
 <cd>
-max(abs(T - path(:, k))) &lt; 1e-6    
+S = T(:, ind) + randn(2, 1);
 </cd>
-meaning that every coordinate of every vertex of triangle <m>T</m> with within <m>10^{-6}</m> of the corresponding coordinate of the center of <m>T</m>. This is just saying <q>the triangle is small</q>, and makes no use of the values of function <m>f</m>. Replacing this stopping condition with <q>the difference between the largest and smallest of the values of <m>f</m> at the vertices of <m>T</m> is less than <m>10^{-6}</m>.</q> 
-Does the method still reliably find the minimum <m>(1, 1)</m> of Rosenbrock's function? Does it take more or fewer steps with the new stopping condition, or about the same as before? </p></statement></exercise>
- 
- 
+If the value of <m>f</m> at <c>S</c> is smaller than the value at <c>T(:, ind)</c>, then replace <c>T(:, ind)</c> with <c>S</c>. Otherwise, perform the contraction step. </p>
+
+<p>If you run the stochastic Nelder-Mead method five times (pressing <kbd>F5</kbd> repeatedly) how many times does it converge to the global minimum?</p></statement></exercise> 
 </exercises>
 
 </chapter>
