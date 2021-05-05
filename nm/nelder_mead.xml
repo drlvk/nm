@@ -134,7 +134,7 @@ we find the search usually fails. The moving triangle has to become very small t
 <p>The reason for the lack of success with Rosenbrock's function is that the version of Nelder-Mead method described in <xref ref="section-nelder-mead-contract" />  does not allow the triangle to change its <em>shape</em> to fit the geometry of the graph. A long narrow valley calls for a long narrow triangle.</p>  
 
 <p>The process of changing the shape of the triangle is <em>expansion</em>, which is introduced as an alternative to reflection from <xref ref="section-nelder-mead-reflect" />. Suppose that the current triangle qualifies for reflection: for example, <m>C</m> is the point with largest value, and <m>f(R) \lt f(C)</m>. Consider 
-the possibility of replacing <m>C</m> with a point <m>E</m> that lies beyong <m>R</m>, thus making the triangle longer. The point <m>E</m> is determined by the following equation, which shows that it is as far from <m>R</m> as <m>R</m> is from the center of reflection <m>M</m>: 
+the possibility of replacing <m>C</m> with a point <m>E</m> that lies beyond <m>R</m>, thus making the triangle longer. The point <m>E</m> is determined by the following equation, which shows that it is as far from <m>R</m> as <m>R</m> is from the center of reflection <m>M</m>: 
 <me> 
  E = R + (R-M) = 2R - M
 </me>
@@ -201,6 +201,8 @@ fminsearch(f, randn(2, 1), options)
 
 <section xml:id="section-nelder-mead-ndim">
 <title>Nelder-Mead method in higher dimensions</title>
+
+<p>This is an optional section, feel free to skip it.</p> 
 
 <p>The code in <xref ref="example-rce-nelder-mead" /> works only for functions of two variables but it can be adapted for <m>n</m>-dimensional optimization. Instead of the initial triangle 
 <cd>
@@ -300,6 +302,9 @@ If the value of <m>f</m> at <c>S</c> is smaller than the value at <c>T(:, ind)</
 
 <p>If you run the stochastic Nelder-Mead method five times (pressing <kbd>F5</kbd> repeatedly) how many times does it converge to the global minimum?</p></statement></exercise> 
 </exercises>
+
+
+<p><em>Remark</em>: The documentation of <url href="https://docs.scipy.org/doc/scipy/reference/optimize.html">SciPy optimize</url> package provides an overview of many other optimization methods. There are a few bracket-based methods for functions of one variable (including golden section), several multivariate methods (such as Nelder-Mead), and in addition, some methods designed for finding the global minimum. Most of the latter group are stochastic methods: they intentionally make the search process subject to chance.</p>
 
 </chapter>
 
