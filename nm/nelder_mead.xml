@@ -301,11 +301,7 @@ S = T(:, ind) + randn(2, 1);
 If the value of <m>f</m> at <c>S</c> is smaller than the value at <c>T(:, ind)</c>, then replace <c>T(:, ind)</c> with <c>S</c>. Otherwise, perform the contraction step. </p>
 
 <p>If you run the stochastic Nelder-Mead method five times (pressing <kbd>F5</kbd> repeatedly) how many times does it converge to the global minimum?</p></statement></exercise> 
-</exercises>
-
 
 <p><em>Remark</em>: The documentation of <url href="https://docs.scipy.org/doc/scipy/reference/optimize.html">SciPy optimize</url> package provides an overview of many other optimization methods. There are a few bracket-based methods for functions of one variable (including golden section), several multivariate methods (such as Nelder-Mead), and in addition, some methods designed for finding the global minimum. Most of the latter group are stochastic methods: they intentionally make the search process subject to chance.</p>
 
-</chapter>
-
-  
+</exercises></chapter>
