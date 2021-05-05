@@ -78,7 +78,6 @@ end
     
 fprintf('Found x = (%g, %g), |x| = %g, f(x) = %g \n', x0, norm(x0), f(x0));
 </pre>
-<p>With the linear penalty, the minimization process sometimes fails to converge within the allowed attempts; but if it converges, it stays in the unit disk. With the quadratic penalty, the convergence is more reliable but the norm of the point of minimum is usually greater than <m>1</m>. </p>
 </solution></example>
 
 <p>Note that the penalty method works just as well with <term>equality constraints</term> of the form 
