@@ -219,7 +219,7 @@ The search path will be <c>path = zeros(n, max_tries)</c> which we will only use
 
 <p>The line <c>values = [f(T(:,1)) f(T(:,2)) f(T(:,3))]</c> resists vectorization unless we rewrite <c>f</c> (which we probably should not do because in practice, the objective function is user-provided code). So it becomes a loop:
 <cd>
-values = zeros(n+1, 1);
+values = zeros(1, n+1);
 for j = 1:n+1
     values(j) = f(T(:, j));
 end    
@@ -244,7 +244,7 @@ for k = 1:max_tries
     if max(abs(T - mean(T, 2))) &lt; 1e-6
         break
     end
-    values = zeros(n+1, 1);
+    values = zeros(1, n+1);
     for j = 1:n+1
         values(j) = f(T(:, j));
     end
