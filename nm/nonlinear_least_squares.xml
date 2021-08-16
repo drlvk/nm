@@ -170,7 +170,7 @@ fprintf('The source is located near (%g, %g) \n', opt(3:4));
 
     <exercise number="1">
         <statement>
-<p> Consider the count of world-wide Covid cases (<url href="https://www.nytimes.com/interactive/2020/world/coronavirus-maps.html">source</url>) from Fall 2020:</p>
+<p> Consider the count of world-wide Covid cases (<url href="https://www.nytimes.com/interactive/2021/world/covid-cases.html">source</url>) from Fall 2020:</p>
 
 <figure xml:id="covid-world-png"><image source="images/covid_world.png" /> <caption>New reported cases</caption></figure>
 
