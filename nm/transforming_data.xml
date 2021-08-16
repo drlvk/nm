@@ -40,7 +40,7 @@ The least squares solution of <xref ref="eq-transformed-lls" /> is the vector <m
 
 <example xml:id="example-best-fit-exponential">
   <title>Fit an exponential to Covid data</title> 
-<statement><p>The following are new Covid infections in France as reported on Fridays in September-October (from Sep 4 to Oct 23).
+<statement><p>The following are new Covid infections in France as reported on Fridays in September-October 2020 (from Sep 4 to Oct 23).
 <cd>
 y = [6011 7742 9335 12048 10946 14618 20399 29472]';  
 </cd>
@@ -215,7 +215,7 @@ as a vector of 4 numbers, however. </p>
   
 <exercise number="2" xml:id="exercise-transforming-data-2">
         <statement>
-<p> The number of active Covid cases at SU during October 1 - October 23 is given below.
+<p> The number of active Covid cases at SU during October 1-23, 2020, is given below.
 <cd>
 y = [5 5 4 5 9 25 45 65 77 87 87 89 97 101 90 74 57 26 20 13 12 12 13]'; 
 </cd>
