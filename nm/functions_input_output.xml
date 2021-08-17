@@ -7,6 +7,12 @@
 
     <introduction>
         <p>We take a look at some of mathematical and statistical functions available in Matlab, and consider the ways for user input and data output.</p>
+        <p>The following parts of <url href="https://matlabacademy.mathworks.com/R2021a/portal.html?course=gettingstarted">MATLAB Onramp</url> minicourse are directly related to this chapter: 
+     <ul>
+     	<li>Calling Functions</li> 
+        <li>Obtaining Help (summary: use <c>help commandname</c> to get a short description of the usage of the command, or <c>doc commandname</c> to get more details in a formatted help page) </li> 
+    </ul>
+        </p>
     </introduction>
 
 <section xml:id="section-builtin-functions">

@@ -7,6 +7,14 @@
 
     <introduction>
         <p>We will only need three types of Matlab objects: scalars, vectors, and matrices. A scalar is just a single number, like 2.75. Vectors and matrices deserve a more careful look. Being able to use them efficiently is a key to programming in Matlab. Note that <q>Mat</q> in <q>Matlab</q> stands for <q>matrix</q>, not <q>mathematics</q>.</p>
+        <p>The following parts of <url href="https://matlabacademy.mathworks.com/R2021a/portal.html?course=gettingstarted">MATLAB Onramp</url> minicourse are directly related to this chapter: 
+     <ul>
+     	<li>Commands</li> 
+        <li>MATLAB Desktop and Editor</li>
+        <li>Vectors and Matrices</li>
+        <li>Indexing into and Modifying Arrays</li>
+    </ul>
+    Note that the above minicourse is presented as a <q>Live Script</q> (.mlx file extension), but in MAT 581 we will use standard Matlab scripts (.m file extension). The code syntax is the same for both. </p>
     </introduction>
 
 <section xml:id="section-matlab-interface">
