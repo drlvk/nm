@@ -40,7 +40,7 @@
 
  <p>Although the course is built around Matlab software, one can use <url href="https://www.gnu.org/software/octave/download.html">Octave</url> to run examples and do homework just as well.</p>
 
-<p>If you are new to Matlab, begin with the free online minicourse <url href="https://matlabacademy.mathworks.com/R2021a/portal.html?course=gettingstarted">MATLAB Onramp</url>. The first part of the course, up to and including <q>Plotting Data</q>, is the most important one. It will be referenced in each of the first four chapters/classes.</p>
+<p>If you are new to Matlab, begin with the free online minicourse <url href="https://matlabacademy.mathworks.com/en/details/gettingstarted">MATLAB Onramp</url>. The first part of the course, up to and including <q>Plotting Data</q>, is the most important one. It will be referenced in each of the first four chapters/classes.</p>
 
     </preface>
   

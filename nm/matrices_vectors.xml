@@ -7,7 +7,7 @@
 
     <introduction>
         <p>We will only need three types of Matlab objects: scalars, vectors, and matrices. A scalar is just a single number, like 2.75. Vectors and matrices deserve a more careful look. Being able to use them efficiently is a key to programming in Matlab. Note that <q>Mat</q> in <q>Matlab</q> stands for <q>matrix</q>, not <q>mathematics</q>.</p>
-        <p>The following parts of <url href="https://matlabacademy.mathworks.com/R2021a/portal.html?course=gettingstarted">MATLAB Onramp</url> minicourse are directly related to this chapter: 
+        <p>The following parts of <url href="https://matlabacademy.mathworks.com/en/details/gettingstarted">MATLAB Onramp</url> minicourse are directly related to this chapter: 
      <ul>
      	<li>Commands</li> 
         <li>MATLAB Desktop and Editor</li>

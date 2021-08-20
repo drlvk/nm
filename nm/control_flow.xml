@@ -7,7 +7,7 @@
 
     <introduction>
         <p>Loops and conditional statements in Matlab are similar to those in other imperative programming languages. But in Matlab, array operations (<xref ref="section-vectorization"/>) can often replace loops, and provide faster and shorter code. However, loops are sometimes unavoidable when the each computation depends on the result of the previous computation.</p>
-        <p>The following part of <url href="https://matlabacademy.mathworks.com/R2021a/portal.html?course=gettingstarted">MATLAB Onramp</url> minicourse is directly related to this chapter: 
+        <p>The following part of <url href="https://matlabacademy.mathworks.com/en/details/gettingstarted">MATLAB Onramp</url> minicourse is directly related to this chapter: 
      <ul>
         <li>Programming</li> 
     </ul>
