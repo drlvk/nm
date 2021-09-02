@@ -145,7 +145,55 @@ disp(v.^(1./v))
 </section>
 
 
+<section xml:id="section-array-expansion">
+<title>Implicit expansion of arrays</title>
 
+<p>Sometimes we can apply an elementwise array operation to two arrays of different sizes. The rule is that the array sizes must match, but number 1 matches any number. For example, the following commands work, and produce a 3<times/>5 matrix of 2s:
+<ul>
+	<li> <c>ones(3, 1) + ones(3, 5)</c> </li>
+	<li> <c>ones(1, 5) + ones(3, 5)</c> </li>
+	<li> <c>ones(1, 5) + ones(3, 1)</c>  </li>
+</ul>
+</p>
+
+<p>The reason is that a matrix with 1 column can be turned into a matrix with 5 columns just by repeating the same column 5 times. This kind of expansion by repetition creates 3<times/>5 matrices in each of the above examples. For a more interesting example, try <c>(1:6) + (1:6)' - 1</c> which combines a row vector (size 1<times/>6) with a column vector (size 6<times/>1) and a scalar (size 1<times/>1). The array expansion results in a neat 6<times/>6 matrix:</p>
+<pre>
+1     2     3     4     5     6
+2     3     4     5     6     7
+3     4     5     6     7     8
+4     5     6     7     8     9
+5     6     7     8     9    10
+6     7     8     9    10    11
+</pre>	
+
+<p>In contrast, <c>ones(3, 2) + ones(3, 5)</c> does not work: the numbers 2 and 5 are not equal, and neither of them is 1. </p> 
+
+
+<example>
+	<title>Multiplication table</title>
+<statement>
+	<p>Display the multiplication table of size 9<times/>9, that is a matrix of products of integers from 1 to 9.</p> 
+</statement>
+<answer>
+<pre>
+A = (1:9).*(1:9)';
+disp(A)
+</pre>
+<p>The output is shown below.</p>
+<pre>
+1     2     3     4     5     6     7     8     9
+2     4     6     8    10    12    14    16    18
+3     6     9    12    15    18    21    24    27
+4     8    12    16    20    24    28    32    36
+5    10    15    20    25    30    35    40    45
+6    12    18    24    30    36    42    48    54
+7    14    21    28    35    42    49    56    63
+8    16    24    32    40    48    56    64    72
+9    18    27    36    45    54    63    72    81
+</pre>     
+<p>Note that without the period we would get the single number 285 instead. (Why this number?)</p>
+</answer></example>
+</section>  
 
 
 <section xml:id="section-plotting">
@@ -187,7 +235,7 @@ plot(x, y)
 t = linspace(0, 20, 500);
 plot(t.*cos(t), t.*sin(t))
 </pre>
-<p>This curve is called the <term>Archimedian spiral</term>.</p> 
+<p>This curve is called the <term>Archimedean spiral</term>.</p> 
 </answer>
 </example>  
 </section>
@@ -239,6 +287,15 @@ disp(x)
 <xref ref="section-large-matrices" />. The right-hand size column vector begins with all-zeros: note that <c>zeros(n, 1)</c> is a column of zeros, while <c>zeros(1, n)</c> is a row of zeros. The first and last entries of <c>b</c> are changed as described in the system. </p>
 </answer>
 </example>
+
+<example> <title>Table of squares and cubes of small integers</title>
+<statement>Create a 3<times/>9 matrix which has the integers 1 through 9 in the first row, their squares in the second row, and their cubes in the third row.
+</statement>
+
+<answer><p>The single line <c>A = (1:9).^((1:3)')</c> does the job. The elementwise operation <c>.^</c> can combine the arrays of sizes 1<times/>9 and 3<times/>1, as explained in <xref ref="section-array-expansion" />. The result is a 3<times/>9 matrix with the expected property: the base (1 through 9) is the column number, the exponent (1 through 3) is the row number.</p>
+ </answer>
+</example>
+
 
 <example> <title>Plot of a function</title>
 <statement>Plot the function <m> y = (x - 1)/(x^2 + 1)</m> on the interval <m>[-1, 5]</m>
