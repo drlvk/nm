@@ -120,7 +120,7 @@ results in <c>z</c> being <c>[11 5 2]</c>. But we cannot add <c>[8 -2]</c> and <
 
 <p>One can also multiply two vectors, or two matrices, or a vector and a matrix. To understand how this works in Matlab, keep in mind that a vector is treated as a matrix with one row (or one column). Two matrices can be multiplied only when the inner dimensions agree: that is, two matrices of sizes <m>m\times n</m> and <m>p\times q</m> can be multiplied when <m>n = p</m>. The product has size <m>m\times q</m>. Some examples: <ul> 
 <li><c>[3 7] * [4 2]</c> is <alert>an error</alert>: the first argument has size <m>1\times 2</m>, the second also has size <m>1\times 2</m>, and the inner dimensions do not agree: <m>2\ne 1</m>.</li>
-<li><c>[3 7] * [4; 2]</c> is <c>26</c>. the first argument has size <m>1\times 2</m>, the second has size <m>2\times 1</m>, so the product is defined and has size <m>1\times 1</m> which makes it a scalar. This is how one computes the <term>scalar product</term> of two vectors: it comes from multiplying a row vector by a column vector.</li>
+<li><c>[3 7] * [4; 2]</c> is <c>26</c>. the first argument has size <m>1\times 2</m>, the second has size <m>2\times 1</m>, so the product is defined and has size <m>1\times 1</m> which makes it a scalar. This is how one computes the <term>scalar product</term> of two vectors: it comes from multiplying a row vector by a column vector. In introductory mathematics courses this product is called the <term>dot product</term> which emphasizes its notation instead of output. This may be confusing because Matlab also has products with a dot <c>.</c> but they mean a different thing: we will see them in next chapter. </li>
 <li><c>[1 2 3; 4 5 6] * [-4; 0; 3]</c> is <c>[5; 2]</c>. The sizes <m>2\times 3</m> and <m>3\times 1</m> are compatible and the product has size <m>2\times 1</m>. This is how <term>matrix-vector</term> products work in linear algebra too: the vector, placed to the right of a matrix, must be written as a column.</li> 
 <li><c>[5 -2] * [1 2 3; 4 5 6]</c> is <c>[-3 0 3]</c>. The sizes <m>1\times 2</m> and <m>2\times 3</m> are compatible and the product has size <m>1\times 3</m>. So, we can have a vector to the left of a matrix when it is a row vector. </li> 
 <li><c>[0 1; -1 0] * [1 2 3; 4 5 6]</c> is <c>[4   5   6; -1  -2  -3]</c>. This is a <term>matrix product</term>. Two matrices have compatible sizes <m>2\times 2</m> and <m>2\times 3</m>, and the product is of size <m>2\times 3</m>.</li>
@@ -305,7 +305,7 @@ x = (first 5 digits of your SUID);
 y = (all entries of x except first); 
 z = (all entries of x except last);
 u = (the sum of vectors y and z);
-v = (the dot product of vectors y and z);
+v = (the scalar product of vectors y and z, also known as the dot product in Calculus);
 </pre>
 <p>Then display <c>u</c> and <c>v</c> using <c>disp</c>.</p>
 <p>

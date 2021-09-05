@@ -331,7 +331,7 @@ plot(x, y)
 
 <p> <ol label="(a)">
 <li>Find the first 30 Fibonacci numbers using Matlab's linear solver <c>A\b</c>. To achieve this, you will first need to create a <m>30\times 30</m> matrix of the linear system and then create a column vector <c>b</c> where the first two coordinates are <m>1</m> and the rest are <m>0</m>. The commands <c>eye</c>, <c>diag</c>, <c>ones</c>, and <c>zeros</c> will help. </li>
-<li>Using the same method, find the first 30 <q>generalized Fibonacci numbers</q> that begin with <m>a, b</m> instead of <m>1, 1</m>. Use the first two digits of your SUID number as the starting values <m>a, b</m>. (For example, if your SUID begins with 2067<ellipsis/> then <m>a=2</m>, <m>b=0</m>.)</li> 
+<li>Using the same method, find the first 30 <q>generalized Fibonacci numbers</q> that begin with numbers <m>p, q</m> instead of <m>1, 1</m>. Use the first two digits of your SUID number as the starting values <m>p, q</m>. (For example, if your SUID begins with 2067<ellipsis/> then <m>p=2</m>, <m>q=0</m>.)</li> 
 </ol>
 </p>
         </statement>
