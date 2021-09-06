@@ -228,9 +228,9 @@ end
 <section xml:id="section-timing-code">
 <title>Measuring the computation time </title>
 
-<p>In the previous section we saw two implementations of the golden section search: . To directly measure the speed difference between them, we can use the combination of <c>tic</c> and <c>toc</c> commands. Insert <c>tic</c> at the beginning of the code that should be timed, and <c>toc</c> at the end: the time elapsed between <c>tic</c> and <c>toc</c> will be shown in the Matlab command window.</p>
+<p>Since loops may run for a long time, it is worthwhile to compare the time required by different approaches. To do this, we can use the combination of <c>tic</c> and <c>toc</c> commands: insert <c>tic</c> at the beginning of the code that should be timed, and <c>toc</c> at the end. The time elapsed between <c>tic</c> and <c>toc</c> will be shown in the Matlab command window.</p>
 
-<p>Compare two ways of computing the sum of cosines of all integers from <m>1</m> to <m>10^7</m>: a loop and an array operation. Which one is faster?</p>
+<p>Let us compare two ways of computing the sum of cosines of all integers from <m>1</m> to <m>10^7</m>: a loop and an array operation. Which one is faster?</p>
 <pre>
 n = 1e7;
 tic
@@ -247,8 +247,8 @@ toc
 disp(s)
 </pre>
 
-<p>One should not take it as an axiom that an array operation is faster than a loop. Operating with large arrays requires more memory to store intermediate results. Some internal implementation details may cause a loop with a scalar operation to be faster than an array operation. Try different ways of computing the sums 
-<m>\sum_{j=1}^n \frac{1}{j}</m> and <m>\sum_{j=1}^n j^3</m> where <m>n=10^7</m> as before.</p>
+<p>An array operation is <emph>not always</emph> faster than a loop. Operating with large arrays requires more memory to store intermediate results. Other internal implementation details may cause a loop with a scalar operation to be faster than an array operation. Try different ways of computing the sums 
+<m>\sum_{j=1}^n \frac{1}{j}</m> and <m>\sum_{j=1}^n j^3</m> where <m>n=10^7</m> as before. Also note that <m>j^3</m> could be computed as <c>j*j*j</c>. </p>
 </section>
 
 <section xml:id="examples-control-flow">
