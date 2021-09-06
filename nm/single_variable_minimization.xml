@@ -185,9 +185,50 @@ end
 fprintf('Found a minimum x = %g with f(x) = %g \n', c, f(c));
 </pre></solution></example>
 
-<p>The code in <xref ref="example-golden-section" /> does not explicitly store the previously computed values to be re-used at next step, but, depending on the language used, such <em>caching</em> of previously computed function values will happen behind the scenes.</p>
+<p>The code in <xref ref="example-golden-section" /> does not store previously computed values of the function and therefore they get recomputed again for the same <m>x</m>-value. In some languages, such <em>caching</em> of previously computed function values may happen behind the scenes. In Matlab it does not (currently), so we need to store the values to be reused. The following version of the above code does this.</p>
 
+<example xml:id="example-golden-section-optimized">
+<title>Efficient golden section search</title>
+<statement><p>Improve the efficiency of the code in <xref ref="example-golden-section" /> by storing and reusing some function values. </p> </statement>
+<solution>
+<p>We use the variables <c>fc</c> and <c>fd</c> to store the values of <m>f</m> at the points <c>c</c> and <c>d</c>. When the algorithm replaces of these points with the other, the previously computed value is reused without executing the function <m>f</m> again. This approach requires more work to be done before the main loop, in order to initialize <c>fc</c> and <c>fd</c>.</p>
+<pre>
+f = @(x) x.^4 - 3*x.^2 + x + 1;
+a = -2;
+b = 2;
+r = (3-sqrt(5))/2;
+
+c = a + r*(b-a);        % preparation
+fc = f(c);
+d = b - r*(b-a);
+fd = f(d);
+
+while b-a >= 100*eps(a)
+    if fc &lt; fd
+        b = d;
+        d = c;
+        fd = fc;         % reused value
+        c = a + r*(b-a);
+        fc = f(c);       % newly computed value
+    else
+        a = c;
+        c = d;
+        fc = fd;         % reused value
+        d = b - r*(b-a);
+        fd = f(d);       % newly computed value
+    end
+end
+</pre>
+<p>The code is longer than <xref ref="example-golden-section" />  but it runs faster because at every execution of the loop there is only one call to function <m>f</m> instead of two. </p>
+</solution></example>
+
+<p>Since the function <m>f</m> used in <xref ref="example-golden-section" /> and <xref ref="example-golden-section-optimized" /> is easy to compute, the gain of optimized implementation may not be evident. To make it visible, replace the function with the following, which takes relatively long to evaluate:
+<cd>
+f = @(x) x.^4 - 3*x.^2 + x + 1 + 0*sum(rand(1, 1e6));
+</cd>
+and time the script with <c>tic</c> <c>toc</c> as in <xref ref="section-timing-code" />. </p>
 </section>
+
 
 <exercises xml:id="exercises-single-variable-minimization">
     <title>Homework</title>

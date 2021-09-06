@@ -225,6 +225,32 @@ end
 <p> The loop has a limit of 1000 tries. It ends sooner if the required condition <q>new x is close to old one</q> is reached. After the loop there is another conditional statement which reports the result depending on whether the loop terminated early (success) or ran out of tries (failure). Try running this script with different inputs such as 2, -3, 4, -5, 6. What do you observe?</p>  
 </section>
 
+<section xml:id="section-timing-code">
+<title>Measuring the computation time </title>
+
+<p>In the previous section we saw two implementations of the golden section search: . To directly measure the speed difference between them, we can use the combination of <c>tic</c> and <c>toc</c> commands. Insert <c>tic</c> at the beginning of the code that should be timed, and <c>toc</c> at the end: the time elapsed between <c>tic</c> and <c>toc</c> will be shown in the Matlab command window.</p>
+
+<p>Compare two ways of computing the sum of cosines of all integers from <m>1</m> to <m>10^7</m>: a loop and an array operation. Which one is faster?</p>
+<pre>
+n = 1e7;
+tic
+s = 0;
+for j = 1:n
+    s = s + cos(j);
+end
+toc
+disp(s)
+
+tic
+s = sum(cos(1:n));
+toc
+disp(s)
+</pre>
+
+<p>One should not take it as an axiom that an array operation is faster than a loop. Operating with large arrays requires more memory to store intermediate results. Some internal implementation details may cause a loop with a scalar operation to be faster than an array operation. Try different ways of computing the sums 
+<m>\sum_{j=1}^n \frac{1}{j}</m> and <m>\sum_{j=1}^n j^3</m> where <m>n=10^7</m> as before.</p>
+</section>
+
 <section xml:id="examples-control-flow">
 
 <title>Examples and questions</title>  
@@ -300,7 +326,6 @@ plot(1:N, steps, '.')
     end 
 </pre></question>
 
-
 </section>
 
 
@@ -317,9 +342,7 @@ plot(1:N, steps, '.')
 
     <exercise number="2">
         <statement>
-<p>If in <xref ref="example-harmonic-series"/> we swap two lines <c>s = s + 1/n;</c> and
-<c>n = n + 1;</c> the answer becomes very different. Explain why this happens. 
-</p>
+<p>Modify the example <xref ref="example-harmonic-series"/> so that it finds the first partial sum that is greater than <m>20</m>. Then use the <c>tic</c> <c>toc</c> commands to compare the execution time of two versions of this script: one with reciprocal computed as <c>1/n</c> and one with <c>n^(-1)</c>. Which version runs faster? </p>
 </statement>
 </exercise>
 
