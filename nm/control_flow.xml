@@ -247,8 +247,9 @@ toc
 disp(s)
 </pre>
 
-<p>An array operation is <emph>not always</emph> faster than a loop. Operating with large arrays requires more memory to store intermediate results. Other internal implementation details may cause a loop with a scalar operation to be faster than an array operation. Try different ways of computing the sums 
-<m>\sum_{j=1}^n \frac{1}{j}</m> and <m>\sum_{j=1}^n j^3</m> where <m>n=10^7</m> as before. Also note that <m>j^3</m> could be computed as <c>j*j*j</c>. </p>
+<p>An array operation is not always faster than a loop. Operating with large arrays requires more memory to store intermediate results. Other internal implementation details may cause a loop with a scalar operation to be faster than an array operation. Thus, we usually cannot tell which approach is faster without measuring the computation time. 
+For more examples, try different ways of computing the sums 
+<m>\sum_{j=1}^n \frac{1}{j}</m> and <m>\sum_{j=1}^n j^3</m> where <m>n=10^7</m> as before. Also note that <m>j^3</m> could be computed as <c>j*j*j</c>: does this speed up the computation? </p>
 </section>
 
 <section xml:id="examples-control-flow">
