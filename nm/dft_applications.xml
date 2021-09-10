@@ -54,7 +54,7 @@ will just use  <c>fft2</c> and (inverse) <c>ifft2</c>, we will not worry about t
 
 <figure xml:id="winter-png"><image source="images/winter.png" /> <caption>Grayscale PNG image</caption></figure>
 
-<p>After loading the image with <c>im = imread('winter.png')</c>, check this is a matrix (no separate channels for colors). Try <c>fc = fft2(im);</c> which produces a matrix of the same size but with complex entries. It is not easy to understand all of it. Small pieces can be inspected with <c>fc(1:5, 1:5)</c> for example: when doing this, notice the special role of <c>fc(1, 1)</c>, the upper left number. A histogram can help visualize the distribution of the magnitudes of Fourier coefficients: <c>hist(abs(fc(:)), 50)</c>. (Recall that <c>fc(:)</c> means flattening a matrix to a vector.) Looks like nearly all coefficients are much smaller than the largest ones. </p> 
+<p>After loading the image with <c>im = imread('winter.png')</c>, check this is a matrix (no separate channels for colors). Try <c>fc = fft2(im);</c> which produces a matrix of the same size but with complex entries. It is not easy to understand all of it. Small pieces can be inspected with <c>fc(1:5, 1:5)</c> for example: when doing this, notice the special role of <c>fc(1, 1)</c>, the upper left number. A histogram can help visualize the distribution of the magnitudes of Fourier coefficients: <c>histogram(abs(fc(:)), 50)</c>. (Recall that <c>fc(:)</c> means flattening a matrix to a vector.) Looks like nearly all coefficients are much smaller than the largest ones. </p> 
 
 <p>We can set all small Fourier coefficients (less than some threshold <c>thr</c>) to zero using 
 <c>fc(abs(fc) &lt; thr) = 0;</c>. One way to determine the threshold reasonably is to use 

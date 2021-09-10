@@ -195,14 +195,13 @@ end
 </pre>
 <p>The command <c>size(x)</c> returns the size of <m>x</m> as the number of rows and columns. Consequently, 
 <c>ones(size(x))</c> means creating a vector or matrix of the same size as <c>x</c>, but with all entries 1. 
-If we started with <c>y = 1</c> instead, the computation would still work because adding 1 to a vector like <c>x.^k</c> means adding 1 to each component of the vector. However, when <c>n = 0</c> the loop does not run at all and the output would be a scalar <c>1</c> instead of a vector, which is a bug. </p>
-        <p>One could also start with <c>y = zeros(size(x))</c> and run the loop <c>for k=0:n</c>; the result is the same. </p>
+If we started with <c>y = 1</c> instead, the computation would still work because adding 1 to a vector like <c>x.^k</c> means adding 1 to each component of the vector (ex. However, when <c>n = 0</c> the loop does not run at all and the output would be a scalar <c>1</c> instead of a vector, which is a bug. </p>
       </answer>
     </example>
     <example xml:id="example-plot-poly">
       <title>Plotting a polynomial</title>
       <statement>
-        <p>Use the function from <xref ref="example-eval-poly"/> to plot the polynomial with <m> a = -3/2</m> and <m>n = 6</m> on the interval <m>[-1, 1]</m>. Assume the script is in the file <c>example.m</c>. 
+        <p>Use the function from <xref ref="example-eval-poly"/> to plot the polynomial with <m> a = -3/2</m> and <m>n = 6</m> on the interval <m>[-1, 1]</m>. 
 </p>
       </statement>
       <answer>
@@ -221,7 +220,7 @@ end
     </example>
     <question>
       <title>Function creating a vector</title>
-      <p>What does the function <c>f</c> defined by <c>f = @(x, y) [x y]</c> do? Can one give it vector inputs <c>x, y</c>. If so, does it matter if they are row vectors or column vectors? Do they need to be of the same size?</p>
+      <p>What does the function <c>f</c> defined by <c>f = @(x, y) [x y]</c> do? Can one give it vector inputs <c>x, y</c>? If so, does it matter if they are row vectors or column vectors? Do they need to be of the same size?</p>
     </question>
   </section>
   <exercises xml:id="exercises-user-defined-functions">
