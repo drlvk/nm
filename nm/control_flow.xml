@@ -343,7 +343,8 @@ plot(1:N, steps, '.')
 
     <exercise number="2">
         <statement>
-<p>Modify <xref ref="example-harmonic-series"/> so that it finds the first partial sum that is greater than <m>20</m>. Then use the <c>tic</c> <c>toc</c> commands to time two versions of this script: one with reciprocals computed as <c>1/n</c> and one with <c>n^(-1)</c>. Which version runs faster? </p>
+<p>Modify <xref ref="example-harmonic-series"/> so that it finds the first partial sum that is greater than <m>20</m>. Then use the <c>tic</c> <c>toc</c> commands to time two versions of this loop: one with reciprocals computed as <c>1/n</c> and one with <c>n^(-1)</c>. Which version runs faster? </p>
+<p>(If the program takes more than a minute to run on your computer, replace <m>20</m> by <m>15</m>.)</p>
 </statement>
 </exercise>
 

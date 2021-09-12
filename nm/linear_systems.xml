@@ -321,6 +321,7 @@ function [k, c] = linearfit(x,y)
   ... then assign c and d based on its solution
 end
 </pre>
+<p>We do not actually need 500 points in the vector <c>xx</c> to plot a line: two would be enough. But the code is written to be adaptable for non-linear fit in the future.</p>
 </statement>
 </exercise>
 
@@ -328,7 +329,7 @@ end
         <statement>
 <p>Write a script that:
 <ol label="(a)">
-    <li>Creates a matrix <m>A</m> of size <m>20\times 20</m> according to the formula <m>A_{ij} = 1/(i+j-1)</m>. (This will require a double loop)</li>
+    <li>Creates a matrix <m>A</m> of size <m>20\times 20</m> according to the formula <m>A_{ij} = 1/(i+j-1)</m>. This can be done either with a double loop or by using array expansion as explained in <xref ref="section-array-expansion" />. </li>
     <li>Creates a column vector <m>b</m> with <m>20</m> elements which alternate like <m>(c, 0, c, 0, c, 0, \dots)</m>. Here <m>c</m> is the first digit of your SUID.</li>
     <li>Computes the solution of <m>Ax=b</m> and displays the norm of the difference between <m>Ax</m> and <m>b</m>.</li>
 </ol>
