@@ -99,7 +99,7 @@ x = A\b;
 disp(x)
 disp(norm(A*x-b))
 </pre> 
-<p>It can be informative to add the line <c>disp(A*x)</c> and compare its entries of this vector to the entries of <c>b</c>.</p>
+<p>It may be informative to add the line <c>disp(A*x)</c> and compare this vector to <c>b</c>.</p>
 </answer>
 </example> 
 
