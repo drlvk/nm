@@ -98,7 +98,7 @@ fprintf('Found a root x = %.12g\n', (a+b)/2);
 
 <p>Generally, if some numerical method has error <m>\epsilon_n</m> after <m>n</m> steps, we say that the method is
 <ul>
-   <li><term>linearly convergent</term> if <m>\epsilon_{n+1} \le c\epsilon_b</m> with some constant <m>c \lt 1</m></li>
+   <li><term>linearly convergent</term> if <m>\epsilon_{n+1} \le c\epsilon_n</m> with some constant <m>c \lt 1</m></li>
    <li><term>quadratically convergent</term> if <m>\epsilon_{n+1} \le M\epsilon_n^2</m> with some constant <m>M</m></li>
    <li><term>convergent with order <m>p</m></term> if <m>\epsilon_{n+1} \le M\epsilon_n^p</m> with some constants <m>M</m>, <m>p > 0</m>. </li>
 </ul>
@@ -196,8 +196,8 @@ end
 
     <exercise number="1">
         <statement>
-<p> For the function <m>f(x) = \log(x^2 + 1/2)  + 9x^4 </m>, use  the derivative <m>f'</m> determine the number of roots and find a bracketing interval for each of them. (No programming is needed. Here, as in Matlab and in most mathematical texts, <m>\log</m> means the natural logarithm, base <m>e</m>.)
-</p>
+<p> Let <m>f(x) = \log(3x + 2) - x </m>. Use the derivative <m>f'</m> to determine the number of roots of <m>f</m> and find a bracketing interval for each of them. Remember that a bracketing interval <m>[a, b]</m> must be contained in the domain of <m>f</m>; otherwise the bisection method cannot work.</p> 
+<p>In this problem, as in Matlab and in most mathematical texts, <m>\log</m> means the natural logarithm, base <m>e</m>. No programming is needed to solve this problem, and even a calculator is not necessary, as long as you remember that  <m>2\lt e\lt 3</m>.  </p>
 </statement>
 </exercise>
 
