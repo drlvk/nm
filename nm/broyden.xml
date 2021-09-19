@@ -158,11 +158,11 @@ Found a solution after 1359 steps:
 <p>By contrast, Newton's method converged in 9 steps. There is a price to pay for the lack of Jacobian matrix.</p>
 </solution></example>
 
-<question><title>The role of the starting point</title>
-<p>The starting point <c>[1; 2; 3]</c> seems unfortunately chosen in <xref ref="example-durand-kerner-broyden" />, because if we start with <c>[1; 1; 1]</c> instead, the method converges much faster: in 37 steps. Recall that for Newton's method this starting point did not work at all. What makes the difference? </p></question>
+<question><title>The role of the initial point</title>
+<p>The initial point <c>[1; 2; 3]</c> seems unfortunately chosen in <xref ref="example-durand-kerner-broyden" />, because if we start with <c>[1; 1; 1]</c> instead, the method converges much faster: in 37 steps. Recall that for Newton's method this initial point did not work at all. What makes the difference? </p></question>
 
-<question><title>The role of the starting matrix </title>
-<p>If we keep the starting point <c>[1; 2; 3]</c> in <xref ref="example-durand-kerner-broyden" /> but change the initial guess for inverse Jacobian to the matrix
+<question><title>The role of the initial matrix </title>
+<p>If we keep the initial point <c>[1; 2; 3]</c> in <xref ref="example-durand-kerner-broyden" /> but change the initial guess for inverse Jacobian to the matrix
 <cd>
 B = 0.1*eye(3);
 </cd>

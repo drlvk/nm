@@ -2,7 +2,7 @@
 
 <chapter xml:id="chapter-newton-secant" xmlns:xi="http://www.w3.org/2001/XInclude">
 
-<title>Newton's method and secant method</title>
+<title>Newton's method and its relatives</title>
 
 
     <introduction>
@@ -41,7 +41,7 @@ we get <q>Found x = 1 after 11 steps</q>.  If the starting point is different, t
 <section xml:id="section-newton-method-issues">
 <title>Potential issues with Newton's method</title>
 
-<p>First potential issue: we might not have a formula for the derivative of function <m>f</m>. This can be overcome by using numeric differentiation, which is covered later in the course. </p>
+<p>One potential issue is obvious: we might not have a formula for the derivative of function <m>f</m>. This can be overcome by using <em>numerical differentiation</em>, which we will study later in <xref ref="chapter-numerical-differentiation" />. </p>
 
 <p>The points where <m>f'(x)=0</m> are problematic for Newton's method, for two reasons. One is that <m>g</m> is not defined at such a point because of division by zero. So, if we happen to arrive at such a point in the process of iteration, the process has to be stopped and restarted again with a different initial value. Even if the derivative is not exactly zero but is very close to it, the value of <m>g</m> can be huge, sending the search to a location far from the actual solutions. </p>
 
@@ -113,7 +113,45 @@ end
 </solution></example>
 </section>
 
+<section xml:id="section-fzero-algorithm">
+<title>How <c>fzero</c> works</title>
 
+<p>Matlab command <c>fzero</c> implements <url href="https://en.wikipedia.org/wiki/Brent%27s_method">Brent's method</url> (1973). It builds on earlier <url href="https://en.wikipedia.org/wiki/Brent%27s_method#Dekker's_method">Dekker's method</url> (1969) which is easier to describe:
+<ol>
+<li>Start with a bracketing interval.</li>
+<li>Try the secant method.</li>
+<li>Accept the result of secant method if it <q>looks right</q>, which means: it lies between the midpoint and the endpoint with smaller value of <m>|f|</m>.</li>
+<li>Otherwise use bisection instead.</li>
+<li>Identify a new bracketing interval. Repeat until it is small enough.</li>
+</ol>
+</p>
+
+<p>Brent's method replaces secant lines with parabolas: instead of drawing a <em>line</em> through <em>two</em> points on the graph <m>y=f(x)</m>, we draw a <em>parabola</em> through <em>three points</em> on the graph. </p> 
+
+<p>But a parabola of the form <m>y=Ax^2+Bx+C</m> may intersect the <m>x</m>-axis twice, or not at all. This would not work for our purpose. So, Brent's method uses parabolas of the form <m>x=Ay^2+By+C</m> because they cross the <m>x</m>-axis once, at <m>x=C</m>. This is called <q>inverse quadratic interpolation</q>. We will study interpolation in detail in Part IV of the course. </p>
+
+<p>Brent's method can be summarized as: 
+<ol>
+<li>Start with a bracketing interval.</li>
+<li>Try inverse quadratic interpolation</li>
+<li>Accept the result of IQI if it <q>looks right</q> (the condition is more complicated than in Dekker's method)</li>
+<li>Otherwise use bisection instead.</li>
+<li>Identify a new bracketing interval. Repeat until it is small enough.</li>
+</ol>
+</p>
+
+<p>Several other variations of this approach were proposed over the years, but Brent's method became entrenched in libraries for numerical computation, from Matlab (<c>fzero</c>) to R (<c>uniroot</c>) to Python (SciPy <c>optimize</c> library) and others.</p>
+
+<p>To see how Brent's method works inside <c>fzero</c>, use an option for displaying each iteration.</p>
+<pre>
+options = optimset('Display', 'iter');
+fzero(@(x) exp(x)-1, 7, options)
+</pre>
+<p>The steps shown by this code include the preliminary process of finding a bracketing interval. These steps can be avoided if such an interval is given to <c>fzero</c> as its second argument <c>[a b]</c>, instead of an initial guess.</p>  
+<pre>
+fzero(@(x) exp(x)-1, [-5 5], options)
+</pre>
+</section>
 
 <section xml:id="section-relaxation-parameter">
 <title>The relaxation parameter</title>
@@ -165,7 +203,18 @@ Since <m>x, p \to 0</m>, the denominator is close to 1. Therefore, the method go
 Since the factor <m>p</m> itself goes to zero, the secant method has faster than linear rate of convergence. 
 </p></solution></example>
 
- 
+<example xml:id="example-fzero-singularity">
+   <title> The behavior of <c>fzero</c> near a singularity</title>
+<statement><p>Try using <c>fzero</c> to solve the equation <m>\tan x = 0</m> on the interval <m>[1, 2]</m>. Is there any warning that the result may be incorrect? Then try again with the option of displaying each iteration.</p>
+</statement>
+<solution><p>If we try <c>fzero(@(x) tan(x), [1 2])</c> then the result is <m>1.5708</m> and no warning is shown. But with the verbose option,
+<cd>
+options = optimset('Display', 'iter');
+fzero(@(x) tan(x), [1 2], options)
+</cd>
+Matlab will display an additional statement at the end: <q>Current point x may be near a singular point. The interval [1, 2] reduced to the requested tolerance and the function changes sign in the interval, but f(x) increased in magnitude as the interval reduced.</q></p>
+</solution></example>
+
 <question><title> Equation with no solution </title>
 <p>What happens if either Newton's method or secant method is applied to the equation <m>|x|+1 = 0</m> (which, of course, has no solutions)? 
 </p></question> 
@@ -182,7 +231,7 @@ Since the factor <m>p</m> itself goes to zero, the secant method has faster than
 
     <exercise number="1">
         <statement>
-<p> (Theoretical problem.) Suppose that Newton's method is used to solve <m>f(x)=0</m> with <m>f(x) = e^x + e^{-x} - 2</m>. Show that the function <m>g(x)=x-f(x)/f'(x)</m> (extended by <m>g(0)=0</m>) has a nonzero derivative at <m>0</m>. (Hence, <m>0</m> is not a superattracting point for Newton's method in this example.) </p>
+<p> (Theoretical problem.) Suppose that Newton's method is used to solve <m>f(x)=0</m> with <m>f(x) = e^x + e^{-x} - 2</m>. Show that the function <m>g(x)=x-f(x)/f'(x)</m> (extended by <m>g(0)=0</m>) has a nonzero derivative at <m>0</m>. (Hence, <m>0</m> is not a super-attracting point for Newton's method in this example.) </p>
 </statement>
 <hint><p>Hint: To simplify <m>f(x)/f'(x)</m>, you can multiply the numerator and denominator by <m>e^x</m> and recognize that they both can be factored. One possible approach to computing <m>g'(0)</m> is to take the limit of <m>g(x)/x</m> as <m>x\to 0</m> using L'Hospital's rule. </p> </hint>
 </exercise>
