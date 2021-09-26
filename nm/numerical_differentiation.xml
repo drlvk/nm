@@ -59,6 +59,8 @@ Thus, a higher-order formula should allow us to obtain an accurate result while 
 <men xml:id="eq-loss-sig1"> (3.45 + 100) - 102 = 103 - 102 = 1</men> 
 while the exact arithmetic gives <m>1.45</m>. The error is nearly <m>50\%</m>.</p> 
 
+
+
 <p>An actual illustration is the following attempt to compute the derivative of <m>f(x) = \sqrt{x}</m> at the point <m>x = 10^6</m>. Note that <m>f(10^6) = 1000</m> and <m>f'(10^6) = 1/2000 = 5\cdot 10^{-4}</m>. Both looks like reasonable numbers. Let us try to use the approximation <xref ref="eq-diff-f1" /> with the values 
 <m>h = 10^{-9}, 10^{-10}, 10^{-11}</m>, in Matlab console:</p>
 <pre>
@@ -111,6 +113,9 @@ ans = -1.0000e-09
 <p>Matlab also has some built-in logic for avoiding loss of significance in two frequently encountered situations: 
 <m>e^{x} - 1</m> and <m>\log (1+x)</m> when <m>x\approx 0</m>. These are the functions <c>expm1</c> and <c>log1p</c>. To see the difference, compare the results of <c>(exp(x)-1)/x</c> and <c>expm1(x)/x</c> when <c>x=1e-20</c>.
 </p>  
+
+<p>Another situation where loss of significance may occur is the evaluation of a polynomial of high degree: <xref ref="example-monomial-basis-loss-of-significance" />.</p>
+
 </section>
 
 

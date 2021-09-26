@@ -174,8 +174,7 @@ After 7 steps got 1
 <li><m>g(x) = 16/x^3</m></li>
 <li><m>h(x) = x^3 - x/2</m></li>
 </ol>
-(No programming is needed.)
-</p>
+No programming is involved in this problem. Ignore the solutions in complex numbers like <m>x=i</m>; we only need real numbers here.</p>
 </statement>
 </exercise>
 

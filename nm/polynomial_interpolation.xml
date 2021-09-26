@@ -19,7 +19,13 @@
 
 <p>A straightforward way is to do this is to write <m>p(x) = \sum_{j=0}^{n-1} c_j x^j</m> and solve a linear system for <m>c_j</m>; it has <m>n</m> equations with <m>n</m> unknowns. But this process is both slow and numerically fragile; the matrix of the linear system is likely to be ill-conditioned. And even if we could find the coefficients of monomials <m>x_j</m> easily, we do not necessarily want to, for the following reason. </p>  
 
-<p>We are used to seeing polynomials written in terms of the <term>monomial basis</term> <m>x^0, x^1, \dots, x^d</m>, that is, as a linear combination of the monomials. But this basis is ill-suited for numerical computations away from the point <m>x=0</m>. For example, consider the simple polynomial <m>p(x) = (x-7)^{15}</m>. If we expand it in the monomial basis and then try to compute its values on the interval <m>[6, 8]</m>, the result will be disappointing. In the code below, <c>c</c> is a vector of coefficients; the ellipsis notation allows it to by split between lines for readability. </p>
+<p>We are used to seeing polynomials written in terms of the <term>monomial basis</term> <m>x^0, x^1, \dots, x^d</m>, that is, as a linear combination of the monomials. But this basis is ill-suited for numerical computations away from the point <m>x=0</m>, as the following example shows.</p> 
+
+<example xml:id="example-monomial-basis-loss-of-significance">
+  <title>Loss of significance in the monomial basis</title>
+<statement><p>Consider the polynomial <m>p(x) = (x-7)^{15}</m>. Expand this formula in the monomial basis and try using it to plot the polynomial on the interval <m>[6, 8]</m>. Also plot the original formula for comparison.</p></statement>
+
+<answer>In the code below, <c>c</c> is a vector of coefficients; the ellipsis notation allows it to by split between lines for readability (without <ellipsis/>, a linebreak would be understood as the beginning of a new row of a matrix). 
 <pre>
 c = [1, -105, 5145, -156065, 3277365, -50471421, 588833245, -5299499205, ...
     37096494435, -201969803035, 848273172747, -2699051004195, 6297785676455, ...
@@ -36,6 +42,7 @@ subplot(1, 2, 2)
 plot(x, (x-7).^15)  
 </pre>
 <p>There is a catastrophic loss of significance here. If one uses <c>p = polyval(c, x)</c>, the result is not much better, even though this command tries to avoid the loss of significance. Expanding this polynomial in the monomial basis is numerically unwise.</p> 
+</answer></example>
 </section>
 
 <section xml:id="section-lagrange-polynomial">
