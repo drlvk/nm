@@ -128,7 +128,7 @@ f'(x) \approx \frac{f(x+h)-f(x-h)}{2h}
 </men> The following computation explains why.</p>
 
 <example xml:id="example-error-diff-f1-symm">
-  <title>Order of error of symmmetric difference approximation to <m>f'</m> </title>
+  <title>Order of error of symmetric difference approximation to <m>f'</m> </title>
 <statement><p>Find the order of error of the formula <xref ref="eq-diff-f1-symm" />.</p></statement> 
 <solution><p>
 <ul>
