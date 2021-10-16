@@ -159,14 +159,16 @@ Found a solution after 1359 steps:
 </solution></example>
 
 <question><title>The role of the initial point</title>
-<p>The initial point <c>[1; 2; 3]</c> seems unfortunately chosen in <xref ref="example-durand-kerner-broyden" />, because if we start with <c>[1; 1; 1]</c> instead, the method converges much faster: in 37 steps. Recall that for Newton's method this initial point did not work at all. What makes the difference? </p></question>
+<p>The initial point <c>[1; 2; 3]</c> seems unfortunately chosen in <xref ref="example-durand-kerner-broyden" />, because if we start with <c>[1; 1; 1]</c> instead, the method converges much faster: in 37 steps. Recall that for Newton's method this initial point did not work at all: the Jacobian was not invertible. Why is it possible to use it for Broyden't method? </p>
+<p> The initial point <c>[1; -2; 3]</c> leads to even faster convergence.</p> 
+</question>
 
 <question><title>The role of the initial matrix </title>
 <p>If we keep the initial point <c>[1; 2; 3]</c> in <xref ref="example-durand-kerner-broyden" /> but change the initial guess for inverse Jacobian to the matrix
 <cd>
 B = 0.1*eye(3);
 </cd>
-the algorithm converges much faster: in 53 steps. Why could this be? In what way does the <q>smaller</q> matrix help? Is the factor of 0.1 an under-relaxation parameter here? </p></question> 
+the algorithm converges much faster: in 53 steps. Why could this be? In what way does the <q>smaller</q> matrix help?  </p></question> 
 
 </section>
 

@@ -182,7 +182,19 @@ polynomial is <m>P_1(x)=x</m>, with the zero at the middle of interval <m>[-1,1]
 
     <exercise number="3">
         <statement>
-<p> Rewrite the adaptive integration script in <xref ref="example-implement-adaptive-gauss" /> so that it uses trapezoidal and Simpson's rules for <m>I_1, I_2</m>, and test it on the integral <m>\int_0^4 x^{3/2}\,dx</m> to make sure it returns a correct result.</p>   
+<p> Rewrite the adaptive integration script in <xref ref="example-implement-adaptive-gauss" /> so that it uses trapezoidal rule for <m>I_1</m> and Simpson's rule for <m>I_2</m>. Test it on the integral <m>\int_0^4 x^{3/2}\,dx</m> to make sure the script returns a correct result.</p> 
+
+<p>(For Octave users: recursive functions in Octave have some restrictions: the file must be named as the function itself, and the call to the function must come from the command line or from another file. For example, the Fibonacci recursion in Octave would be saved in file <q>fib.m</q> with the contents
+<cd>
+function f = fib(n)
+    if n &lt; 1
+        f = 1;
+    else
+        f = fib(n-1) + fib(n-2);
+    endif
+endfunction
+</cd>
+and then one would use it by entering, for example, <c>fib(8)</c> in the command line.)</p>  
 </statement></exercise>
 
  

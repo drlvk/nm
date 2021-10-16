@@ -194,6 +194,8 @@ The integral on the right is proper. As <m>u\to 0+</m>, the logarithm tends to n
 Two approximations must be made here: replacing <m>\infty</m> in the integral with a large number <m>b</m>, and using the <em>trapezoidal</em> rule with a large number of subintervals <m>n</m>. While avoiding extremely large <m>b</m> and <m>n</m> that might freeze your computer, calculate the value of integral <m>I</m> with enough precision so that <c>round(8*I^2, 2)</c> (rounding to 2 places) produces 3.14, a reasonable approximation to <m>\pi</m>.</p>    
 
 <p>Questions to answer: (a) What values of <m>b</m> and <m>n</m> did you use to achieve 3.14? (b) If you increase <m>b</m> while keeping <m>n</m> fixed, does the answer become more precise or less precise? Why? (Hint: think of the error estimate formula) </p>
+
+<p>(For Octave users: <c>round(x, 2)</c> is not currently available in Octave: it only has <c>round(x)</c>, rounding to the nearest integer. As a workaround, use <c>round(x*100)/100</c> which has the same effect as <c>round(x, 2)</c> in Matlab.)</p>
 </statement></exercise>
  
 
