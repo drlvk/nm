@@ -123,7 +123,7 @@ plot(t, p(t), x, y, 'r*')
 
 <p>Newton  polynomial is a third way of constructing an interpolating polynomial of degree <m>\lt n</m> through <m>n</m> given points. It is still the same polynomial, since there is only one such polynomial. But the method is different because, yet again, we use a different basis. The Newton basis is somewhere between monomial basis and Lagrange basis, in the following sense. Let <m>\mathbf c</m> be the vector of coefficients of interpolating polynomial in some basis; these coefficients are obtained from a linear system <m>A\mathbf c=\mathbf y</m> where the square matrix <m>A</m> depends on the basis. 
 <ul>
-  <li>For the monomial basis, the matrix <m>A</m> is dense and often ill-conditioned (it has entries <m>x_j^{i-1}</m> and is known as the <url href="https://en.wikipedia.org/wiki/Vandermonde_matrix">Vandermonde matrix</url>.</li>
+  <li>For the monomial basis, the matrix <m>A</m> is dense and often ill-conditioned (it has entries <m>x_j^{i-1}</m> and is known as the <url href="https://en.wikipedia.org/wiki/Vandermonde_matrix">Vandermonde matrix</url>.)</li>
   <li>For the Lagrange basis, the matrix <m>A</m> is the identity matrix, so the coefficients <m>c_k</m> are simply the given values <m>y_k</m>.</li>
   <li>For the Newton basis, the matrix <m>A</m> is <em>triangular</em>. This means there is some work to be done to obtain <m>\mathbf c</m> from <m>\mathbf y</m> but it is straightforward.</li>
 </ul>
