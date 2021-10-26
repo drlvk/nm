@@ -110,7 +110,7 @@ given that it describes a natural spline on <m>[0, 2]</m>.</p></statement>
 <section xml:id="section-using-cubic-splines">
 <title>Using cubic splines</title> 
 
-<p>We do not go into the process of finding the coefficients of a cubic spline: it involves solving a linear system with only a few nonzero diagonals. In Matlab, the command <c>spline</c> computes a knot-a-knot spline from given data, for example
+<p>We do not go into the process of finding the coefficients of a cubic spline: it involves solving a linear system with only a few nonzero diagonals. In Matlab, the command <c>spline</c> computes a not-a-knot spline from given data, for example
 <cd>
 x = 1:7;
 y = [1 3 2 4 4 1 5];
