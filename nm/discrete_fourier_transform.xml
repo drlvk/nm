@@ -187,16 +187,15 @@ Replacing <c>k = 0:n-1</c> in the above code with <c>k = [0:(n-1)/2 (1-n)/2:-1];
 c = [c(1:n/2) c(n/2+1)/2 c(n/2+1)/2 c(n/2+2:end)];    
 k = [0:n/2 -n/2:-1];
 </cd>
-If it is not known whether <m>n</m> is even or odd, one can use this conditional statement to handle both cases: 
-<cd> 
+If it is not known whether <m>n</m> is even or odd, one can use a conditional statement to handle both cases:</p> 
+<pre> 
 if mod(n, 2) == 1
-    k = [0:(n-1)/2 (1-n)/2:-1]; 
+    k = [0:(n-1)/2 (1-n)/2:-1];
 else
     c = [c(1:n/2) c(n/2+1)/2 c(n/2+1)/2 c(n/2+2:end)];
     k = [0:n/2 -n/2:-1];
 end
-</cd>
-</p>
+</pre>
 
 <p>The preceding examples had complex-valued data, but the same approach allows us to interpolate real-valued data with a real trigonometric polynomial. The main difference is in plotting the real-valued periodic function: we want the horizontal axis to represent <m>t</m> while the vertical axis shows the values of the function.</p>
 
