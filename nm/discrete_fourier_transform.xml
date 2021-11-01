@@ -264,7 +264,7 @@ plot(t, real(p(t)), (0:n-1)/n, z, 'r*')
     <exercise number="2">
         <statement>
 <p> Choose some complex numbers <m>z_0, z_1, \dots, z_{n-1}</m> (with odd <m>n</m>) so that connecting them in this order (and connecting <m>z_{n-1}</m> to <m>z_0</m>) one gets a closed curve similar to letter B. 
-Then use Discrete Fourier Transform to plot a complex trigonometric polynomial interpolating these numbers. Does its plot look like letter B? </p> 
+Then use Discrete Fourier Transform to plot a complex trigonometric polynomial interpolating these numbers (<xref ref="example-meta-interpolation" /> may be helpful). Does the plot look like letter B? </p> 
 </statement></exercise>
  
 </exercises>
