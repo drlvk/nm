@@ -181,16 +181,24 @@ k = [0 1 2 3 4 -4 -3 -2 -1];
 </cd>
 Replacing <c>k = 0:n-1</c> in the above code with <c>k = [0:(n-1)/2 (1-n)/2:-1];</c> corrects the issue. </p> 
 
-<p>The previous paragraph operates with an odd number <m>n</m> which is more natural in this context because trigonometric polynomials <xref ref="eq-trigonometric-polynomial-complex" /> normally contain an odd number of terms. But what if we are given an even number of points to interpolate through, such as 10? It is not clear whether to keep <m>k=n/2</m> as positive: <c>k=[0:n/2 1-n/2:-1]</c> or to move it to negative: 
-<c>k=[0:n/2-1  -n/2:-1]</c>. The symmetric approach is to split the term with <m>k=n/2</m> in two, like this:  
+<p>The previous paragraph operates with an odd number <m>n</m> which is more natural in this context because trigonometric polynomials <xref ref="eq-trigonometric-polynomial-complex" /> normally contain an odd number of terms. If we have an even number of points to interpolate through, the aliasing gets more involved: for example, with <m>n=6</m> points we have frequencies
+0, 1, 2, 3, 4, 5 and it is not clear whether to keep <m>k=3</m> as is or to replace it with <m>k-n=-3</m>. The best approach is to split this term in two, so that the list of coefficients <m>k</m> becomes 0, 1, 2, 3, -3, -2, -1. The corresponding Fourier coefficient is split in two halves accordingly: 
 <cd>
-c = [c(1:n/2-1) c(n/2)/2 c(n/2)/2 c(n/2+1:end)];
+c = [c(1:n/2) c(n/2+1)/2 c(n/2+1)/2 c(n/2+2:end)];    
 k = [0:n/2 -n/2:-1];
 </cd>
-To avoid this complication, we stick to odd <m>n</m> (number of interpolation points) in this section.</p> 
+If it is not known whether <m>n</m> is even or odd, one can use this conditional statement to handle both cases: 
+<cd> 
+if mod(n, 2) == 1
+    k = [0:(n-1)/2 (1-n)/2:-1]; 
+else
+    c = [c(1:n/2) c(n/2+1)/2 c(n/2+1)/2 c(n/2+2:end)];
+    k = [0:n/2 -n/2:-1];
+end
+</cd>
+</p>
 
-<p>The same approach works for interpolating real-valued data with a trigonometric function. The main difference is in plotting the real-valued periodic function: we want the horizontal axis to represent <m>t</m> while the vertical axis shows the values of the function.</p>
-
+<p>The preceding examples had complex-valued data, but the same approach allows us to interpolate real-valued data with a real trigonometric polynomial. The main difference is in plotting the real-valued periodic function: we want the horizontal axis to represent <m>t</m> while the vertical axis shows the values of the function.</p>
 
 <example xml:id="example-real-trigonometric-interpolation">
   <title> Interpolation by a real trigonometric polynomial</title> 
