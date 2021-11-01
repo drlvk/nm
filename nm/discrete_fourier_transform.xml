@@ -197,6 +197,37 @@ else
 end
 </pre>
 
+
+<example xml:id="example-meta-interpolation">
+  <title> Create a closed curve similar to the logo of Meta </title> 
+<statement><p>Choose a few points in the complex plane so that trigonometric interpolation through these points creates a curve similar to <url href="https://en.wikipedia.org/wiki/Meta_Platforms#/media/File:Meta_Platforms_Inc._logo.svg">Meta logo</url>. </p> 
+</statement>
+<answer><p>It is natural to place the self-intersection point at <m>0</m>, then the points of interpolation will be symmetric about the vertical (imaginary) axis. Trial and error leads to the choice
+<cd>
+z = [6, 6-6i, 2-3i, -2+3i, -6, -6-6i, -2-3i, 2+3i];
+</cd>
+which describes the curve starting from the upper right part, going down, then diagonally to top left, then down, and diagonally to top right again. We have <m>n=8</m> points, so the above discussion about odd/even distinction is relevant. For the sake of reusability, the code uses a conditional statement that can handle both odd and even cases. </p> 
+<pre>
+n = numel(z);
+c = fft(z);
+if mod(n, 2) == 1
+    k = [0:(n-1)/2 (1-n)/2:-1]; 
+else
+    c = [c(1:n/2) c(n/2+1)/2 c(n/2+1)/2 c(n/2+2:end)];
+    k = [0:n/2 -n/2:-1];
+end
+p = @(t) c/n*exp(2*pi*1i*k'*t);
+
+t = linspace(0, 1, 1000);
+plot(p(t), 'linewidth', 30)
+hold on
+plot(z, 'k.', 'markersize', 30)
+hold off
+axis equal
+</pre>
+<p>The curve is made extra thick because this is how Meta logo looks. The code also marks the eight points of interpolation.</p>
+</answer> </example> 
+
 <p>The preceding examples had complex-valued data, but the same approach allows us to interpolate real-valued data with a real trigonometric polynomial. The main difference is in plotting the real-valued periodic function: we want the horizontal axis to represent <m>t</m> while the vertical axis shows the values of the function.</p>
 
 <example xml:id="example-real-trigonometric-interpolation">
