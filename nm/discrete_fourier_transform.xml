@@ -257,7 +257,7 @@ plot(t, real(p(t)), (0:n-1)/n, z, 'r*')
     <exercise number="1">
         <statement>
 <p> Modify <xref ref="example-real-trigonometric-interpolation" /> to create and plot two real trigonometric polynomials <m>p</m> such that the values <m>p(0), p(1/9), \dots, p(8/9)</m> are the 9 digits of your SUID number. One polynomial should use the aliased reconstruction formula <c>k = [0:(n-1)/2 (1-n)/2:-1];</c> and the other the non-aliased formula <c>k = 0:n-1</c>. </p>
-<p>The command <c>subplot</c> can help display these polynomials side by side, for example <c>subplot(1, 2, 1)</c> before the first plot and then <c>subplot(1, 2, 2)</c> before the second. Which polynomial creates a more natural curve through given points?  
+<p>The command <c>subplot</c> can help display these polynomials in one figure, for example <c>subplot(2, 1, 1)</c> before the first plot and then <c>subplot(2, 1, 2)</c> before the second. Which polynomial creates a more natural curve through given points?  
 </p> 
 </statement></exercise>
   

@@ -165,7 +165,7 @@ histogram(S, 100, 'Normalization', 'pdf')
 <c>hist(S, 100, 100/k)</c>.)</p>
 <p>This produces a <em>normalized</em> histogram of <m>10^7</m> sample sums, with <m>k</m> numbers in each sample. The numbers are chosen from uniform distribution on <m>[-1/2, 1/2]</m>. Normalization means that the area under the histogram is 1 (in probability terms, this histogram approximates the <em>probability density function</em> of sample sums, hence the option <q>pdf</q>.) </p>
 
-<p>What should the value <m>k</m> be in order for the histogram to resemble the cardinal B-splines of degree 3 shown in <xref ref="B-spline-png" />? Find the answer experimentally after trying a few values of <m>k</m>. Having found a suitable <m>k</m>, confirm your guess by adding the graph of the cardinal spline to the histogram plot (recall <c>hold on</c> / <c>hold off</c>  are useful for combining graphs.) </p>
+<p>What should the value <m>k</m> be in order for the histogram to resemble the cardinal B-spline of degree 3 shown in <xref ref="B-spline-png" />? Find the answer experimentally after trying a few values of <m>k</m>. Having found a suitable <m>k</m>, confirm your guess by adding the graph of the cardinal spline to the histogram plot (recall <c>hold on</c> / <c>hold off</c>  are useful for combining graphs.) </p>
 </statement></exercise>
 
  
