@@ -194,8 +194,6 @@ The key step is writing a loop that sums the squares of the elements of <c>sorte
 <c>thr</c> should be used for truncating Fourier coefficients.</p>
 
 <p>Compare the quality of compressed image with <c>q = 90</c>, <c>q = 80</c>, and <c>q = 70</c>. In addition to showing the compressed image, the script should display the percentage of Fourier coefficients that were kept as non-zero values: for example, <c>100*numel(nonzeros(fc))/numel(fc)</c>. </p> 
-
-<p>Note for Octave users: the command <c>prctile</c> (which is not available in Octave) is not needed at all in this homework.</p> 
 </statement>
 <hint><p>Consider a small example: the sorted array of nonconstant coefficients is <c>[10 8 7 5 4 2 1]</c> which makes its total energy <m>259</m>. Suppose we want to determine the threshold <c>thr</c> that preserves 90% of energy, which is <m>0.9\cdot 259 = 233.1</m>. Start adding the squares of coefficients until the required amount is reached:
 <ul>
@@ -204,7 +202,10 @@ The key step is writing a loop that sums the squares of the elements of <c>sorte
 <li> add <m>7^2</m>, get <m>213</m>, still not enough</li>
 <li> add <m>5^2</m>, get <m>238</m>, which is enough</li>
 </ul>
-At the conclusion of the loop we found that <m>5</m> is the smallest coefficient that we should keep; any smaller ones should be discarded. Thus, in this example <c>thr = 5</c> would be the correct choice of threshold. Once the threshold is determined, the rest proceeds as in <xref ref="example-compress-image" />.</p></hint>
+At the conclusion of this process (which can be either a <c>while</c> loop or a <c>for</c> loop with a <c>break</c> statement) we find that <m>5</m> is the smallest coefficient that we should keep; any smaller ones should be discarded. Thus, in this example <c>thr = 5</c> would be the correct choice of threshold. Once the threshold is determined, the rest proceeds as in <xref ref="example-compress-image" />.</p>
+
+<p>Note that the command <c>prctile</c> is not needed in this homework.</p> 
+</hint>
 </exercise>
    
  
