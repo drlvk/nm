@@ -19,7 +19,7 @@
 <li> <c>size(im)</c> shows its size (dimensions) as 462<times/>692<times/>3. This is a three-dimensional array, where the last index means the <term>color channel</term>: Red, Green, Blue. The first two indices are rows and columns. One can access individual channels with <c>im(:, :, 1)</c> (for red). 
 Matlab can also work with <term>grayscale</term> images which have just one channel for brightness; such images are represented by matrices which makes them easier to work with. 
 </li>
-<li> <c>class(im)</c> says <q>uint8</q>. All other Matlab objects we worked have class <c>double</c> meaning they are floating-point numbers with double-precision, able to store about 16 decimal digits. But <c>uint8</c> is different: it is an <term>unsigned 8-bit integer</term>, with possible values 0, 1, <ellipsis/>, 255. This reflects the image format: in each channel, the brightness of each pixel ranges from 0 to 255. (How many possible colors does this create?) In other languages, one would say <q>type</q> instead of <q>class</q>.</li>
+<li> <c>class(im)</c> says <q>uint8</q>. All other Matlab objects we encountered so far have class <c>double</c> meaning they contain floating-point numbers with double-precision, able to store about 16 decimal digits. But <c>uint8</c> is different: it is an <term>unsigned 8-bit integer</term>, with possible values 0, 1, <ellipsis/>, 255. This reflects the image format: in each channel, the brightness of each pixel ranges from 0 to 255. (How many possible colors does this create?) Since 8 bits form a <em>byte</em>, the data in our image requires <m>462 \times 692 \times 3 = 959112</m> bytes for storage. But the JPEG file with this image is much smaller, due to built-in compression which will be described later.</li>
 </ul>
 </p>
 
@@ -194,7 +194,18 @@ The key step is writing a loop that sums the squares of the elements of <c>sorte
 <c>thr</c> should be used for truncating Fourier coefficients.</p>
 
 <p>Compare the quality of compressed image with <c>q = 90</c>, <c>q = 80</c>, and <c>q = 70</c>. In addition to showing the compressed image, the script should display the percentage of Fourier coefficients that were kept as non-zero values: for example, <c>100*numel(nonzeros(fc))/numel(fc)</c>. </p> 
-</statement></exercise>
+
+<p>Note for Octave users: the command <c>prctile</c> (which is not available in Octave) is not needed at all in this homework.</p> 
+</statement>
+<hint><p>Consider a small example: the sorted array of nonconstant coefficients is <c>[10 8 7 5 4 2 1]</c> which makes its total energy <m>259</m>. Suppose we want to determine the threshold <c>thr</c> that preserves 90% of energy, which is <m>0.9\cdot 259 = 233.1</m>. Start adding the squares of coefficients until the required amount is reached:
+<ul>
+<li> <m>10^2 = 100</m>, not enough</li>
+<li> add <m>8^2</m>, get <m>164</m>, still not enough</li>
+<li> add <m>7^2</m>, get <m>213</m>, still not enough</li>
+<li> add <m>5^2</m>, get <m>238</m>, which is enough</li>
+</ul>
+At the conclusion of the loop we found that <m>5</m> is the smallest coefficient that we should keep; any smaller ones should be discarded. Thus, in this example <c>thr = 5</c> would be the correct choice of threshold. Once the threshold is determined, the rest proceeds as in <xref ref="example-compress-image" />.</p></hint>
+</exercise>
    
  
 </exercises>
