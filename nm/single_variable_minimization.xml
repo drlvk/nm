@@ -236,10 +236,10 @@ and time the script with <c>tic</c> <c>toc</c> as in <xref ref="section-timing-c
 <exercise number="1">
 <statement> <p> (Theoretical) For each of the following functions, use the derivative <m>f'</m> to determine if it is unimodal  on the given interval. You do not need to actually find the minimum. 
 <ol label="(a)">
-<li> <m>e^{-x}\sin x </m> on <m>[1,100] </m> </li>
-<li> <m>\ln(x)+10/x </m> on <m>[1,100] </m> </li>
-<li> <m>x^2 e^{x} </m> on <m>[-10,10] </m> </li>
-<li> <m>x^3 e^{x} </m> on <m>[-10,10] </m> </li>
+<li> <m>f(x) = e^{-x}\sin x </m> on <m>[1,100] </m> </li>
+<li> <m>f(x) = \ln(x)+10/x </m> on <m>[1,100] </m> </li>
+<li> <m>f(x) = x^2 e^{x} </m> on <m>[-10,10] </m> </li>
+<li> <m>f(x) = x^3 e^{x} </m> on <m>[-10,10] </m> </li>
 </ol>
 </p></statement></exercise>
  
