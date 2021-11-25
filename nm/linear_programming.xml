@@ -215,6 +215,8 @@ and
 <section xml:id="section-lp-duality-transportation">
 <title>Duality in optimal transportation</title>
 
+<p>This is an optional section, feel free to skip it.</p>
+
 <p>The book <em>Topics in Optimal Transportation</em> by <url href="https://en.wikipedia.org/wiki/C%C3%A9dric_Villani">Cédric Villani</url> presents the following illustration of duality, credited by the author to <url href="https://en.wikipedia.org/wiki/Luis_Caffarelli">Luis Caffarelli</url>. In this book the duality theorem is named after <url href="https://en.wikipedia.org/wiki/Leonid_Kantorovich">Leonid Kantorovich</url>. </p> 
 
 <blockquote> <p>Suppose for instance that you are both a mathematician and an industrialist, and want to transfer a huge amount of coal from your mines to your factories. You can hire trucks to do this transportation problem, but you have to pay them <m>c(X, Y)</m> for each ton of coal which is transported from place <m>X</m> to place <m>Y</m>. Both the amount of coal which you can extract from each mine, and the amount which each factory should receive, are fixed. As you are trying to [<ellipsis/>] minimize the price you have to pay, another mathematician comes to you and tells you: </p>

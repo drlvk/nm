@@ -33,16 +33,16 @@ where the coefficients <m>c_1, \dots, c_m</m> are to be determined by training t
 
 <p>In <xref ref="chapter-nonlinear-least-squares" /> our training method was to minimize the sum of squares 
 <me>
-S(\mathbf c) = \sum_{j=1}^n (z_j - h_{\mathbf c}(\mathbf x_j))^2
+S(\mathbf c) = \sum_{k=1}^n (z_k - h_{\mathbf c}(\mathbf x_k))^2
 </me>
-However, in the context of probability there is a more natural method: maximizing the <term>likelihood</term> function. Think of <m>h_{\mathbf c}(\mathbf x_j)</m> as the probability that <m>z_j=1</m>, and therefore <m>1 - h_{\mathbf c}(\mathbf x_j)</m> is the probability that <m>z_j=0</m>. Assuming the independence of outcomes, the probability of observing the data that was actually observed is 
+However, in the context of probability there is a more natural method: maximizing the <term>likelihood</term> function. Think of <m>h_{\mathbf c}(\mathbf x_k)</m> as the probability that <m>z_k=1</m>, and therefore <m>1 - h_{\mathbf c}(\mathbf x_k)</m> is the probability that <m>z_k=0</m>. Assuming the independence of outcomes, the probability of observing the data that was actually observed is 
 <men xml:id="eq-likelihood-function">
-L(\mathbf c)  = \prod_{z_j = 1}  h_{\mathbf c}(\mathbf x_j)  \cdot \prod_{z_j = 0} (1-h_{\mathbf c}(\mathbf x_j))
+L(\mathbf c)  = \prod_{z_k = 1}  h_{\mathbf c}(\mathbf x_k)  \cdot \prod_{z_k = 0} (1-h_{\mathbf c}(\mathbf x_k))
 </men>
-Since the outcomes <m>z_j</m> already occurred, this expression is not really the probability of a random event; it is the 
+Since the outcomes <m>z_k</m> already occurred, this expression is not really the probability of a random event; it is the 
 <term>likelihood</term> of the parameters being <m>\mathbf c</m>. We want to maximize this likelihood. Since the product may be very small when there are many observations, it is easier to maximize the <term>log-likelihood</term>, the logarithm of <xref ref="eq-likelihood-function" />:
 <men xml:id="eq-log-likelihood-function">
-\log L(\mathbf c) = \sum_{z_j = 1} \log h_{\mathbf c}(\mathbf x_j)  + \sum_{z_j = 0} \log (1-h_{\mathbf c}(\mathbf x_j))
+\log L(\mathbf c) = \sum_{z_k = 1} \log h_{\mathbf c}(\mathbf x_k)  + \sum_{z_k = 0} \log (1-h_{\mathbf c}(\mathbf x_k))
 </men>
 </p>
 
@@ -92,8 +92,8 @@ disp([prediction' actual']);
 <p>Linear programming offers a very different, geometric approach to classification. Think of observations with <m>m</m> explanatory variables as  points in <m>\mathbb R^m</m>, which are colored (say, red or blue) according to their category. Our goal is to
 find a plane (or surface) that separates the points of different colors as cleanly as possible.</p>  
 
-<p>To help with visualization, consider the case <m>m=2</m> when the explanatory variables  <m>(x_1, x_2)</m> are more conveniently labeled <m>(x, y)</m>. We are looking for a line <m>y = ax+b</m> such that the points of one category are above it, and the points of other category are below it. If such a line exists, it is not unique, so we want to choose it to maximize the width of separation. That is, we look for maximal <m>w\ge 0</m> such that <m>y_j\ge ax_j + b + w</m> in the first set (above the line) and 
-<m>y_j\le ax_j +b - w</m> in the second set (below the line). This is a linear programming problem, with three variables <m>a, b, w</m>, objective function <m>w</m>, and the linear constraints stated above. </p>
+<p>To help with visualization, consider the case <m>m=2</m> when the explanatory variables  <m>(x_1, x_2)</m> are more conveniently labeled <m>(x, y)</m>. We are looking for a line <m>y = ax+b</m> such that the points of one category are above it, and the points of other category are below it. If such a line exists, it is not unique, so we want to choose it to maximize the width of separation. That is, we look for maximal <m>w\ge 0</m> such that <m>y_k\ge ax_k + b + w</m> in the first set (above the line) and 
+<m>y_k\le ax_k +b - w</m> in the second set (below the line). This is a linear programming problem, with three variables <m>a, b, w</m>, objective function <m>w</m>, and the linear constraints stated above. </p>
 
 <p>The same idea applies to separation by a curve (for example, a polynomial). </p>
 
@@ -102,14 +102,14 @@ find a plane (or surface) that separates the points of different colors as clean
 <statement><p> Find and plot the best parabola separating  the points <m>(2,3)</m>, <m>(4,6)</m>, and <m>(7,4)</m> (the <q>top</q> group) from <m>(3,4)</m> and <m>(5,5)</m> (the <q>bottom</q> group). </p> 
 </statement>
 
-<solution><p>We maximize <m>w</m> subject to constraints <m>y_j\ge ax_j^2 + bx_j + c + w</m> in the first group and 
-<m>y_j\le ax_j^2 + bx_j + c - w</m> in the second. Rewrite the constraints as 
+<solution><p>We maximize <m>w</m> subject to constraints <m>y_k\ge ax_k^2 + bx_k + c + w</m> in the first group and 
+<m>y_k\le ax_k^2 + bx_k + c - w</m> in the second. Rewrite the constraints as 
 <me>
-ax_j^2 + bx_j + c + w \le y_j
+ax_k^2 + bx_k + c + w \le y_k
 </me>
 in the first group and      
 <me>
--ax_j^2 - bx_j - c + w \le -y_j
+-ax_k^2 - bx_k - c + w \le -y_k
 </me>
 in the second. Also, <m>w\ge 0</m> is required by the geometric meaning of <m>w</m> as the <q>width</q> of separation. 
 Given the vectors <c>xt, yt</c> describing the first group and <c>xb, yb</c> for the second, we can form a system of linear inequalities <m>A\mathbf x\le \mathbf b</m> as below </p>
@@ -132,14 +132,13 @@ A = [xt.^2 xt xt.^0 xt.^0; -xb.^2 -xb -xb.^0 xb.^0];
 b = [yt; -yb];
 opt = linprog([0; 0; 0; -1], A, b, [], [], [-Inf; -Inf; -Inf; 0]);
 </pre>
-<p>The result is the same. With either version of the code, if the data points are changed so that there is no parabola that separates them completely, we get the message <q>No feasible solution found.
-Linprog stopped because no point satisfies the constraints.</q></p>
+<p>The result is the same. With either version of the code, if the data points are changed so that there is no parabola that separates them completely, we get the message <q>No feasible solution found. Linprog stopped because no point satisfies the constraints.</q></p>
 </solution>
 </example>
 
 <p>Complete separation of the categories may be impossible (which makes the linear programming problem infeasible, as Matlab would report). Perhaps some data points  have incorrect measurement values, or are mislabeled by category, or perhaps (quite likely) one simply cannot predict the outcome with certainty, based on the explanatory variables we have. In such a case we can still look for a separating line or curve, but the separation will be <em>incomplete</em>, with some points left on the <q>wrong</q> side. </p>
 
-<p>We look for a line that minimizes the sum of penalties, the penalty being the amount by which a point falls into the wrong group. Formally, we minimize <m>\sum p_j</m> where <m>p_j\ge 0</m> are the penalties, subject to constraints <m>y_j\ge ax_j + b - p_j</m> for points in the <q>top</q> category and <m>y_j \le ax_j + b + p_j</m> for points in the <q>bottom</q> category. This is still a linear programming problem, but there are more variables now: <m>a, b, p_1, \dots, p_n</m>, and the objective function is  <m>\sum p_j</m>. 
+<p>We look for a line that minimizes the sum of penalties, the penalty being the amount by which a point falls into the wrong group. Formally, we minimize <m>\sum p_k</m> where <m>p_k\ge 0</m> are the penalties, subject to constraints <m>y_k\ge ax_k + b - p_k</m> for points in the <q>top</q> category and <m>y_k \le ax_k + b + p_k</m> for points in the <q>bottom</q> category. This is still a linear programming problem, but there are more variables now: <m>a, b, p_1, \dots, p_n</m>, and the objective function is  <m>\sum p_k</m>. 
 </p>   
 
 <example xml:id="example-separate-by-line">
@@ -153,17 +152,17 @@ xb = randn(7, 1);
 yb = randn(7, 1);
 </pre>
 </statement> 
-<solution><p>We minimize <m>\sum p_j</m> subject to constraints <m>y_j\ge ax_j + b - p_j</m> in the first group and 
-<m>y_j\le ax_j + b + p_j</m> in the second. Rewrite the constraints as 
+<solution><p>We minimize <m>\sum p_k</m> subject to constraints <m>y_k\ge ax_k + b - p_k</m> in the first group and 
+<m>y_k\le ax_k + b + p_k</m> in the second. Rewrite the constraints as 
 <me>
-ax_j + b - p_j \le y_j
+ax_k + b - p_k \le y_k
 </me>
 in the first group and      
 <me>
--ax_j - b - p_j \le -y_j
+-ax_k - b - p_k \le -y_k
 </me>
-in the second. We also require <m>p_j \ge 0</m>. 
-Given the vectors <c>xt, yt</c> describing the first group and <c>xb, yb</c> for the second, we can form a system of linear inequalities <m>A\mathbf x\le \mathbf b</m> and separately impose the nonnegativity requirement on <m>p_j</m> (though not on the 
+in the second. We also require <m>p_k \ge 0</m>. 
+Given the vectors <c>xt, yt</c> describing the first group and <c>xb, yb</c> for the second, we can form a system of linear inequalities <m>A\mathbf x\le \mathbf b</m> and separately impose the nonnegativity requirement on <m>p_k</m> (though not on the 
 coefficients <m>a, b</m> of the line). </p>
 <pre>
 A = [xt xt.^0; -xb -xb.^0];
@@ -187,7 +186,12 @@ plot(xt, yt, 'b*', xb, yb, 'r*', t, y, 'k')
     <title>Homework</title>
 
 <exercise number="1">
-<statement> <p> Modify <xref ref="example-separate-by-line" /> to separate the points (probably incompletely) by a parabola rather than by a line.
+<statement> <p> (Theoretical) Write down the system of linear constraints used in <xref ref="example-separate-by-line" /> in an explicit form (for example <m>11a+22b-w\ge 33</m> etc).
+</p></statement></exercise>
+
+<exercise number="2">
+<statement> <p> (Computational) Modify the code in <xref ref="example-separate-by-line" /> to separate the points
+ (not completely) by a parabola rather than by a line.
 </p></statement></exercise>
  
 </exercises>
