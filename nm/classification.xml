@@ -186,7 +186,7 @@ plot(xt, yt, 'b*', xb, yb, 'r*', t, y, 'k')
     <title>Homework</title>
 
 <exercise number="1">
-<statement> <p> (Theoretical) Write down the system of linear constraints used in <xref ref="example-separate-by-line" /> in an explicit form, as a system of inequalities such as <q><m>11a+22b-33c + w\le 44</m></q>.
+<statement> <p> (Theoretical) Write down the system of linear constraints used in <xref ref="example-separate-by-parabola" /> in an explicit form, as a system of inequalities such as <q><m>11a+22b-33c + w\le 44</m></q>.
 </p></statement></exercise>
 
 <exercise number="2">
