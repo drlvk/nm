@@ -45,65 +45,65 @@ along with MathBook XML.  If not, see <http://www.gnu.org/licenses/>.
     <book xml:id="numerical-methods">
         <title>Numerical Methods with Programming</title> 
 
-        <xi:include href="./frontmatter.xml" />                 <!-- Title Page, Preface, etc. -->
+        <xi:include href="./frontmatter.ptx" />                 <!-- Title Page, Preface, etc. -->
 
         <!-- Parts are optional, included here for testing            -->
         <!-- In "bookinfo.xml" set to "structural" for maximum effect -->
 
         <part xml:id="part-matlab">
             <title>Using Matlab</title>
-            <xi:include href="./matrices_vectors.xml" /> 
-            <xi:include href="./systems_vectorization_plots.xml" />
-            <xi:include href="./functions_input_output.xml" />
-            <xi:include href="./control_flow.xml" />
-            <xi:include href="./user_defined_functions.xml" />
+            <xi:include href="./matrices_vectors.ptx" /> 
+            <xi:include href="./systems_vectorization_plots.ptx" />
+            <xi:include href="./functions_input_output.ptx" />
+            <xi:include href="./control_flow.ptx" />
+            <xi:include href="./user_defined_functions.ptx" />
         </part>
 
         <part xml:id="part-equations">
             <title>Solving Equations</title>
-            <xi:include href="./linear_systems.xml" />
-            <xi:include href="./root_finding_bisection.xml" />
-            <xi:include href="./fixed_point_iteration.xml" />
-            <xi:include href="./newton_secant.xml" />
-            <xi:include href="./multivariable_newton.xml" />
-            <xi:include href="./broyden.xml" />
+            <xi:include href="./linear_systems.ptx" />
+            <xi:include href="./root_finding_bisection.ptx" />
+            <xi:include href="./fixed_point_iteration.ptx" />
+            <xi:include href="./newton_secant.ptx" />
+            <xi:include href="./multivariable_newton.ptx" />
+            <xi:include href="./broyden.ptx" />
         </part>
 
         <part xml:id="part-calculus">
             <title>Numerical Calculus</title>
-            <xi:include href="./numerical_differentiation.xml" />
-            <xi:include href="./trapezoid_midpoint.xml" />
-            <xi:include href="./simpson_newton_cotes.xml" />
-            <xi:include href="./legendre_laguerre.xml" /> 
-            <xi:include href="./gaussian_integration.xml" /> 
-            <xi:include href="./adaptive_integration.xml" />
-            <xi:include href="./multivariable_integration.xml" />
-            <xi:include href="./ode_euler.xml" />
-            <xi:include href="./ode_modeling.xml" />
+            <xi:include href="./numerical_differentiation.ptx" />
+            <xi:include href="./trapezoid_midpoint.ptx" />
+            <xi:include href="./simpson_newton_cotes.ptx" />
+            <xi:include href="./legendre_laguerre.ptx" /> 
+            <xi:include href="./gaussian_integration.ptx" /> 
+            <xi:include href="./adaptive_integration.ptx" />
+            <xi:include href="./multivariable_integration.ptx" />
+            <xi:include href="./ode_euler.ptx" />
+            <xi:include href="./ode_modeling.ptx" />
         </part>
 
         <part xml:id="part-data">
             <title>Modeling Data</title>
-            <xi:include href="./polynomial_interpolation.xml" />
-            <xi:include href="./chebyshev.xml" />
-            <xi:include href="./spline_interpolation.xml" />
-            <xi:include href="./spline_approximation.xml" />
-            <xi:include href="./discrete_fourier_transform.xml" />
-            <xi:include href="./dft_applications.xml" />
-            <xi:include href="./linear_least_squares.xml" />
-            <xi:include href="./transforming_data.xml" />
-            <xi:include href="./nonlinear_least_squares.xml" />
+            <xi:include href="./polynomial_interpolation.ptx" />
+            <xi:include href="./chebyshev.ptx" />
+            <xi:include href="./spline_interpolation.ptx" />
+            <xi:include href="./spline_approximation.ptx" />
+            <xi:include href="./discrete_fourier_transform.ptx" />
+            <xi:include href="./dft_applications.ptx" />
+            <xi:include href="./linear_least_squares.ptx" />
+            <xi:include href="./transforming_data.ptx" />
+            <xi:include href="./nonlinear_least_squares.ptx" />
         </part>
 
         <part xml:id="part-optimization">
             <title>Optimization</title> 
-            <xi:include href="./single_variable_minimization.xml" />
-            <xi:include href="./parabolic_interpolation_descent.xml" />
-            <xi:include href="./gradient_newton_conjugate.xml" />
-            <xi:include href="./nelder_mead.xml" />
-            <xi:include href="./constrained_optimization.xml" />
-            <xi:include href="./linear_programming.xml" />
-            <xi:include href="./classification.xml" />
+            <xi:include href="./single_variable_minimization.ptx" />
+            <xi:include href="./parabolic_interpolation_descent.ptx" />
+            <xi:include href="./gradient_newton_conjugate.ptx" />
+            <xi:include href="./nelder_mead.ptx" />
+            <xi:include href="./constrained_optimization.ptx" />
+            <xi:include href="./linear_programming.ptx" />
+            <xi:include href="./classification.ptx" />
         </part>
 
     </book>
