@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+<!--******************************************-->
+<!--*  Authored with PreTeXt                 *-->
+<!--*  pretextbook.org                       *-->
+<!--*  Theme: default-modern                 *-->
+<!--*  Palette:                              *-->
+<!--******************************************-->
+
+<!--********************************************-->
+<!--*       Generated from PreTeXt source      *-->
+<!--*                                          *-->
+<!--*         https://pretextbook.org          *-->
+<!--*                                          *-->
+<!--********************************************-->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="robots" content="noindex, nofollow">
+</head>
+<body class="ignore-math">
+<article class="remark remark-like"><h3 class="heading">
+<span class="type">Remark</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="codenumber">18.3.2</span><span class="period heading-divison-mark heading-divison-mark__period">.</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="title">Averaging over a sphere.</span>
+</h3>
+<div class="para logical">
+<div class="para">Monte-Carlo method can also be used to average a function over a <em class="emphasis">sphere</em> with the help of <dfn class="terminology">normal distribution</dfn>.  Here is a brief summary of random number generators in Matlab:</div>
+<ul class="disc" id="remark-normal-distribution-2-3">
+<li>
+<div class="para">
+<code class="code-inline tex2jax_ignore">rand(m, n)</code> generates an <span class="process-math">\(m\times n\)</span> matrix of random real numbers taken from the uniform distribution on the interval <span class="process-math">\([0, 1]\text{.}\)</span>
+</div>
+<div class="autopermalink" data-description="Item"><a href="#remark-normal-distribution-2-3-1" title="Copy heading and permalink for Item" aria-label="Copy heading and permalink for Item">🔗</a></div>
+</li>
+<li>
+<div class="para">
+<code class="code-inline tex2jax_ignore">randi([A B], m, n)</code> generates an <span class="process-math">\(m\times n\)</span> matrix of random <em class="emphasis">integer</em> numbers taken from the discrete uniform distribution on the finite set <span class="process-math">\(A, A+1, \dots, B\text{.}\)</span>
+</div>
+<div class="autopermalink" data-description="Item"><a href="#remark-normal-distribution-2-3-2" title="Copy heading and permalink for Item" aria-label="Copy heading and permalink for Item">🔗</a></div>
+</li>
+<li>
+<div class="para">
+<code class="code-inline tex2jax_ignore">randn(m, n)</code> generates an <span class="process-math">\(m\times n\)</span> matrix of random real numbers taken from the <a class="external" href="https://en.wikipedia.org/wiki/Normal_distribution" target="_blank">standard normal distribution</a> on the real line.</div>
+<div class="autopermalink" data-description="Item"><a href="#remark-normal-distribution-2-3-3" title="Copy heading and permalink for Item" aria-label="Copy heading and permalink for Item">🔗</a></div>
+</li>
+</ul>
+<div class="para">Try them out with <code class="code-inline tex2jax_ignore">rand(1, 5)</code>, <code class="code-inline tex2jax_ignore">randi([2 7], 1, 5)</code>, and <code class="code-inline tex2jax_ignore">randn(1, 5)</code> to observe the differences in output.</div>
+<div class="autopermalink" data-description="Paragraph"><a href="#remark-normal-distribution-2" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="para logical">
+<div class="para">One of the distinguishing features of the normal distribution is the following: if one generates a random <span class="process-math">\(d\)</span>-dimensional vector <span class="process-math">\(\mathbf x\)</span> by taking each component <span class="process-math">\(x_1, \dots, x_d\)</span> independently from the normal distribution, the vector <span class="process-math">\(\mathbf x\)</span> is equally likely to point in any given direction. More precisely, the unit vectors <span class="process-math">\(\mathbf x / |\mathbf x|\)</span> are uniformly distributed over the unit sphere. With Matlab, this process amounts to the computations</div>
+<pre class="code-display tex2jax_ignore clipboardable">
+x = randn(1, d);
+x = x/norm(x);
+</pre>
+<div class="para">Note that <code class="code-inline tex2jax_ignore">x = randn(1, d)/norm(randn(1, d))</code> would not do the job, because each use of <code class="code-inline tex2jax_ignore">randn</code> leads to a new random vector.</div>
+<div class="autopermalink" data-description="Paragraph"><a href="#remark-normal-distribution-3" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="para">If one replaces <code class="code-inline tex2jax_ignore">x = rand(1, d)</code> in <a href="section-integration-monte-carlo.html#example-monte-carlo-box" class="xref" data-knowl="./knowl/xref/example-monte-carlo-box.html" data-reveal-label="Reveal" data-close-label="Close" title="Example 18.3.1: Implement the Monte-Carlo method over a high-dimensional cube">Example 18.3.1</a> with the above code for generating random unit vectors, the result is an approximate value of the average of function <span class="process-math">\(f\)</span> over the unit sphere <span class="process-math">\(\{\mathbf x\in \mathbb R^d\colon |\mathbf x|=1\}\text{.}\)</span><div class="autopermalink" data-description="Paragraph"><a href="#remark-normal-distribution-4" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="para">A remark for those familiar with probability theory: the process of generating vectors uniformly distributed over the unit sphere is based on the normal distribution because of the following property of its probability density function <span class="process-math">\(p\text{:}\)</span> the product <span class="process-math">\(p(x_1)p(x_2)\cdots p(x_d)\)</span> depends only on the norm of vector <span class="process-math">\(\mathbf x\text{.}\)</span><div class="autopermalink" data-description="Paragraph"><a href="#remark-normal-distribution-5" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="autopermalink" data-description="Remark 18.3.2: Averaging over a sphere"><a href="#remark-normal-distribution" title="Copy heading and permalink for Remark 18.3.2: Averaging over a sphere" aria-label="Copy heading and permalink for Remark 18.3.2: Averaging over a sphere">🔗</a></div></article><span class="incontext"><a class="internal" href="section-integration-monte-carlo.html#remark-normal-distribution">in-context</a></span>
+</body>
+</html>

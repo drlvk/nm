@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+<!--******************************************-->
+<!--*  Authored with PreTeXt                 *-->
+<!--*  pretextbook.org                       *-->
+<!--*  Theme: default-modern                 *-->
+<!--*  Palette:                              *-->
+<!--******************************************-->
+
+<!--********************************************-->
+<!--*       Generated from PreTeXt source      *-->
+<!--*                                          *-->
+<!--*         https://pretextbook.org          *-->
+<!--*                                          *-->
+<!--********************************************-->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="robots" content="noindex, nofollow">
+</head>
+<body class="ignore-math">
+<article class="example example-like"><h3 class="heading">
+<span class="type">Example</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="codenumber">28.2.1</span><span class="period heading-divison-mark heading-divison-mark__period">.</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="title">Fit a logistic function to Covid data.</span>
+</h3>
+<div class="para logical">
+<div class="para">There were at least 121 reported Covid infections among SU students between October 8 and October 26 of 2020. The following are the cumulative counts of people recovered, day by day, starting with October 9.</div>
+<pre class="code-display tex2jax_ignore clipboardable">
+R = [1 1 1 5 8 10 27 44 62 93 101 110 112 115 116 117 118 120]';  
+</pre>
+<div class="para">Fit a logistic function to these <em class="emphasis">proportion</em> of the total “population” of 121 that recovered on each day.</div>
+<div class="autopermalink" data-description="Paragraph"><a href="#example-best-fit-logistic-2-1" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="solutions"><details class="solution solution-like born-hidden-knowl"><summary class="knowl__link"><span class="type">Solution</span><span class="period heading-divison-mark heading-divison-mark__period">.</span></summary><div class="solution solution-like knowl__content">
+<div class="para">We need to compute proportions <code class="code-inline tex2jax_ignore">y = R/121</code> and transform them by <code class="code-inline tex2jax_ignore">yt = log(y./(1-y))</code>. Then the usual linear regression is applied.<div class="autopermalink" data-description="Paragraph"><a href="#example-best-fit-logistic-3-1" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<pre class="code-block tex2jax_ignore clipboardable">x = (1:numel(R))';  
+y = R/121;
+yt = log(y./(1-y));
+X = x.^(0:1); 
+beta = X\yt;
+f = @(x) 1 ./ (1 + exp(-(x.^(0:1))*beta));
+
+t = linspace(min(x), max(x), 1000)';
+plot(t, f(t), 'b', x, y, 'r*')
+</pre>
+<div class="para">Here the logistic function is written as <span class="process-math">\(1/(1+\exp(-\beta_1 - \beta_2 x))\)</span> with parameters <span class="process-math">\(\beta_1, \beta_2\)</span> contained in the vector <code class="code-inline tex2jax_ignore">beta</code>.<div class="autopermalink" data-description="Paragraph"><a href="#example-best-fit-logistic-3-3" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="autopermalink" data-description="Solution 28.2.1.1"><a href="#example-best-fit-logistic-3" title="Copy heading and permalink for Solution 28.2.1.1" aria-label="Copy heading and permalink for Solution 28.2.1.1">🔗</a></div>
+</div></details></div>
+<div class="autopermalink" data-description="Example 28.2.1: Fit a logistic function to Covid data"><a href="#example-best-fit-logistic" title="Copy heading and permalink for Example 28.2.1: Fit a logistic function to Covid data" aria-label="Copy heading and permalink for Example 28.2.1: Fit a logistic function to Covid data">🔗</a></div></article><span class="incontext"><a class="internal" href="section-example-logistic-fit.html#example-best-fit-logistic">in-context</a></span>
+</body>
+</html>

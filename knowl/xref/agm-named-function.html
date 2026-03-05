@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+<!--******************************************-->
+<!--*  Authored with PreTeXt                 *-->
+<!--*  pretextbook.org                       *-->
+<!--*  Theme: default-modern                 *-->
+<!--*  Palette:                              *-->
+<!--******************************************-->
+
+<!--********************************************-->
+<!--*       Generated from PreTeXt source      *-->
+<!--*                                          *-->
+<!--*         https://pretextbook.org          *-->
+<!--*                                          *-->
+<!--********************************************-->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="robots" content="noindex, nofollow">
+</head>
+<body class="ignore-math">
+<article class="example example-like"><h3 class="heading">
+<span class="type">Example</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="codenumber">5.2.1</span><span class="period heading-divison-mark heading-divison-mark__period">.</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="title">Arithmetic-geometric mean with given tolerance.</span>
+</h3>
+<div class="para">Write a named function with three inputs: numbers <code class="code-inline tex2jax_ignore">x, y</code> and <code class="code-inline tex2jax_ignore">tol</code>, which finds the arithmetic-geometric mean of <code class="code-inline tex2jax_ignore">a, b</code> with tolerance <code class="code-inline tex2jax_ignore">tol</code> (meaning that the process stops when the difference of arithmetic and geometric mean is less than <code class="code-inline tex2jax_ignore">tol</code>.)<div class="autopermalink" data-description="Paragraph"><a href="#agm-named-function-2-1" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="solutions"><details class="answer solution-like born-hidden-knowl"><summary class="knowl__link"><span class="type">Answer</span><span class="period heading-divison-mark heading-divison-mark__period">.</span></summary><div class="answer solution-like knowl__content">
+<pre class="code-block tex2jax_ignore clipboardable">function z = agm(x, y, tol) 
+   while abs(x - y) &gt;= tol
+       a = (x + y)/2;
+       g = sqrt(x*y);
+       x = a;
+       y = g;
+   end
+   z = x;
+end
+</pre>
+<div class="para">Note that the result has to be assigned to whichever function variable was designated as output on th first line of the function: in this case, <code class="code-inline tex2jax_ignore">z</code>. If you are familiar with Python, the following comparison may help:<pre class="code-block tex2jax_ignore clipboardable">def agm(x, y, tol): 
+    # some Python code computing z
+return z
+</pre>The difference is that Matlab specifies the variable(s) to be returned at the beginning of the function, instead of at the end.<div class="autopermalink" data-description="Paragraph"><a href="#agm-named-function-3-2" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="autopermalink" data-description="Answer 5.2.1.1"><a href="#agm-named-function-3" title="Copy heading and permalink for Answer 5.2.1.1" aria-label="Copy heading and permalink for Answer 5.2.1.1">🔗</a></div>
+</div></details></div>
+<div class="autopermalink" data-description="Example 5.2.1: Arithmetic-geometric mean with given tolerance"><a href="#agm-named-function" title="Copy heading and permalink for Example 5.2.1: Arithmetic-geometric mean with given tolerance" aria-label="Copy heading and permalink for Example 5.2.1: Arithmetic-geometric mean with given tolerance">🔗</a></div></article><span class="incontext"><a class="internal" href="section-named-functions.html#agm-named-function">in-context</a></span>
+</body>
+</html>

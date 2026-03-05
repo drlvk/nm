@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<!--********************************************-->
+<!--*       Generated from PreTeXt source      *-->
+<!--*                                          *-->
+<!--*         https://pretextbook.org          *-->
+<!--*                                          *-->
+<!--********************************************-->
+<html lang="en-US" dir="ltr">
+<!--******************************************-->
+<!--*  Authored with PreTeXt                 *-->
+<!--*  pretextbook.org                       *-->
+<!--*  Theme: default-modern                 *-->
+<!--*  Palette:                              *-->
+<!--******************************************-->
+<head xmlns:og="http://ogp.me/ns#" xmlns:book="https://ogp.me/ns/book#">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>How fzero works</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
+<link href="_static/pretext/css/theme.css" rel="stylesheet" type="text/css">
+<link href="_static/pretext/css/ol-markers.css" rel="stylesheet" type="text/css">
+<script>
+var runestoneMathReady = new Promise((resolve) => window.rsMathReady = resolve);
+window.MathJax = {
+  "tex": {
+    "inlineMath": [
+      [
+        "\\(",
+        "\\)"
+      ]
+    ],
+    "tags": "none",
+    "tagSide": "right",
+    "tagIndent": ".8em",
+    "packages": {
+      "[+]": [
+        "base",
+        "extpfeil",
+        "ams",
+        "amscd",
+        "color",
+        "newcommand",
+        "knowl"
+      ]
+    }
+  },
+  "options": {
+    "ignoreHtmlClass": "tex2jax_ignore|ignore-math",
+    "processHtmlClass": "process-math"
+  },
+  "chtml": {
+    "scale": 0.98,
+    "mtextInheritFont": true
+  },
+  "loader": {
+    "load": [
+      "input/asciimath",
+      "[tex]/extpfeil",
+      "[tex]/amscd",
+      "[tex]/color",
+      "[tex]/newcommand",
+      "[pretext]/mathjaxknowl3.js"
+    ],
+    "paths": {
+      "pretext": "_static/pretext/js"
+    }
+  },
+  "startup": {
+    pageReady() {
+      return MathJax.startup.defaultPageReady().then(function () {
+      console.log("in ready function");
+      rsMathReady();
+      }
+    )}
+  }
+};
+</script><script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script><meta name="Keywords" content="Authored in PreTeXt">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta property="og:type" content="book">
+<meta property="book:title" content="Numerical Methods with Programming">
+<meta property="book:author" content="Leonid Kovalev">
+<script src="_static/pretext/js/jquery.min.js"></script><script src="_static/pretext/js/pretext.js"></script><script src="_static/pretext/js/pretext_add_on.js?x=1"></script><!--** eBookCongig is necessary to configure interactive       **-->
+<!--** Runestone components to run locally in reader's browser **-->
+<!--** No external communication:                              **-->
+<!--**     log level is 0, Runestone Services are disabled     **-->
+<script type="text/javascript">
+eBookConfig = {};
+eBookConfig.useRunestoneServices = false;
+eBookConfig.host = 'http://127.0.0.1:8000';
+eBookConfig.course = 'PTX_Course_Title_Here';
+eBookConfig.basecourse = 'PTX_Base_Course';
+eBookConfig.isLoggedIn = false;
+eBookConfig.email = '';
+eBookConfig.isInstructor = false;
+eBookConfig.logLevel = 0;
+eBookConfig.username = '';
+eBookConfig.readings = null;
+eBookConfig.activities = null;
+eBookConfig.downloadsEnabled = false;
+eBookConfig.allow_pairs = false;
+eBookConfig.enableScratchAC = false;
+eBookConfig.build_info = "";
+eBookConfig.python3 = null;
+eBookConfig.runestone_version = '7.11.17';
+eBookConfig.jobehost = '';
+eBookConfig.proxyuri_runs = '';
+eBookConfig.proxyuri_files = '';
+eBookConfig.enable_chatcodes =  false;
+</script>
+<!--*** Runestone Services ***-->
+<script src="_static/prefix-runtime.86a1bdf80f338ffc.bundle.js"></script><script src="_static/prefix-723.3e6434f80549315a.bundle.js"></script><script src="_static/prefix-runestone.98ef3b0c170cd180.bundle.js"></script><link rel="stylesheet" type="text/css" href="_static/prefix-723.3bccd435914aa0ff.css">
+<link rel="stylesheet" type="text/css" href="_static/prefix-runestone.74f6fa0c85f09c79.css">
+<script src="_static/pretext/js/lti_iframe_resizer.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.9/lunr.min.js" integrity="sha512-4xUl/d6D6THrAnXAwGajXkoWaeMNwEKK4iNfq5DotEbLPAfk6FSxSP3ydNxqDgCw1c/0Z1Jg6L8h2j+++9BZmg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><script src="lunr-pretext-search-index.js" async=""></script><script src="_static/pretext/js/pretext_search.js"></script><script src="_static/pretext/js/knowl.js"></script><!--knowl.js code controls Sage Cells within knowls--><script>sagecellEvalName='Evaluate (Sage)';
+</script>
+</head>
+<body class="pretext book ignore-math">
+<a class="assistive" href="#ptx-content">Skip to main content</a><header id="ptx-masthead" class="ptx-masthead"><div class="ptx-banner"><div class="title-container">
+<h1 class="heading"><a href="numerical-methods.html"><span class="title">Numerical Methods with Programming</span></a></h1>
+<p class="byline">Leonid Kovalev</p>
+</div></div></header><nav id="ptx-navbar" class="ptx-navbar navbar"><div class="ptx-navbar-contents">
+<button class="toc-toggle button" title="Contents"><span class="icon material-symbols-outlined" aria-hidden="true">&#xe5d2;</span><span class="name">Contents</span></button><div class="searchbox">
+<div class="searchwidget"><button id="searchbutton" class="searchbutton button" type="button" title="Search book"><span class="icon material-symbols-outlined" aria-hidden="true">&#xe8b6;</span><span class="name">Search Book</span></button></div>
+<div id="searchresultsplaceholder" class="searchresultsplaceholder" style="display: none">
+<div class="search-results-controls">
+<input aria-label="Search term" id="ptxsearch" class="ptxsearch" type="text" name="terms" placeholder="Search term"><button title="Close search" id="closesearchresults" class="closesearchresults"><span class="material-symbols-outlined">close</span></button>
+</div>
+<h2 class="search-results-heading">Search Results: </h2>
+<div id="searchempty" class="searchempty"><span>No results.</span></div>
+<ol id="searchresults" class="searchresults"></ol>
+</div>
+</div>
+<span class="nav-other-controls"><button id="light-dark-button" class="light-dark-button button" title="Dark Mode"><span class="icon material-symbols-outlined" aria-hidden="true">&#xe51c;</span><span class="name">Dark Mode</span></button></span><span class="treebuttons"><a class="previous-button button" href="section-secant-method.html" title="Previous"><span class="icon material-symbols-outlined" aria-hidden="true">&#xe5cb;</span><span class="name">Prev</span></a><a class="up-button button" href="chapter-newton-secant.html" title="Up"><span class="icon material-symbols-outlined" aria-hidden="true">&#xe5ce;</span><span class="name">Up</span></a><a class="next-button button" href="section-relaxation-parameter.html" title="Next"><span class="name">Next</span><span class="icon material-symbols-outlined" aria-hidden="true">&#xe5cc;</span></a></span>
+</div></nav><div id="latex-macros" class="hidden-content process-math" style="display:none"><span class="process-math">\(
+\newcommand{\lt}{&lt;}
+\newcommand{\gt}{&gt;}
+\newcommand{\amp}{&amp;}
+\definecolor{fillinmathshade}{gray}{0.9}
+\newcommand{\fillinmath}[1]{\mathchoice{\colorbox{fillinmathshade}{$\displaystyle     \phantom{\,#1\,}$}}{\colorbox{fillinmathshade}{$\textstyle        \phantom{\,#1\,}$}}{\colorbox{fillinmathshade}{$\scriptstyle      \phantom{\,#1\,}$}}{\colorbox{fillinmathshade}{$\scriptscriptstyle\phantom{\,#1\,}$}}}
+\)</span></div>
+<div class="ptx-page">
+<div id="ptx-sidebar" class="ptx-sidebar"><nav id="ptx-toc" class="ptx-toc depth3 parts focused" data-preexpanded-levels="0" data-max-levels="3"><ul class="structural toc-item-list contains-active">
+<li class="toc-item toc-frontmatter">
+<div class="toc-title-box"><a href="frontmatter.html" class="internal"><span class="title">Front Matter</span></a></div>
+<ul class="structural toc-item-list">
+<li class="toc-item toc-acknowledgement"><div class="toc-title-box"><a href="acknowledgement.html" class="internal"><span class="title">Acknowledgements</span></a></div></li>
+<li class="toc-item toc-preface"><div class="toc-title-box"><a href="preface.html" class="internal"><span class="title">Preface</span></a></div></li>
+</ul>
+</li>
+<li class="toc-item toc-part">
+<div class="toc-title-box"><a href="part-matlab.html" class="internal"><span class="codenumber">I</span> <span class="title">Using Matlab</span></a></div>
+<ul class="structural toc-item-list">
+<li class="toc-item toc-chapter">
+<div class="toc-title-box"><a href="chapter-scalars-vectors-matrices.html" class="internal"><span class="codenumber">1</span> <span class="title">Scalars, vectors and matrices</span></a></div>
+<ul class="structural toc-item-list">
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-matlab-interface.html" class="internal"><span class="codenumber">1.1</span> <span class="title">Matlab interface</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-scalars.html" class="internal"><span class="codenumber">1.2</span> <span class="title">Assigning scalar values</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-vectors-matrices.html" class="internal"><span class="codenumber">1.3</span> <span class="title">Creating vectors and matrices</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-operations-vectors-matrices.html" class="internal"><span class="codenumber">1.4</span> <span class="title">Operations on vectors and matrices</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-indexing-vectors-matrices.html" class="internal"><span class="codenumber">1.5</span> <span class="title">Accessing the entries of vectors and matrices</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-comments-sections.html" class="internal"><span class="codenumber">1.6</span> <span class="title">Comments and sections in a script</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="examples-matrices-vectors.html" class="internal"><span class="codenumber">1.7</span> <span class="title">Examples and questions</span></a></div></li>
+<li class="toc-item toc-exercises"><div class="toc-title-box"><a href="exercises-matrices-vectors.html" class="internal"><span class="codenumber">1.8</span> <span class="title">Homework</span></a></div></li>
+</ul>
+</li>
+<li class="toc-item toc-chapter">
+<div class="toc-title-box"><a href="chapter-systems-vectorization-plots.html" class="internal"><span class="codenumber">2</span> <span class="title">Linear systems, array operations, plots</span></a></div>
+<ul class="structural toc-item-list">
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-linear-systems.html" class="internal"><span class="codenumber">2.1</span> <span class="title">Systems of linear equations</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-large-matrices.html" class="internal"><span class="codenumber">2.2</span> <span class="title">More tools for constructing matrices</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-vectorization.html" class="internal"><span class="codenumber">2.3</span> <span class="title">Array operations</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-array-expansion.html" class="internal"><span class="codenumber">2.4</span> <span class="title">Implicit expansion of arrays</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-plotting.html" class="internal"><span class="codenumber">2.5</span> <span class="title">Plotting</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="examples-systems-vectorization-plots.html" class="internal"><span class="codenumber">2.6</span> <span class="title">Examples and questions</span></a></div></li>
+<li class="toc-item toc-exercises"><div class="toc-title-box"><a href="exercises-systems-vectorization-plots.html" class="internal"><span class="codenumber">2.7</span> <span class="title">Homework</span></a></div></li>
+</ul>
+</li>
+<li class="toc-item toc-chapter">
+<div class="toc-title-box"><a href="chapter-functions-input-output.html" class="internal"><span class="codenumber">3</span> <span class="title">Built-in functions, input, output</span></a></div>
+<ul class="structural toc-item-list">
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-builtin-functions.html" class="internal"><span class="codenumber">3.1</span> <span class="title">Built-in functions</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-random-numbers-histograms.html" class="internal"><span class="codenumber">3.2</span> <span class="title">Random numbers and histograms</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-user-input.html" class="internal"><span class="codenumber">3.3</span> <span class="title">User input</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-formatted-output.html" class="internal"><span class="codenumber">3.4</span> <span class="title">Formatted output</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="examples-functions-input-output.html" class="internal"><span class="codenumber">3.5</span> <span class="title">Examples and questions</span></a></div></li>
+<li class="toc-item toc-exercises"><div class="toc-title-box"><a href="exercises-functions-input-output.html" class="internal"><span class="codenumber">3.6</span> <span class="title">Homework</span></a></div></li>
+</ul>
+</li>
+<li class="toc-item toc-chapter">
+<div class="toc-title-box"><a href="chapter-control-flow.html" class="internal"><span class="codenumber">4</span> <span class="title">Control flow: loops and conditional statements</span></a></div>
+<ul class="structural toc-item-list">
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-for-loop.html" class="internal"><span class="codenumber">4.1</span> <span class="title"><code class="code-inline tex2jax_ignore">for</code> loop</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-while-loop.html" class="internal"><span class="codenumber">4.2</span> <span class="title"><code class="code-inline tex2jax_ignore">while</code> loop</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-if-statement.html" class="internal"><span class="codenumber">4.3</span> <span class="title"><code class="code-inline tex2jax_ignore">if</code> statement</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-break-statement.html" class="internal"><span class="codenumber">4.4</span> <span class="title">Breaking out of a loop</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-timing-code.html" class="internal"><span class="codenumber">4.5</span> <span class="title">Measuring the computation time</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="examples-control-flow.html" class="internal"><span class="codenumber">4.6</span> <span class="title">Examples and questions</span></a></div></li>
+<li class="toc-item toc-exercises"><div class="toc-title-box"><a href="exercises-control-flow.html" class="internal"><span class="codenumber">4.7</span> <span class="title">Homework</span></a></div></li>
+</ul>
+</li>
+<li class="toc-item toc-chapter">
+<div class="toc-title-box"><a href="chapter-user-defined-functions.html" class="internal"><span class="codenumber">5</span> <span class="title">User-defined functions</span></a></div>
+<ul class="structural toc-item-list">
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-anonymous-functions.html" class="internal"><span class="codenumber">5.1</span> <span class="title">Anonymous functions</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-named-functions.html" class="internal"><span class="codenumber">5.2</span> <span class="title">Named functions</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="examples-user-defined-functions.html" class="internal"><span class="codenumber">5.3</span> <span class="title">Examples and questions</span></a></div></li>
+<li class="toc-item toc-exercises"><div class="toc-title-box"><a href="exercises-user-defined-functions.html" class="internal"><span class="codenumber">5.4</span> <span class="title">Homework</span></a></div></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-item toc-part contains-active">
+<div class="toc-title-box"><a href="part-equations.html" class="internal"><span class="codenumber">II</span> <span class="title">Solving Equations</span></a></div>
+<ul class="structural toc-item-list contains-active">
+<li class="toc-item toc-chapter">
+<div class="toc-title-box"><a href="chapter-linear-systems.html" class="internal"><span class="codenumber">6</span> <span class="title">Systems of linear equations</span></a></div>
+<ul class="structural toc-item-list">
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-classification-linear-systems.html" class="internal"><span class="codenumber">6.1</span> <span class="title">Classification of linear systems</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-systems-without-free-variables.html" class="internal"><span class="codenumber">6.2</span> <span class="title">Systems without free variables</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-systems-with-free-variables.html" class="internal"><span class="codenumber">6.3</span> <span class="title">Systems with free variables</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-round-off.html" class="internal"><span class="codenumber">6.4</span> <span class="title">The effect of round-off errors</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="examples-linear-systems.html" class="internal"><span class="codenumber">6.5</span> <span class="title">Examples and questions</span></a></div></li>
+<li class="toc-item toc-exercises"><div class="toc-title-box"><a href="exercises-linear-systems.html" class="internal"><span class="codenumber">6.6</span> <span class="title">Homework</span></a></div></li>
+</ul>
+</li>
+<li class="toc-item toc-chapter">
+<div class="toc-title-box"><a href="chapter-roots-bisection.html" class="internal"><span class="codenumber">7</span> <span class="title">Root finding: bisection</span></a></div>
+<ul class="structural toc-item-list">
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-motivation-numeric-solution.html" class="internal"><span class="codenumber">7.1</span> <span class="title">Motivation for solving equations numerically</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-meaning-numeric-solution.html" class="internal"><span class="codenumber">7.2</span> <span class="title">The meaning of a numeric solution</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-bisection-method.html" class="internal"><span class="codenumber">7.3</span> <span class="title">Bisection method</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-bisection-issues.html" class="internal"><span class="codenumber">7.4</span> <span class="title">Limitations of the bisection method</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="examples-roots-bisection.html" class="internal"><span class="codenumber">7.5</span> <span class="title">Examples and questions</span></a></div></li>
+<li class="toc-item toc-exercises"><div class="toc-title-box"><a href="exercises-roots-bisection.html" class="internal"><span class="codenumber">7.6</span> <span class="title">Homework</span></a></div></li>
+</ul>
+</li>
+<li class="toc-item toc-chapter">
+<div class="toc-title-box"><a href="chapter-fixed-point-iteration.html" class="internal"><span class="codenumber">8</span> <span class="title">Root finding: fixed point iteration</span></a></div>
+<ul class="structural toc-item-list">
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-classification-fixed-points.html" class="internal"><span class="codenumber">8.1</span> <span class="title">Classification of fixed points</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-rewriting-fixed-point.html" class="internal"><span class="codenumber">8.2</span> <span class="title">Rewriting equations in the fixed-point form</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-rate-convergence.html" class="internal"><span class="codenumber">8.3</span> <span class="title">The speed of convergence of fixed-point iteration</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="examples-fixed-point-iteration.html" class="internal"><span class="codenumber">8.4</span> <span class="title">Examples and questions</span></a></div></li>
+<li class="toc-item toc-exercises"><div class="toc-title-box"><a href="exercises-fixed-point-iteration.html" class="internal"><span class="codenumber">8.5</span> <span class="title">Homework</span></a></div></li>
+</ul>
+</li>
+<li class="toc-item toc-chapter contains-active">
+<div class="toc-title-box"><a href="chapter-newton-secant.html" class="internal"><span class="codenumber">9</span> <span class="title">Newton’s method and its relatives</span></a></div>
+<ul class="structural toc-item-list contains-active">
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-newton-method-intro.html" class="internal"><span class="codenumber">9.1</span> <span class="title">Newton’s method</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-newton-method-issues.html" class="internal"><span class="codenumber">9.2</span> <span class="title">Potential issues with Newton’s method</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-secant-method.html" class="internal"><span class="codenumber">9.3</span> <span class="title">The secant method</span></a></div></li>
+<li class="toc-item toc-section active"><div class="toc-title-box"><a href="section-fzero-algorithm.html" class="internal"><span class="codenumber">9.4</span> <span class="title">How <code class="code-inline tex2jax_ignore">fzero</code> works</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-relaxation-parameter.html" class="internal"><span class="codenumber">9.5</span> <span class="title">The relaxation parameter</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="examples-newton-secant.html" class="internal"><span class="codenumber">9.6</span> <span class="title">Examples and questions</span></a></div></li>
+<li class="toc-item toc-exercises"><div class="toc-title-box"><a href="exercises-newton-secant.html" class="internal"><span class="codenumber">9.7</span> <span class="title">Homework</span></a></div></li>
+</ul>
+</li>
+<li class="toc-item toc-chapter">
+<div class="toc-title-box"><a href="chapter-multivariate-newton.html" class="internal"><span class="codenumber">10</span> <span class="title">Systems of several nonlinear equations: multivariate Newton’s method</span></a></div>
+<ul class="structural toc-item-list">
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-nonlinear-systems.html" class="internal"><span class="codenumber">10.1</span> <span class="title">Systems of nonlinear equations</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-multivariate-newton.html" class="internal"><span class="codenumber">10.2</span> <span class="title">Multivariate Newton’s method</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-multivariate-newton-method-issues.html" class="internal"><span class="codenumber">10.3</span> <span class="title">Potential issues</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="examples-multivariate-newton.html" class="internal"><span class="codenumber">10.4</span> <span class="title">Examples and questions</span></a></div></li>
+<li class="toc-item toc-exercises"><div class="toc-title-box"><a href="exercises-multivariate-newton.html" class="internal"><span class="codenumber">10.5</span> <span class="title">Homework</span></a></div></li>
+</ul>
+</li>
+<li class="toc-item toc-chapter">
+<div class="toc-title-box"><a href="chapter-broyden.html" class="internal"><span class="codenumber">11</span> <span class="title">Broyden’s method</span></a></div>
+<ul class="structural toc-item-list">
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-broyden-intro.html" class="internal"><span class="codenumber">11.1</span> <span class="title">Idea of Broyden’s method</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-broyden-linear-algebra.html" class="internal"><span class="codenumber">11.2</span> <span class="title">Outer products</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-broyden-method.html" class="internal"><span class="codenumber">11.3</span> <span class="title">Details of Broyden’s method</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="examples-broyden.html" class="internal"><span class="codenumber">11.4</span> <span class="title">Examples and questions</span></a></div></li>
+<li class="toc-item toc-exercises"><div class="toc-title-box"><a href="exercises-broyden.html" class="internal"><span class="codenumber">11.5</span> <span class="title">Homework</span></a></div></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-item toc-part">
+<div class="toc-title-box"><a href="part-calculus.html" class="internal"><span class="codenumber">III</span> <span class="title">Numerical Calculus</span></a></div>
+<ul class="structural toc-item-list">
+<li class="toc-item toc-chapter">
+<div class="toc-title-box"><a href="chapter-numerical-differentiation.html" class="internal"><span class="codenumber">12</span> <span class="title">Numerical differentiation</span></a></div>
+<ul class="structural toc-item-list">
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-differentiation-intro.html" class="internal"><span class="codenumber">12.1</span> <span class="title">Definition of derivative and the order of error</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-loss-significance.html" class="internal"><span class="codenumber">12.2</span> <span class="title">Loss of significance</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-symmetric-difference.html" class="internal"><span class="codenumber">12.3</span> <span class="title">Symmetric difference formulas</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-richardson-extrapolation.html" class="internal"><span class="codenumber">12.4</span> <span class="title">Richardson extrapolation</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="examples-numerical-differentiation.html" class="internal"><span class="codenumber">12.5</span> <span class="title">Examples and questions</span></a></div></li>
+<li class="toc-item toc-exercises"><div class="toc-title-box"><a href="exercises-numerical-differentiation.html" class="internal"><span class="codenumber">12.6</span> <span class="title">Homework</span></a></div></li>
+</ul>
+</li>
+<li class="toc-item toc-chapter">
+<div class="toc-title-box"><a href="chapter-trapezoid-midpoint.html" class="internal"><span class="codenumber">13</span> <span class="title">Numerical integration: basic rules</span></a></div>
+<ul class="structural toc-item-list">
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-riemann-sums.html" class="internal"><span class="codenumber">13.1</span> <span class="title">Riemann sums</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-left-right-midpoint.html" class="internal"><span class="codenumber">13.2</span> <span class="title">Left, right, midpoint rules</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-trapezoidal-rulet.html" class="internal"><span class="codenumber">13.3</span> <span class="title">Trapezoidal rule</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-lrtm-error-estimates.html" class="internal"><span class="codenumber">13.4</span> <span class="title">Error estimates</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="examples-trapezoid-midpoint.html" class="internal"><span class="codenumber">13.5</span> <span class="title">Examples and questions</span></a></div></li>
+<li class="toc-item toc-exercises"><div class="toc-title-box"><a href="exercises-trapezoid-midpoint.html" class="internal"><span class="codenumber">13.6</span> <span class="title">Homework</span></a></div></li>
+</ul>
+</li>
+<li class="toc-item toc-chapter">
+<div class="toc-title-box"><a href="chapter-simpson-newton-cotes.html" class="internal"><span class="codenumber">14</span> <span class="title">Simpson’s rule and other Newton-Cotes rules</span></a></div>
+<ul class="structural toc-item-list">
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-simpson-rule.html" class="internal"><span class="codenumber">14.1</span> <span class="title">Simpson’s rule</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-simpson-other-derivation.html" class="internal"><span class="codenumber">14.2</span> <span class="title">Other derivations of Simpson’s rule</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-newton-cotes.html" class="internal"><span class="codenumber">14.3</span> <span class="title">Newton-Cotes rules</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="examples-simpson-newton-cotes.html" class="internal"><span class="codenumber">14.4</span> <span class="title">Examples and questions</span></a></div></li>
+<li class="toc-item toc-exercises"><div class="toc-title-box"><a href="exercises-simpson-newton-cotes.html" class="internal"><span class="codenumber">14.5</span> <span class="title">Homework</span></a></div></li>
+</ul>
+</li>
+<li class="toc-item toc-chapter">
+<div class="toc-title-box"><a href="chapter-legendre-laguerre.html" class="internal"><span class="codenumber">15</span> <span class="title">Legendre polynomials and Laguerre polynomials</span></a></div>
+<ul class="structural toc-item-list">
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-legendre-motivation.html" class="internal"><span class="codenumber">15.1</span> <span class="title">Motivation: search for better evaluation points</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-legendre-polynomials.html" class="internal"><span class="codenumber">15.2</span> <span class="title">Legendre polynomials</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-laguerre-polynomials.html" class="internal"><span class="codenumber">15.3</span> <span class="title">Laguerre polynomials</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="examples-legendre-laguerre.html" class="internal"><span class="codenumber">15.4</span> <span class="title">Examples and questions</span></a></div></li>
+<li class="toc-item toc-exercises"><div class="toc-title-box"><a href="exercises-legendre-laguerre.html" class="internal"><span class="codenumber">15.5</span> <span class="title">Homework</span></a></div></li>
+</ul>
+</li>
+<li class="toc-item toc-chapter">
+<div class="toc-title-box"><a href="chapter-gaussian-integration.html" class="internal"><span class="codenumber">16</span> <span class="title">Gauss-Legendre and Gauss-Laguerre integration</span></a></div>
+<ul class="structural toc-item-list">
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-orthogonal-polynomials-recap.html" class="internal"><span class="codenumber">16.1</span> <span class="title">Brief recap of orthogonal polynomials</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-gauss-legendre.html" class="internal"><span class="codenumber">16.2</span> <span class="title">Gauss-Legendre integration</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-gauss-laguerre.html" class="internal"><span class="codenumber">16.3</span> <span class="title">Gauss-Laguerre integration</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="examples-gaussian-integration.html" class="internal"><span class="codenumber">16.4</span> <span class="title">Examples and questions</span></a></div></li>
+<li class="toc-item toc-exercises"><div class="toc-title-box"><a href="exercises-gaussian-integration.html" class="internal"><span class="codenumber">16.5</span> <span class="title">Homework</span></a></div></li>
+</ul>
+</li>
+<li class="toc-item toc-chapter">
+<div class="toc-title-box"><a href="chapter-adaptive-integration.html" class="internal"><span class="codenumber">17</span> <span class="title">Adaptive integration</span></a></div>
+<ul class="structural toc-item-list">
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-motivation-adaptive-integration.html" class="internal"><span class="codenumber">17.1</span> <span class="title">Why we need adaptive methods</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-adaptive-integration-error-estimate.html" class="internal"><span class="codenumber">17.2</span> <span class="title">Estimating error by using two step sizes</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-adaptive-integration-bisection.html" class="internal"><span class="codenumber">17.3</span> <span class="title">Recursive subdivision algorithm</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-adaptive-integration-rules.html" class="internal"><span class="codenumber">17.4</span> <span class="title">Combining two rules</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="examples-adaptive-integration.html" class="internal"><span class="codenumber">17.5</span> <span class="title">Examples and questions</span></a></div></li>
+<li class="toc-item toc-exercises"><div class="toc-title-box"><a href="exercises-adaptive-integration.html" class="internal"><span class="codenumber">17.6</span> <span class="title">Homework</span></a></div></li>
+</ul>
+</li>
+<li class="toc-item toc-chapter">
+<div class="toc-title-box"><a href="chapter-multivariable-integration.html" class="internal"><span class="codenumber">18</span> <span class="title">Multivariable integration</span></a></div>
+<ul class="structural toc-item-list">
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-integration-rectangle.html" class="internal"><span class="codenumber">18.1</span> <span class="title">Double integrals over rectangles</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-integration-general-2d.html" class="internal"><span class="codenumber">18.2</span> <span class="title">Double integrals over general regions</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-integration-monte-carlo.html" class="internal"><span class="codenumber">18.3</span> <span class="title">High-dimensional integration: Monte-Carlo method</span></a></div></li>
+<li class="toc-item toc-exercises"><div class="toc-title-box"><a href="exercises-multivariable-integration.html" class="internal"><span class="codenumber">18.4</span> <span class="title">Homework</span></a></div></li>
+</ul>
+</li>
+<li class="toc-item toc-chapter">
+<div class="toc-title-box"><a href="chapter-ode-euler.html" class="internal"><span class="codenumber">19</span> <span class="title">Differential equations: Euler’s method and its relatives</span></a></div>
+<ul class="structural toc-item-list">
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-ode-intro.html" class="internal"><span class="codenumber">19.1</span> <span class="title">Ordinary differential equations</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-euler-method.html" class="internal"><span class="codenumber">19.2</span> <span class="title">Euler’s method</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-ode-order-accuracy.html" class="internal"><span class="codenumber">19.3</span> <span class="title">Estimating the accuracy of numeric ODE methods</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-ode-euler-improved.html" class="internal"><span class="codenumber">19.4</span> <span class="title">Improving Euler’s method</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-ode-systems.html" class="internal"><span class="codenumber">19.5</span> <span class="title">Solving systems of differential equations</span></a></div></li>
+<li class="toc-item toc-exercises"><div class="toc-title-box"><a href="exercises-ode-euler.html" class="internal"><span class="codenumber">19.6</span> <span class="title">Homework</span></a></div></li>
+</ul>
+</li>
+<li class="toc-item toc-chapter">
+<div class="toc-title-box"><a href="chapter-ode-modeling.html" class="internal"><span class="codenumber">20</span> <span class="title">Modeling with differential equations</span></a></div>
+<ul class="structural toc-item-list">
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-ode-epidemiology.html" class="internal"><span class="codenumber">20.1</span> <span class="title">Models of an epidemic</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-ode-predator-prey.html" class="internal"><span class="codenumber">20.2</span> <span class="title">Predator-prey models</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="examples-ode-modeling.html" class="internal"><span class="codenumber">20.3</span> <span class="title">Examples and questions</span></a></div></li>
+<li class="toc-item toc-exercises"><div class="toc-title-box"><a href="exercises-ode-modeling.html" class="internal"><span class="codenumber">20.4</span> <span class="title">Homework</span></a></div></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-item toc-part">
+<div class="toc-title-box"><a href="part-data.html" class="internal"><span class="codenumber">IV</span> <span class="title">Modeling Data</span></a></div>
+<ul class="structural toc-item-list">
+<li class="toc-item toc-chapter">
+<div class="toc-title-box"><a href="chapter-polynomial-interpolation.html" class="internal"><span class="codenumber">21</span> <span class="title">Polynomial Interpolation</span></a></div>
+<ul class="structural toc-item-list">
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-monomial-basis.html" class="internal"><span class="codenumber">21.1</span> <span class="title">Interpolation in the monomial basis</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-lagrange-polynomial.html" class="internal"><span class="codenumber">21.2</span> <span class="title">Lagrange interpolating polynomial</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-newton-polynomial.html" class="internal"><span class="codenumber">21.3</span> <span class="title">Newton interpolating polynomial</span></a></div></li>
+<li class="toc-item toc-exercises"><div class="toc-title-box"><a href="exercises-polynomial-interpolation.html" class="internal"><span class="codenumber">21.4</span> <span class="title">Homework</span></a></div></li>
+</ul>
+</li>
+<li class="toc-item toc-chapter">
+<div class="toc-title-box"><a href="chapter-chebyshev.html" class="internal"><span class="codenumber">22</span> <span class="title">Chebyshev Polynomials and Interpolation</span></a></div>
+<ul class="structural toc-item-list">
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-error-polynomial-interpolation.html" class="internal"><span class="codenumber">22.1</span> <span class="title">Estimating the error of polynomial interpolation</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-chebyshev-polynomials-interpolation.html" class="internal"><span class="codenumber">22.2</span> <span class="title">Chebyshev polynomials and interpolation</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-chebyshev-extreme-points.html" class="internal"><span class="codenumber">22.3</span> <span class="title">Chebyshev extreme points</span></a></div></li>
+<li class="toc-item toc-exercises"><div class="toc-title-box"><a href="exercises-chebyshev.html" class="internal"><span class="codenumber">22.4</span> <span class="title">Homework</span></a></div></li>
+</ul>
+</li>
+<li class="toc-item toc-chapter">
+<div class="toc-title-box"><a href="chapter-spline-interpolation.html" class="internal"><span class="codenumber">23</span> <span class="title">Spline Interpolation</span></a></div>
+<ul class="structural toc-item-list">
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-piecewise-linear-interpolation.html" class="internal"><span class="codenumber">23.1</span> <span class="title">Piecewise linear interpolation</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-cubic-splines.html" class="internal"><span class="codenumber">23.2</span> <span class="title">Cubic splines</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-using-cubic-splines.html" class="internal"><span class="codenumber">23.3</span> <span class="title">Using cubic splines</span></a></div></li>
+<li class="toc-item toc-exercises"><div class="toc-title-box"><a href="exercises-spline-interpolation.html" class="internal"><span class="codenumber">23.4</span> <span class="title">Homework</span></a></div></li>
+</ul>
+</li>
+<li class="toc-item toc-chapter">
+<div class="toc-title-box"><a href="chapter-spline-approximation.html" class="internal"><span class="codenumber">24</span> <span class="title">Spline Approximation</span></a></div>
+<ul class="structural toc-item-list">
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-drawbacks-spline-interpolation.html" class="internal"><span class="codenumber">24.1</span> <span class="title">Weak points of spline interpolation</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-b-splines.html" class="internal"><span class="codenumber">24.2</span> <span class="title">Hat functions and B-splines</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-construct-cardinal-splines.html" class="internal"><span class="codenumber">24.3</span> <span class="title">Construction of cardinal B-splines</span></a></div></li>
+<li class="toc-item toc-exercises"><div class="toc-title-box"><a href="exercises-spline-approximation.html" class="internal"><span class="codenumber">24.4</span> <span class="title">Homework</span></a></div></li>
+</ul>
+</li>
+<li class="toc-item toc-chapter">
+<div class="toc-title-box"><a href="chapter-discrete-fourier-transform.html" class="internal"><span class="codenumber">25</span> <span class="title">Discrete Fourier Transform</span></a></div>
+<ul class="structural toc-item-list">
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-periodic-functions.html" class="internal"><span class="codenumber">25.1</span> <span class="title">Periodic functions and trigonometric polynomials</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-fourier-series.html" class="internal"><span class="codenumber">25.2</span> <span class="title">Fourier series</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-discrete-fourier-transform.html" class="internal"><span class="codenumber">25.3</span> <span class="title">Discrete Fourier Transform</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-trigonometric-interpolation.html" class="internal"><span class="codenumber">25.4</span> <span class="title">Trigonometric Interpolation</span></a></div></li>
+<li class="toc-item toc-exercises"><div class="toc-title-box"><a href="exercises-discrete-fourier-transform.html" class="internal"><span class="codenumber">25.5</span> <span class="title">Homework</span></a></div></li>
+</ul>
+</li>
+<li class="toc-item toc-chapter">
+<div class="toc-title-box"><a href="chapter-dft-applications.html" class="internal"><span class="codenumber">26</span> <span class="title">Applications of Discrete Fourier Transform</span></a></div>
+<ul class="structural toc-item-list">
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-image-compression.html" class="internal"><span class="codenumber">26.1</span> <span class="title">Working with images in Matlab</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-2d-dft.html" class="internal"><span class="codenumber">26.2</span> <span class="title">Two-dimensional DFT</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-cosine-interpolation.html" class="internal"><span class="codenumber">26.3</span> <span class="title">Cosine interpolation of non-periodic functions</span></a></div></li>
+<li class="toc-item toc-exercises"><div class="toc-title-box"><a href="exercises-dft-applications.html" class="internal"><span class="codenumber">26.4</span> <span class="title">Homework</span></a></div></li>
+</ul>
+</li>
+<li class="toc-item toc-chapter">
+<div class="toc-title-box"><a href="chapter-linear-least-squares.html" class="internal"><span class="codenumber">27</span> <span class="title">Linear Least Squares</span></a></div>
+<ul class="structural toc-item-list">
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-lsq-overview.html" class="internal"><span class="codenumber">27.1</span> <span class="title">Overview of least squares</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-overfitting.html" class="internal"><span class="codenumber">27.2</span> <span class="title">Overfitting, training and testing</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-standard-error.html" class="internal"><span class="codenumber">27.3</span> <span class="title">The standard error of parameters</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-multiple-regression.html" class="internal"><span class="codenumber">27.4</span> <span class="title">Multiple regression</span></a></div></li>
+<li class="toc-item toc-exercises"><div class="toc-title-box"><a href="exercises-linear-least-squares.html" class="internal"><span class="codenumber">27.5</span> <span class="title">Homework</span></a></div></li>
+</ul>
+</li>
+<li class="toc-item toc-chapter">
+<div class="toc-title-box"><a href="chapter-transforming-data.html" class="internal"><span class="codenumber">28</span> <span class="title">Transforming Data for LLS</span></a></div>
+<ul class="structural toc-item-list">
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-example-exponential-fit.html" class="internal"><span class="codenumber">28.1</span> <span class="title">Exponential fit</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-example-logistic-fit.html" class="internal"><span class="codenumber">28.2</span> <span class="title">Logistic fit</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-weighted-least-squares.html" class="internal"><span class="codenumber">28.3</span> <span class="title">Weighted least squares</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-example-implicit-equation.html" class="internal"><span class="codenumber">28.4</span> <span class="title">Fitting an implicit equation</span></a></div></li>
+<li class="toc-item toc-exercises"><div class="toc-title-box"><a href="exercises-transforming-data.html" class="internal"><span class="codenumber">28.5</span> <span class="title">Homework</span></a></div></li>
+</ul>
+</li>
+<li class="toc-item toc-chapter">
+<div class="toc-title-box"><a href="chapter-nonlinear-least-squares.html" class="internal"><span class="codenumber">29</span> <span class="title">Nonlinear Least Squares</span></a></div>
+<ul class="structural toc-item-list">
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-nls-motivation.html" class="internal"><span class="codenumber">29.1</span> <span class="title">Motivating examples for Nonlinear Least Squares</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-using-fminsearch-curvefit.html" class="internal"><span class="codenumber">29.2</span> <span class="title">Using fminsearch for curve-fitting</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-source-location.html" class="internal"><span class="codenumber">29.3</span> <span class="title">Beyond curve-fitting: source location</span></a></div></li>
+<li class="toc-item toc-exercises"><div class="toc-title-box"><a href="exercises-nonlinear-least-squares.html" class="internal"><span class="codenumber">29.4</span> <span class="title">Homework</span></a></div></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-item toc-part">
+<div class="toc-title-box"><a href="part-optimization.html" class="internal"><span class="codenumber">V</span> <span class="title">Optimization</span></a></div>
+<ul class="structural toc-item-list">
+<li class="toc-item toc-chapter">
+<div class="toc-title-box"><a href="chapter-single-variable-minimization.html" class="internal"><span class="codenumber">30</span> <span class="title">Single Variable Minimization</span></a></div>
+<ul class="structural toc-item-list">
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-introduction-optimization.html" class="internal"><span class="codenumber">30.1</span> <span class="title">Basic concepts of optimization</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-brute-force.html" class="internal"><span class="codenumber">30.2</span> <span class="title">Brute force search</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-newton-method-min.html" class="internal"><span class="codenumber">30.3</span> <span class="title">Newton method for minimization</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-golden-section.html" class="internal"><span class="codenumber">30.4</span> <span class="title">Golden section search</span></a></div></li>
+<li class="toc-item toc-exercises"><div class="toc-title-box"><a href="exercises-single-variable-minimization.html" class="internal"><span class="codenumber">30.5</span> <span class="title">Homework</span></a></div></li>
+</ul>
+</li>
+<li class="toc-item toc-chapter">
+<div class="toc-title-box"><a href="chapter-parabolic-interpolation-descent.html" class="internal"><span class="codenumber">31</span> <span class="title">Parabolic Interpolation and Gradient Descent</span></a></div>
+<ul class="structural toc-item-list">
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-parabolic-interpolation.html" class="internal"><span class="codenumber">31.1</span> <span class="title">Successive parabolic interpolation</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-fminbnd.html" class="internal"><span class="codenumber">31.2</span> <span class="title">How <code class="code-inline tex2jax_ignore">fminbnd</code> works</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-gradient-descent-1d.html" class="internal"><span class="codenumber">31.3</span> <span class="title">Gradient descent in one dimension</span></a></div></li>
+<li class="toc-item toc-exercises"><div class="toc-title-box"><a href="exercises-parabolic-interpolation-descent.html" class="internal"><span class="codenumber">31.4</span> <span class="title">Homework</span></a></div></li>
+</ul>
+</li>
+<li class="toc-item toc-chapter">
+<div class="toc-title-box"><a href="chapter-gradient-newton-conjugate.html" class="internal"><span class="codenumber">32</span> <span class="title">Gradient methods and Newton’s method</span></a></div>
+<ul class="structural toc-item-list">
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-gradient-descent-nd.html" class="internal"><span class="codenumber">32.1</span> <span class="title">Gradient descent in several variables</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-newton-method-min-nd.html" class="internal"><span class="codenumber">32.2</span> <span class="title">Newton’s method for multivariate minimization</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-conjugate-gradient.html" class="internal"><span class="codenumber">32.3</span> <span class="title">Conjugate gradient method</span></a></div></li>
+<li class="toc-item toc-exercises"><div class="toc-title-box"><a href="exercises-gradient-newton-conjugate.html" class="internal"><span class="codenumber">32.4</span> <span class="title">Homework</span></a></div></li>
+</ul>
+</li>
+<li class="toc-item toc-chapter">
+<div class="toc-title-box"><a href="chapter-nelder-mead.html" class="internal"><span class="codenumber">33</span> <span class="title">The Nelder-Mead method</span></a></div>
+<ul class="structural toc-item-list">
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-nelder-mead-reflect.html" class="internal"><span class="codenumber">33.1</span> <span class="title">First attempt at derivative-free minimization</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-nelder-mead-contract.html" class="internal"><span class="codenumber">33.2</span> <span class="title">Reflection-contraction combination</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-nelder-mead-expand.html" class="internal"><span class="codenumber">33.3</span> <span class="title">Reflection-contraction-expansion Nelder-Mead method</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-nelder-mead-ndim.html" class="internal"><span class="codenumber">33.4</span> <span class="title">Nelder-Mead method in higher dimensions</span></a></div></li>
+<li class="toc-item toc-exercises"><div class="toc-title-box"><a href="exercises-nelder-mead.html" class="internal"><span class="codenumber">33.5</span> <span class="title">Homework</span></a></div></li>
+</ul>
+</li>
+<li class="toc-item toc-chapter">
+<div class="toc-title-box"><a href="chapter-constrained-optimization.html" class="internal"><span class="codenumber">34</span> <span class="title">Constrained Optimization</span></a></div>
+<ul class="structural toc-item-list">
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-penalty-method.html" class="internal"><span class="codenumber">34.1</span> <span class="title">Penalty method</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-lagrange-multiplier.html" class="internal"><span class="codenumber">34.2</span> <span class="title">Lagrange multiplier method</span></a></div></li>
+<li class="toc-item toc-exercises"><div class="toc-title-box"><a href="exercises-constrained-optimization.html" class="internal"><span class="codenumber">34.3</span> <span class="title">Homework</span></a></div></li>
+</ul>
+</li>
+<li class="toc-item toc-chapter">
+<div class="toc-title-box"><a href="chapter-linear-programming.html" class="internal"><span class="codenumber">35</span> <span class="title">Linear Programming</span></a></div>
+<ul class="structural toc-item-list">
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-linear-programming-introduction.html" class="internal"><span class="codenumber">35.1</span> <span class="title">Introduction to linear programming</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-linear-programming-duality.html" class="internal"><span class="codenumber">35.2</span> <span class="title">Duality in linear programming</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-lp-duality-economic.html" class="internal"><span class="codenumber">35.3</span> <span class="title">Interpretation of duality in microeconomics</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-lp-duality-transportation.html" class="internal"><span class="codenumber">35.4</span> <span class="title">Duality in optimal transportation</span></a></div></li>
+<li class="toc-item toc-exercises"><div class="toc-title-box"><a href="exercises-linear-programming.html" class="internal"><span class="codenumber">35.5</span> <span class="title">Homework</span></a></div></li>
+</ul>
+</li>
+<li class="toc-item toc-chapter">
+<div class="toc-title-box"><a href="chapter-classification.html" class="internal"><span class="codenumber">36</span> <span class="title">Classification Problems</span></a></div>
+<ul class="structural toc-item-list">
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-classification-logistic-regression.html" class="internal"><span class="codenumber">36.1</span> <span class="title">Classification and logistic regression</span></a></div></li>
+<li class="toc-item toc-section"><div class="toc-title-box"><a href="section-classification-linear-programming.html" class="internal"><span class="codenumber">36.2</span> <span class="title">Classification and linear programming</span></a></div></li>
+<li class="toc-item toc-exercises"><div class="toc-title-box"><a href="exercises-classification.html" class="internal"><span class="codenumber">36.3</span> <span class="title">Homework</span></a></div></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul></nav></div>
+<main class="ptx-main"><div id="ptx-content" class="ptx-content"><section class="section" id="section-fzero-algorithm"><h2 class="heading hide-type">
+<span class="type">Section</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="codenumber">9.4</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="title">How <code class="code-inline tex2jax_ignore">fzero</code> works</span>
+</h2>
+<div class="para logical" id="section-fzero-algorithm-2">
+<div class="para">Matlab command <code class="code-inline tex2jax_ignore">fzero</code> implements <a class="external" href="https://en.wikipedia.org/wiki/Brent%27s_method" target="_blank">Brent’s method</a> (1973). It builds on earlier <a class="external" href="https://en.wikipedia.org/wiki/Brent%27s_method#Dekker's_method" target="_blank">Dekker’s method</a> (1969) which is easier to describe:</div>
+<ol class="decimal" id="section-fzero-algorithm-2-4">
+<li id="section-fzero-algorithm-2-4-1">
+<div class="para" id="p-derived-section-fzero-algorithm-2-4-1">Start with a bracketing interval.</div>
+<div class="autopermalink" data-description="Item 1"><a href="#section-fzero-algorithm-2-4-1" title="Copy heading and permalink for Item 1" aria-label="Copy heading and permalink for Item 1">🔗</a></div>
+</li>
+<li id="section-fzero-algorithm-2-4-2">
+<div class="para" id="p-derived-section-fzero-algorithm-2-4-2">Try the secant method.</div>
+<div class="autopermalink" data-description="Item 2"><a href="#section-fzero-algorithm-2-4-2" title="Copy heading and permalink for Item 2" aria-label="Copy heading and permalink for Item 2">🔗</a></div>
+</li>
+<li id="section-fzero-algorithm-2-4-3">
+<div class="para" id="p-derived-section-fzero-algorithm-2-4-3">Accept the result of secant method if it “looks right”, which means: it lies between the midpoint and the endpoint with smaller value of <span class="process-math">\(|f|\text{.}\)</span>
+</div>
+<div class="autopermalink" data-description="Item 3"><a href="#section-fzero-algorithm-2-4-3" title="Copy heading and permalink for Item 3" aria-label="Copy heading and permalink for Item 3">🔗</a></div>
+</li>
+<li id="section-fzero-algorithm-2-4-4">
+<div class="para" id="p-derived-section-fzero-algorithm-2-4-4">Otherwise use bisection instead.</div>
+<div class="autopermalink" data-description="Item 4"><a href="#section-fzero-algorithm-2-4-4" title="Copy heading and permalink for Item 4" aria-label="Copy heading and permalink for Item 4">🔗</a></div>
+</li>
+<li id="section-fzero-algorithm-2-4-5">
+<div class="para" id="p-derived-section-fzero-algorithm-2-4-5">Identify a new bracketing interval. Repeat until it is small enough.</div>
+<div class="autopermalink" data-description="Item 5"><a href="#section-fzero-algorithm-2-4-5" title="Copy heading and permalink for Item 5" aria-label="Copy heading and permalink for Item 5">🔗</a></div>
+</li>
+</ol>
+<div class="autopermalink" data-description="Paragraph"><a href="#section-fzero-algorithm-2" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="para" id="section-fzero-algorithm-3">Brent’s method replaces secant lines with parabolas: instead of drawing a <em class="emphasis">line</em> through <em class="emphasis">two</em> points on the graph <span class="process-math">\(y=f(x)\text{,}\)</span> we draw a <em class="emphasis">parabola</em> through <em class="emphasis">three points</em> on the graph.<div class="autopermalink" data-description="Paragraph"><a href="#section-fzero-algorithm-3" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="para" id="section-fzero-algorithm-4">But a parabola of the form <span class="process-math">\(y=Ax^2+Bx+C\)</span> may intersect the <span class="process-math">\(x\)</span>-axis twice, or not at all. This would not work for our purpose. So, Brent’s method uses parabolas of the form <span class="process-math">\(x=Ay^2+By+C\)</span> because they cross the <span class="process-math">\(x\)</span>-axis once, at <span class="process-math">\(x=C\text{.}\)</span> This is called “inverse quadratic interpolation”. We will study interpolation in detail in Part IV of the course.<div class="autopermalink" data-description="Paragraph"><a href="#section-fzero-algorithm-4" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="para logical" id="section-fzero-algorithm-5">
+<div class="para">Brent’s method can be summarized as:</div>
+<ol class="decimal" id="section-fzero-algorithm-5-1">
+<li id="section-fzero-algorithm-5-1-1">
+<div class="para" id="p-derived-section-fzero-algorithm-5-1-1">Start with a bracketing interval.</div>
+<div class="autopermalink" data-description="Item 1"><a href="#section-fzero-algorithm-5-1-1" title="Copy heading and permalink for Item 1" aria-label="Copy heading and permalink for Item 1">🔗</a></div>
+</li>
+<li id="section-fzero-algorithm-5-1-2">
+<div class="para" id="p-derived-section-fzero-algorithm-5-1-2">Try inverse quadratic interpolation</div>
+<div class="autopermalink" data-description="Item 2"><a href="#section-fzero-algorithm-5-1-2" title="Copy heading and permalink for Item 2" aria-label="Copy heading and permalink for Item 2">🔗</a></div>
+</li>
+<li id="section-fzero-algorithm-5-1-3">
+<div class="para" id="p-derived-section-fzero-algorithm-5-1-3">Accept the result of IQI if it “looks right” (the condition is more complicated than in Dekker’s method)</div>
+<div class="autopermalink" data-description="Item 3"><a href="#section-fzero-algorithm-5-1-3" title="Copy heading and permalink for Item 3" aria-label="Copy heading and permalink for Item 3">🔗</a></div>
+</li>
+<li id="section-fzero-algorithm-5-1-4">
+<div class="para" id="p-derived-section-fzero-algorithm-5-1-4">Otherwise use bisection instead.</div>
+<div class="autopermalink" data-description="Item 4"><a href="#section-fzero-algorithm-5-1-4" title="Copy heading and permalink for Item 4" aria-label="Copy heading and permalink for Item 4">🔗</a></div>
+</li>
+<li id="section-fzero-algorithm-5-1-5">
+<div class="para" id="p-derived-section-fzero-algorithm-5-1-5">Identify a new bracketing interval. Repeat until it is small enough.</div>
+<div class="autopermalink" data-description="Item 5"><a href="#section-fzero-algorithm-5-1-5" title="Copy heading and permalink for Item 5" aria-label="Copy heading and permalink for Item 5">🔗</a></div>
+</li>
+</ol>
+<div class="autopermalink" data-description="Paragraph"><a href="#section-fzero-algorithm-5" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="para" id="section-fzero-algorithm-6">Several other variations of this approach were proposed over the years, but Brent’s method became entrenched in libraries for numerical computation, from Matlab (<code class="code-inline tex2jax_ignore">fzero</code>) to R (<code class="code-inline tex2jax_ignore">uniroot</code>) to Python (SciPy <code class="code-inline tex2jax_ignore">optimize</code> library) and others.<div class="autopermalink" data-description="Paragraph"><a href="#section-fzero-algorithm-6" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="para" id="section-fzero-algorithm-7">To see how Brent’s method works inside <code class="code-inline tex2jax_ignore">fzero</code>, use an option for displaying each iteration.<div class="autopermalink" data-description="Paragraph"><a href="#section-fzero-algorithm-7" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<pre class="code-block tex2jax_ignore clipboardable">options = optimset('Display', 'iter');
+fzero(@(x) exp(x)-1, 7, options)
+</pre>
+<div class="para" id="section-fzero-algorithm-9">The steps shown by this code include the preliminary process of finding a bracketing interval. These steps can be avoided if such an interval is given to <code class="code-inline tex2jax_ignore">fzero</code> as its second argument <code class="code-inline tex2jax_ignore">[a b]</code>, instead of an initial guess.<div class="autopermalink" data-description="Paragraph"><a href="#section-fzero-algorithm-9" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<pre class="code-block tex2jax_ignore clipboardable">fzero(@(x) exp(x)-1, [-5 5], options)
+</pre>
+<div class="autopermalink" data-description="Section 9.4: How fzero works"><a href="#section-fzero-algorithm" title="Copy heading and permalink for Section 9.4: How fzero works" aria-label="Copy heading and permalink for Section 9.4: How fzero works">🔗</a></div></section></div>
+<div id="ptx-content-footer" class="ptx-content-footer">
+<a class="previous-button button" href="section-secant-method.html" title="Previous"><span class="icon material-symbols-outlined" aria-hidden="true">&#xe5cb;</span><span class="name">Prev</span></a><a class="top-button button" href="#" title="Top"><span class="icon material-symbols-outlined" aria-hidden="true">&#xe5ce;</span><span class="name">Top</span></a><a class="next-button button" href="section-relaxation-parameter.html" title="Next"><span class="name">Next</span><span class="icon material-symbols-outlined" aria-hidden="true">&#xe5cc;</span></a>
+</div></main>
+</div>
+<div id="ptx-page-footer" class="ptx-page-footer">
+<a class="pretext-link" href="https://pretextbook.org" title="PreTeXt"><div class="logo"><svg xmlns="http://www.w3.org/2000/svg" height="100%" viewBox="338 3000 8772 6866" role="img"><title>PreTeXt logo</title><g style="stroke-width:.025in; stroke:currentColor; fill:none"><polyline points="472,3590 472,9732 " style="stroke-width:174; stroke-linejoin:miter; stroke-linecap:round; "></polyline><path style="stroke-width:126;stroke-linecap:butt;" d="M 4724,9448 A 4660 4660  0  0  1  8598  9259"></path><path style="stroke-width:174;stroke-linecap:butt;" d="M 4488,9685 A 4228 4228  0  0  0   472  9732"></path><path style="stroke-width:126;stroke-linecap:butt;" d="M 4724,3590 A 4241 4241  0  0  1  8598  3496"></path><path style="stroke-width:126;stroke-linecap:round;" d="M 850,3496  A 4241 4241  0  0  1  4724  3590"></path><path style="stroke-width:126;stroke-linecap:round;" d="M 850,9259  A 4507 4507  0  0  1  4724  9448"></path><polyline points="5385,4299 4062,8125" style="stroke-width:300; stroke-linejoin:miter; stroke-linecap:round;"></polyline><polyline points="8598,3496 8598,9259" style="stroke-width:126; stroke-linejoin:miter; stroke-linecap:round;"></polyline><polyline points="850,3496 850,9259" style="stroke-width:126; stroke-linejoin:miter; stroke-linecap:round;"></polyline><polyline points="4960,9685 4488,9685" style="stroke-width:174; stroke-linejoin:miter; stroke-linecap:round;"></polyline><polyline points="3070,4582 1889,6141 3070,7700" style="stroke-width:300; stroke-linejoin:miter; stroke-linecap:round;"></polyline><polyline points="6418,4582 7600,6141 6418,7700" style="stroke-width:300; stroke-linejoin:miter; stroke-linecap:round;"></polyline><polyline points="8976,3590 8976,9732" style="stroke-width:174; stroke-linejoin:miter; stroke-linecap:round;"></polyline><path style="stroke-width:174;stroke-linecap:butt;" d="M 4960,9685 A 4228 4228  0  0  1  8976  9732"></path></g></svg></div></a><a class="runestone-link" href="https://runestone.academy" title="Runestone Academy"><img class="logo" src="https://runestone.academy/runestone/static/images/RAIcon_cropped.png" alt="Runstone Academy logo"></a><a class="mathjax-link" href="https://www.mathjax.org" title="MathJax"><img class="logo" src="https://www.mathjax.org/badge/badge-square-2.png" alt="MathJax logo"></a>
+</div>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+<!--******************************************-->
+<!--*  Authored with PreTeXt                 *-->
+<!--*  pretextbook.org                       *-->
+<!--*  Theme: default-modern                 *-->
+<!--*  Palette:                              *-->
+<!--******************************************-->
+
+<!--********************************************-->
+<!--*       Generated from PreTeXt source      *-->
+<!--*                                          *-->
+<!--*         https://pretextbook.org          *-->
+<!--*                                          *-->
+<!--********************************************-->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="robots" content="noindex, nofollow">
+</head>
+<body class="ignore-math">
+<article class="example example-like"><h3 class="heading">
+<span class="type">Example</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="codenumber">4.6.2</span><span class="period heading-divison-mark heading-divison-mark__period">.</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="title">The Collatz conjecture.</span>
+</h3>
+<div class="para logical">
+<div class="para">The Collatz conjecture, also known as the <dfn class="terminology">Syracuse problem</dfn>, is a famous unsolved problem in mathematics. Its subject is the following process.</div>
+<ol class="decimal" id="example-collatz-2-1-2">
+<li>
+<div class="para">Start with a positive integer k.</div>
+<div class="autopermalink" data-description="Item 1"><a href="#example-collatz-2-1-2-1" title="Copy heading and permalink for Item 1" aria-label="Copy heading and permalink for Item 1">🔗</a></div>
+</li>
+<li>
+<div class="para">If k is even, divide it by 2. Otherwise multiply it by 3 and add 1.</div>
+<div class="autopermalink" data-description="Item 2"><a href="#example-collatz-2-1-2-2" title="Copy heading and permalink for Item 2" aria-label="Copy heading and permalink for Item 2">🔗</a></div>
+</li>
+<li>
+<div class="para">Repeat Step 2.</div>
+<div class="autopermalink" data-description="Item 3"><a href="#example-collatz-2-1-2-3" title="Copy heading and permalink for Item 3" aria-label="Copy heading and permalink for Item 3">🔗</a></div>
+</li>
+</ol>
+<div class="para">The conjecture is that this process always reaches the number 1 (after 1 it enters infinite loop 1, 4, 2, 1, 4, 2, ...) Write a script that verify this conjecture for initial values of k from 1 to 500, and for each of them record the number of steps that it takes to reach 1. Then plot the number of steps. Note: the condition that k is even can be tested as <code class="code-inline tex2jax_ignore">if mod(k, 2) == 0</code> where <code class="code-inline tex2jax_ignore">mod(k, 2)</code> computes the remained of dividing k by 2.</div>
+<div class="autopermalink" data-description="Paragraph"><a href="#example-collatz-2-1" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="solutions"><details class="answer solution-like born-hidden-knowl"><summary class="knowl__link"><span class="type">Answer</span><span class="period heading-divison-mark heading-divison-mark__period">.</span></summary><div class="answer solution-like knowl__content">
+<pre class="code-block tex2jax_ignore clipboardable">N = 500;
+steps = zeros(1, N);
+for n = 1:N
+    count = 0;
+    k = n;
+    while k &gt; 1
+        if mod(k, 2) == 0
+            k = k/2;
+        else 
+            k = 3*k+1;
+        end
+        count = count + 1;
+    end 
+    steps(n) = count;
+end
+plot(1:N, steps, '.')
+</pre>
+<div class="para">
+<em class="emphasis">Explanation</em>. The array <code class="code-inline tex2jax_ignore">steps</code> is created as a bunch of zeros, to be replaced with actual counts of steps. The initial value of Collatz process is called <code class="code-inline tex2jax_ignore">n</code> and it runs through the numbers from 1 to 500. So the variable <code class="code-inline tex2jax_ignore">k</code> is initially assigned the value <code class="code-inline tex2jax_ignore">n</code> and then modified according to the rules stated above. Every time it is modified, the <code class="code-inline tex2jax_ignore">count</code> of steps is increased by 1. The plot at the end shows each data point as an individual dot, not connecting them by lines.<div class="autopermalink" data-description="Paragraph"><a href="#example-collatz-3-2" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="para">This example demonstrates the use of both kinds of loops. Note that the variable involved in <code class="code-inline tex2jax_ignore">while</code> loop condition, <code class="code-inline tex2jax_ignore">while k &gt; 1</code>, should be modified within the loop, otherwise it will never end. In contrast, the variable involved in <code class="code-inline tex2jax_ignore">for</code> loop condition <code class="code-inline tex2jax_ignore">for n = 1:N</code> should <em class="emphasis">not</em> be modified since it is automatically incremented with each run of the loop.<div class="autopermalink" data-description="Paragraph"><a href="#example-collatz-3-3" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="autopermalink" data-description="Answer 4.6.2.1"><a href="#example-collatz-3" title="Copy heading and permalink for Answer 4.6.2.1" aria-label="Copy heading and permalink for Answer 4.6.2.1">🔗</a></div>
+</div></details></div>
+<div class="autopermalink" data-description="Example 4.6.2: The Collatz conjecture"><a href="#example-collatz" title="Copy heading and permalink for Example 4.6.2: The Collatz conjecture" aria-label="Copy heading and permalink for Example 4.6.2: The Collatz conjecture">🔗</a></div></article><span class="incontext"><a class="internal" href="examples-control-flow.html#example-collatz">in-context</a></span>
+</body>
+</html>

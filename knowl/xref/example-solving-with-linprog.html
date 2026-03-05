@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+<!--******************************************-->
+<!--*  Authored with PreTeXt                 *-->
+<!--*  pretextbook.org                       *-->
+<!--*  Theme: default-modern                 *-->
+<!--*  Palette:                              *-->
+<!--******************************************-->
+
+<!--********************************************-->
+<!--*       Generated from PreTeXt source      *-->
+<!--*                                          *-->
+<!--*         https://pretextbook.org          *-->
+<!--*                                          *-->
+<!--********************************************-->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="robots" content="noindex, nofollow">
+</head>
+<body class="ignore-math">
+<article class="example example-like"><h3 class="heading">
+<span class="type">Example</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="codenumber">35.1.1</span><span class="period heading-divison-mark heading-divison-mark__period">.</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="title">A simple linear programming problem.</span>
+</h3>
+<div class="para">Maximize <span class="process-math">\(x_1+x_2\)</span> subject to constraints <span class="process-math">\(x_1 + 2x_2 \le 4\)</span> and <span class="process-math">\(3x_1 + x_2 \le 5\text{.}\)</span><div class="autopermalink" data-description="Paragraph"><a href="#example-solving-with-linprog-2-1" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="solutions"><details class="solution solution-like born-hidden-knowl"><summary class="knowl__link"><span class="type">Solution</span><span class="period heading-divison-mark heading-divison-mark__period">.</span></summary><div class="solution solution-like knowl__content">
+<div class="para logical">
+<div class="para">Rephrasing this as the minimization of <span class="process-math">\(-x_1-x_2\text{,}\)</span> we see that the coefficient vector should be <code class="code-inline tex2jax_ignore">[-1 -1]</code>. Executing</div>
+<pre class="code-display tex2jax_ignore clipboardable">
+linprog([-1; -1], [1 2; 3 1], [4; 5])
+</pre>
+<div class="para">yields <code class="code-inline tex2jax_ignore">[1.2; 1.4]</code>. (Try to visualize this problem and its solution.)</div>
+<div class="autopermalink" data-description="Paragraph"><a href="#example-solving-with-linprog-3-1" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="autopermalink" data-description="Solution 35.1.1.1"><a href="#example-solving-with-linprog-3" title="Copy heading and permalink for Solution 35.1.1.1" aria-label="Copy heading and permalink for Solution 35.1.1.1">🔗</a></div>
+</div></details></div>
+<div class="autopermalink" data-description="Example 35.1.1: A simple linear programming problem"><a href="#example-solving-with-linprog" title="Copy heading and permalink for Example 35.1.1: A simple linear programming problem" aria-label="Copy heading and permalink for Example 35.1.1: A simple linear programming problem">🔗</a></div></article><span class="incontext"><a class="internal" href="section-linear-programming-introduction.html#example-solving-with-linprog">in-context</a></span>
+</body>
+</html>

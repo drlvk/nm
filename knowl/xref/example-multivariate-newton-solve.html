@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+<!--******************************************-->
+<!--*  Authored with PreTeXt                 *-->
+<!--*  pretextbook.org                       *-->
+<!--*  Theme: default-modern                 *-->
+<!--*  Palette:                              *-->
+<!--******************************************-->
+
+<!--********************************************-->
+<!--*       Generated from PreTeXt source      *-->
+<!--*                                          *-->
+<!--*         https://pretextbook.org          *-->
+<!--*                                          *-->
+<!--********************************************-->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="robots" content="noindex, nofollow">
+</head>
+<body class="ignore-math">
+<article class="example example-like"><h3 class="heading">
+<span class="type">Example</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="codenumber">10.2.3</span><span class="period heading-divison-mark heading-divison-mark__period">.</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="title">Solve a system using Newton’s method.</span>
+</h3>
+<div class="para">Solve the system <a href="section-nonlinear-systems.html#eq-nonlinear-system" class="xref" data-knowl="./knowl/xref/eq-nonlinear-system.html" data-reveal-label="Reveal" data-close-label="Close" title="Equation 10.1.1">(10.1.1)</a> using Newton’s method. Try different initial points. Does the method always converge? Does it converge to the same solution?<div class="autopermalink" data-description="Paragraph"><a href="#example-multivariate-newton-solve-2-1" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="solutions"><details class="solution solution-like born-hidden-knowl"><summary class="knowl__link"><span class="type">Solution</span><span class="period heading-divison-mark heading-divison-mark__period">.</span></summary><div class="solution solution-like knowl__content">
+<div class="para">Following the structure of single-variable Newton method with notational adjustments:<div class="autopermalink" data-description="Paragraph"><a href="#example-multivariate-newton-solve-3-1" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<pre class="code-block tex2jax_ignore clipboardable">F = @(x) [x(1)^2*exp(3*x(2)) - 30; x(1)*x(2) - sin(x(1) + x(2)^2)];
+J = @(x) [2*x(1)*exp(3*x(2)), 3*x(1)^2*exp(3*x(2)); 
+          x(2) - cos(x(1) + x(2)^2), x(1) - 2*x(2)*cos(x(1) + x(2)^2)];
+      
+x = [2; 1];
+max_tries = 10000;
+
+for k = 1:max_tries
+    h = -J(x)\F(x);
+    x = x + h;
+    if norm(h) &lt; 100*eps(norm(x))
+        break
+    end
+end
+
+if k &lt; max_tries
+    fprintf('Found a solution after %d steps:\n', k);
+    disp(x)
+    fprintf('The norm of F(x) is %g\n', norm(F(x)))
+else
+    disp('Failed to converge')
+end
+</pre>
+<div class="para">It is reasonable to increase the “max tries” number in Newton’s method when several variables are involved, as convergence may take longer. In the above example, with initial point <code class="code-inline tex2jax_ignore">[2; 1]</code>, a solution <code class="code-inline tex2jax_ignore">[-0.0019; 5.3185]</code> is found in 15 steps. With initial point <code class="code-inline tex2jax_ignore">[1; 2]</code> the method fails to converge. With initial point <code class="code-inline tex2jax_ignore">[2; 2]</code> it converges in 10 steps to a different solution, <code class="code-inline tex2jax_ignore">[-0.2734; 1.9982]</code>.<div class="autopermalink" data-description="Paragraph"><a href="#example-multivariate-newton-solve-3-3" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="autopermalink" data-description="Solution 10.2.3.1"><a href="#example-multivariate-newton-solve-3" title="Copy heading and permalink for Solution 10.2.3.1" aria-label="Copy heading and permalink for Solution 10.2.3.1">🔗</a></div>
+</div></details></div>
+<div class="autopermalink" data-description="Example 10.2.3: Solve a system using Newton’s method"><a href="#example-multivariate-newton-solve" title="Copy heading and permalink for Example 10.2.3: Solve a system using Newton’s method" aria-label="Copy heading and permalink for Example 10.2.3: Solve a system using Newton’s method">🔗</a></div></article><span class="incontext"><a class="internal" href="section-multivariate-newton.html#example-multivariate-newton-solve">in-context</a></span>
+</body>
+</html>

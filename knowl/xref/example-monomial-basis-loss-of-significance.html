@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+<!--******************************************-->
+<!--*  Authored with PreTeXt                 *-->
+<!--*  pretextbook.org                       *-->
+<!--*  Theme: default-modern                 *-->
+<!--*  Palette:                              *-->
+<!--******************************************-->
+
+<!--********************************************-->
+<!--*       Generated from PreTeXt source      *-->
+<!--*                                          *-->
+<!--*         https://pretextbook.org          *-->
+<!--*                                          *-->
+<!--********************************************-->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="robots" content="noindex, nofollow">
+</head>
+<body class="ignore-math">
+<article class="example example-like"><h3 class="heading">
+<span class="type">Example</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="codenumber">21.1.1</span><span class="period heading-divison-mark heading-divison-mark__period">.</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="title">Loss of significance in the monomial basis.</span>
+</h3>
+<div class="para">Consider the polynomial <span class="process-math">\(p(x) = (x-7)^{15}\text{.}\)</span> Expand this formula in the monomial basis and try using it to plot the polynomial on the interval <span class="process-math">\([6, 8]\text{.}\)</span> Also plot the original formula for comparison.<div class="autopermalink" data-description="Paragraph"><a href="#example-monomial-basis-loss-of-significance-2-1" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="solutions"><details class="answer solution-like born-hidden-knowl"><summary class="knowl__link"><span class="type">Answer</span><span class="period heading-divison-mark heading-divison-mark__period">.</span></summary><div class="answer solution-like knowl__content">
+<code class="code-inline tex2jax_ignore">c</code>…<pre class="code-block tex2jax_ignore clipboardable">c = [1, -105, 5145, -156065, 3277365, -50471421, 588833245, -5299499205, ...
+    37096494435, -201969803035, 848273172747, -2699051004195, 6297785676455, ...
+    -10173346092735, 10173346092735, -4747561509943];
+d = 15;
+x = linspace(6, 8, 1000);
+p = zeros(size(x));
+for k=1:d+1
+    p = p + c(k)*x.^(d+1-k);
+end
+subplot(1, 2, 1)
+plot(x, p)
+subplot(1, 2, 2)
+plot(x, (x-7).^15)
+</pre>
+<div class="para">There is a catastrophic loss of significance here. If one uses <code class="code-inline tex2jax_ignore">p = polyval(c, x)</code>, the result is not much better, even though this command tries to avoid the loss of significance. Expanding this polynomial in the monomial basis is numerically unwise.<div class="autopermalink" data-description="Paragraph"><a href="#example-monomial-basis-loss-of-significance-3-4" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="autopermalink" data-description="Answer 21.1.1.1"><a href="#example-monomial-basis-loss-of-significance-3" title="Copy heading and permalink for Answer 21.1.1.1" aria-label="Copy heading and permalink for Answer 21.1.1.1">🔗</a></div>
+</div></details></div>
+<div class="autopermalink" data-description="Example 21.1.1: Loss of significance in the monomial basis"><a href="#example-monomial-basis-loss-of-significance" title="Copy heading and permalink for Example 21.1.1: Loss of significance in the monomial basis" aria-label="Copy heading and permalink for Example 21.1.1: Loss of significance in the monomial basis">🔗</a></div></article><span class="incontext"><a class="internal" href="section-monomial-basis.html#example-monomial-basis-loss-of-significance">in-context</a></span>
+</body>
+</html>

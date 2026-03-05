@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+<!--******************************************-->
+<!--*  Authored with PreTeXt                 *-->
+<!--*  pretextbook.org                       *-->
+<!--*  Theme: default-modern                 *-->
+<!--*  Palette:                              *-->
+<!--******************************************-->
+
+<!--********************************************-->
+<!--*       Generated from PreTeXt source      *-->
+<!--*                                          *-->
+<!--*         https://pretextbook.org          *-->
+<!--*                                          *-->
+<!--********************************************-->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="robots" content="noindex, nofollow">
+</head>
+<body class="ignore-math">
+<article class="example example-like"><h3 class="heading">
+<span class="type">Example</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="codenumber">34.1.2</span><span class="period heading-divison-mark heading-divison-mark__period">.</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="title">Iterative minimization on the unit disk.</span>
+</h3>
+<div class="para">Minimize  <span class="process-math">\(f(x, y) = (x + 7y)^3 \)</span> on the disk <span class="process-math">\(x^2 + y^2\le 1\)</span> by iteratively using <code class="code-inline tex2jax_ignore">fminsearch</code> with a quadratic penalty term.<div class="autopermalink" data-description="Paragraph"><a href="#example-iterative-constrained-minimization-2-1" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="solutions"><details class="solution solution-like born-hidden-knowl"><summary class="knowl__link"><span class="type">Solution</span><span class="period heading-divison-mark heading-divison-mark__period">.</span></summary><div class="solution solution-like knowl__content">
+<pre class="code-block tex2jax_ignore clipboardable">f = @(x) (x(1) + 7*x(2)).^3;
+c = @(x) x(1).^2 + x(2).^2 - 1;
+x0 = randn(2, 1);
+
+for M = [1e3, 1e6, 1e9, 1e12]
+    x0 = fminsearch(@(x) f(x) + M*max(c(x), 0).^2, x0);
+end
+    
+fprintf('Found x = (%g, %g), |x| = %g, f(x) = %g \n', x0, norm(x0), f(x0));
+</pre>
+<div class="autopermalink" data-description="Solution 34.1.2.1"><a href="#example-iterative-constrained-minimization-3" title="Copy heading and permalink for Solution 34.1.2.1" aria-label="Copy heading and permalink for Solution 34.1.2.1">🔗</a></div>
+</div></details></div>
+<div class="autopermalink" data-description="Example 34.1.2: Iterative minimization on the unit disk"><a href="#example-iterative-constrained-minimization" title="Copy heading and permalink for Example 34.1.2: Iterative minimization on the unit disk" aria-label="Copy heading and permalink for Example 34.1.2: Iterative minimization on the unit disk">🔗</a></div></article><span class="incontext"><a class="internal" href="section-penalty-method.html#example-iterative-constrained-minimization">in-context</a></span>
+</body>
+</html>

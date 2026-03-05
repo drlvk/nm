@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+<!--******************************************-->
+<!--*  Authored with PreTeXt                 *-->
+<!--*  pretextbook.org                       *-->
+<!--*  Theme: default-modern                 *-->
+<!--*  Palette:                              *-->
+<!--******************************************-->
+
+<!--********************************************-->
+<!--*       Generated from PreTeXt source      *-->
+<!--*                                          *-->
+<!--*         https://pretextbook.org          *-->
+<!--*                                          *-->
+<!--********************************************-->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="robots" content="noindex, nofollow">
+</head>
+<body class="ignore-math">
+<article class="example example-like"><h3 class="heading">
+<span class="type">Example</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="codenumber">10.4.1</span><span class="period heading-divison-mark heading-divison-mark__period">.</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="title">Rewriting a polynomial equation in multivariate form.</span>
+</h3>
+<div class="para">Consider a polynomial equation, for example <span class="process-math">\(x^3 + 2x^2 - 7x + 1 = 0\text{.}\)</span> This is a scalar equation with one scalar variable, so it could be solved by the methods of previous chapters, including Newton’s method in one variable. But then we would get only one root (depending on initial position), not all three. Rewrite this equation as a system of three equations for three roots <span class="process-math">\(x_1, x_2, x_3\text{,}\)</span> using the fact that the polynomial factors as <span class="process-math">\((x-x_1)(x-x_2)(x-x_3)\text{.}\)</span><div class="autopermalink" data-description="Paragraph"><a href="#example-durand-kerner-setup-2-1" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="solutions"><details class="solution solution-like born-hidden-knowl"><summary class="knowl__link"><span class="type">Solution</span><span class="period heading-divison-mark heading-divison-mark__period">.</span></summary><div class="solution solution-like knowl__content">
+<div class="para logical">
+<div class="para">Expanding the product, we find</div>
+<div class="displaymath process-math">
+\begin{equation*}
+x^3 + 2x^2 - 7x + 1 = (x-x_1)(x-x_2)(x-x_3) = x^3 + Ax^2 + Bx + C
+\end{equation*}
+</div>
+<div class="para">where <span class="process-math">\(A = -(x_1+x_2+x_3)\text{,}\)</span> <span class="process-math">\(B = x_1x_2 + x_1x_3 + x_2x_2\text{,}\)</span> and <span class="process-math">\(C = -x_1x_2x_3\text{.}\)</span> Equating the coefficients, we get the system</div>
+<div class="displaymath process-math">
+\begin{equation*}
+\begin{cases} x_1+x_2+x_3 \amp = -2  \\
+x_1x_2 + x_1x_3 + x_2x_3 \amp = -7 \\ 
+x_1x_2x_3 \amp = -1 
+\end{cases}
+\end{equation*}
+</div>
+<div class="para">If we can solve this system, the solution will consist of all three roots of the original equation.</div>
+<div class="autopermalink" data-description="Paragraph"><a href="#example-durand-kerner-setup-3-1" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="autopermalink" data-description="Solution 10.4.1.1"><a href="#example-durand-kerner-setup-3" title="Copy heading and permalink for Solution 10.4.1.1" aria-label="Copy heading and permalink for Solution 10.4.1.1">🔗</a></div>
+</div></details></div>
+<div class="autopermalink" data-description="Example 10.4.1: Rewriting a polynomial equation in multivariate form"><a href="#example-durand-kerner-setup" title="Copy heading and permalink for Example 10.4.1: Rewriting a polynomial equation in multivariate form" aria-label="Copy heading and permalink for Example 10.4.1: Rewriting a polynomial equation in multivariate form">🔗</a></div></article><span class="incontext"><a class="internal" href="examples-multivariate-newton.html#example-durand-kerner-setup">in-context</a></span>
+</body>
+</html>

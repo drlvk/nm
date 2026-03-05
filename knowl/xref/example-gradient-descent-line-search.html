@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+<!--******************************************-->
+<!--*  Authored with PreTeXt                 *-->
+<!--*  pretextbook.org                       *-->
+<!--*  Theme: default-modern                 *-->
+<!--*  Palette:                              *-->
+<!--******************************************-->
+
+<!--********************************************-->
+<!--*       Generated from PreTeXt source      *-->
+<!--*                                          *-->
+<!--*         https://pretextbook.org          *-->
+<!--*                                          *-->
+<!--********************************************-->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="robots" content="noindex, nofollow">
+</head>
+<body class="ignore-math">
+<article class="example example-like"><h3 class="heading">
+<span class="type">Example</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="codenumber">32.1.1</span><span class="period heading-divison-mark heading-divison-mark__period">.</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="title">Gradient descent with line search.</span>
+</h3>
+<div class="para">Minimize  Rosenbrock’s function <a href="section-gradient-descent-nd.html#eq-rosenbrock" class="xref" data-knowl="./knowl/xref/eq-rosenbrock.html" data-reveal-label="Reveal" data-close-label="Close" title="Equation 32.1.2">(32.1.2)</a> using line search in the direction of steepest descent, <span class="process-math">\(-\nabla f\text{,}\)</span> at each step. Use a random starting point <code class="code-inline tex2jax_ignore">randn(2, 1)</code>. Plot the path of the search.<div class="autopermalink" data-description="Paragraph"><a href="#example-gradient-descent-line-search-2-1" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="solutions"><details class="solution solution-like born-hidden-knowl"><summary class="knowl__link"><span class="type">Solution</span><span class="period heading-divison-mark heading-divison-mark__period">.</span></summary><div class="solution solution-like knowl__content">
+<div class="para logical">
+<div class="para">The gradient of Rosenbrock’s function is</div>
+<div class="displaymath process-math">
+\begin{equation}
+\begin{pmatrix} 2(x_1-1) + 400x_1(x_1^2-x_2) \\ -200(x_1^2 - x_2)\end{pmatrix}\tag{32.1.3}
+\end{equation}
+</div>
+<div class="para">The code uses a matrix <code class="code-inline tex2jax_ignore">path</code> to record the path taken by the search.</div>
+<div class="autopermalink" data-description="Paragraph"><a href="#example-gradient-descent-line-search-3-1" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<pre class="code-block tex2jax_ignore clipboardable">f = @(x) (x(1)-1).^2 + 100*(x(1).^2 - x(2)).^2;
+fg = @(x) [2*(x(1)-1) + 400*x(1)*(x(1).^2 - x(2)); -200*(x(1).^2 - x(2))];
+x = randn(2, 1);
+max_tries = 10000;
+
+path = zeros(2, max_tries);
+for k = 1:max_tries
+    path(:, k) = x;
+    g = -fg(x);    % direction of descent
+    t_min = fminbnd(@(t) f(x + t*g), 0, 1);
+    dx = t_min*g;
+    x = x + dx;
+    if norm(dx) &lt; 1e-6
+        break
+    end
+end
+
+plot(path(1, 1:k), path(2, 1:k), '-+')
+if k &lt; max_tries
+    fprintf('Found x = (%g, %g) with f(x) = %g after %d steps\n', x, f(x), k);
+else
+    disp('Failed to converge')
+end
+</pre>
+<div class="para">Whether the code converges or fails depends on the initial point. Often it fails despite being on the right track, because of too many tiny zigzagging steps.<div class="autopermalink" data-description="Paragraph"><a href="#example-gradient-descent-line-search-3-3" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="autopermalink" data-description="Solution 32.1.1.1"><a href="#example-gradient-descent-line-search-3" title="Copy heading and permalink for Solution 32.1.1.1" aria-label="Copy heading and permalink for Solution 32.1.1.1">🔗</a></div>
+</div></details></div>
+<div class="autopermalink" data-description="Example 32.1.1: Gradient descent with line search"><a href="#example-gradient-descent-line-search" title="Copy heading and permalink for Example 32.1.1: Gradient descent with line search" aria-label="Copy heading and permalink for Example 32.1.1: Gradient descent with line search">🔗</a></div></article><span class="incontext"><a class="internal" href="section-gradient-descent-nd.html#example-gradient-descent-line-search">in-context</a></span>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+<!--******************************************-->
+<!--*  Authored with PreTeXt                 *-->
+<!--*  pretextbook.org                       *-->
+<!--*  Theme: default-modern                 *-->
+<!--*  Palette:                              *-->
+<!--******************************************-->
+
+<!--********************************************-->
+<!--*       Generated from PreTeXt source      *-->
+<!--*                                          *-->
+<!--*         https://pretextbook.org          *-->
+<!--*                                          *-->
+<!--********************************************-->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="robots" content="noindex, nofollow">
+</head>
+<body class="ignore-math">
+<article class="example example-like"><h3 class="heading">
+<span class="type">Example</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="codenumber">16.4.1</span><span class="period heading-divison-mark heading-divison-mark__period">.</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="title">Compute the Gauss-Legendre points and weights.</span>
+</h3>
+<div class="para">For a given integer <span class="process-math">\(n \ge 2\text{,}\)</span> find the Gauss-Legendre evaluation points and weights.<div class="autopermalink" data-description="Paragraph"><a href="#example-find-gauss-legendre-weights-2-1" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="solutions"><details class="answer solution-like born-hidden-knowl"><summary class="knowl__link"><span class="type">Answer</span><span class="period heading-divison-mark heading-divison-mark__period">.</span></summary><div class="answer solution-like knowl__content">
+<div class="para">Combine the code from <a href="examples-legendre-laguerre.html#example-computation-legendre-roots" class="xref" data-knowl="./knowl/xref/example-computation-legendre-roots.html" data-reveal-label="Reveal" data-close-label="Close" title="Example 15.4.2: The roots of Legendre polynomials">Example 15.4.2</a> (computation of Legendre roots) and <a href="section-newton-cotes.html#example-find-cotes-weights" class="xref" data-knowl="./knowl/xref/example-find-cotes-weights.html" data-reveal-label="Reveal" data-close-label="Close" title="Example 14.3.1: Find the weights for a 5-point Newton-Cotes formula">Example 14.3.1</a> (computing the weights). This only requires some changes in variable names and in the orientation of vectors (row/column).<div class="autopermalink" data-description="Paragraph"><a href="#example-find-gauss-legendre-weights-3-1" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<pre class="code-block tex2jax_ignore clipboardable">n = input('n = ');
+p = [1];
+q = [1 0];
+for m = 1:n-1
+    r = ((2*m+1)*[q 0] - m*[0 0 p])/(m+1);
+    p = q;
+    q = r;
+end
+x = roots(r)';
+disp(x);    %  the evaluation points
+i = (1:n)'; 
+A = x.^(i-1);
+b = (1-(-1).^i)./i;
+w = A\b;
+disp(w');   %  the weights
+</pre>
+<div class="autopermalink" data-description="Answer 16.4.1.1"><a href="#example-find-gauss-legendre-weights-3" title="Copy heading and permalink for Answer 16.4.1.1" aria-label="Copy heading and permalink for Answer 16.4.1.1">🔗</a></div>
+</div></details></div>
+<div class="autopermalink" data-description="Example 16.4.1: Compute the Gauss-Legendre points and weights"><a href="#example-find-gauss-legendre-weights" title="Copy heading and permalink for Example 16.4.1: Compute the Gauss-Legendre points and weights" aria-label="Copy heading and permalink for Example 16.4.1: Compute the Gauss-Legendre points and weights">🔗</a></div></article><span class="incontext"><a class="internal" href="examples-gaussian-integration.html#example-find-gauss-legendre-weights">in-context</a></span>
+</body>
+</html>

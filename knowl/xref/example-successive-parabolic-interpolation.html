@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+<!--******************************************-->
+<!--*  Authored with PreTeXt                 *-->
+<!--*  pretextbook.org                       *-->
+<!--*  Theme: default-modern                 *-->
+<!--*  Palette:                              *-->
+<!--******************************************-->
+
+<!--********************************************-->
+<!--*       Generated from PreTeXt source      *-->
+<!--*                                          *-->
+<!--*         https://pretextbook.org          *-->
+<!--*                                          *-->
+<!--********************************************-->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="robots" content="noindex, nofollow">
+</head>
+<body class="ignore-math">
+<article class="example example-like"><h3 class="heading">
+<span class="type">Example</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="codenumber">31.1.1</span><span class="period heading-divison-mark heading-divison-mark__period">.</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="title">Minimize by successive parabolic interpolation.</span>
+</h3>
+<div class="para">Minimize <span class="process-math">\(f(x) = x^4 - 3 x^2 + x + 1\)</span> using successive parabolic interpolation with initial triple of points <span class="process-math">\(a, b, c = -2, 0, 2\text{.}\)</span><div class="autopermalink" data-description="Paragraph"><a href="#example-successive-parabolic-interpolation-2-1" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="solutions"><details class="solution solution-like born-hidden-knowl"><summary class="knowl__link"><span class="type">Solution</span><span class="period heading-divison-mark heading-divison-mark__period">.</span></summary><div class="solution solution-like knowl__content">
+<pre class="code-block tex2jax_ignore clipboardable">f = @(x) x.^4 - 3*x.^2 + x + 1;
+a = -2;
+b = 0;
+c = 2;
+
+max_tries = 10000;
+
+for k = 1:max_tries
+    alpha = (f(b)-f(a))/(b-a);
+    beta = (f(c)-f(a)-alpha*(c-a))/((c-a)*(c-b));
+    x = (a+b)/2 - alpha/(2*beta);
+    a = b;
+    b = c;
+    c = x;
+    if max([a b c]) - min([a b c]) &lt; 1e-6
+        break
+    end
+end
+
+if k &lt; max_tries
+    fprintf('Found x = %g with f(x) = %g after %d steps\n', c, f(c), k);
+else
+    disp('Failed to converge')
+end
+</pre>
+<div class="autopermalink" data-description="Solution 31.1.1.1"><a href="#example-successive-parabolic-interpolation-3" title="Copy heading and permalink for Solution 31.1.1.1" aria-label="Copy heading and permalink for Solution 31.1.1.1">🔗</a></div>
+</div></details></div>
+<div class="autopermalink" data-description="Example 31.1.1: Minimize by successive parabolic interpolation"><a href="#example-successive-parabolic-interpolation" title="Copy heading and permalink for Example 31.1.1: Minimize by successive parabolic interpolation" aria-label="Copy heading and permalink for Example 31.1.1: Minimize by successive parabolic interpolation">🔗</a></div></article><span class="incontext"><a class="internal" href="section-parabolic-interpolation.html#example-successive-parabolic-interpolation">in-context</a></span>
+</body>
+</html>

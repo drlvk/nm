@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+<!--******************************************-->
+<!--*  Authored with PreTeXt                 *-->
+<!--*  pretextbook.org                       *-->
+<!--*  Theme: default-modern                 *-->
+<!--*  Palette:                              *-->
+<!--******************************************-->
+
+<!--********************************************-->
+<!--*       Generated from PreTeXt source      *-->
+<!--*                                          *-->
+<!--*         https://pretextbook.org          *-->
+<!--*                                          *-->
+<!--********************************************-->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="robots" content="noindex, nofollow">
+</head>
+<body class="ignore-math">
+<article class="example example-like"><h3 class="heading">
+<span class="type">Example</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="codenumber">5.3.1</span><span class="period heading-divison-mark heading-divison-mark__period">.</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="title">Mean value of sine function.</span>
+</h3>
+<div class="para">Define an anonymous function <code class="code-inline tex2jax_ignore">meansin = @(n) ...</code> which computes the mean value of <span class="process-math">\(\sin(1)\text{,}\)</span> <span class="process-math">\(\sin(2)\text{,}\)</span> ..., <span class="process-math">\(\sin(n)\text{.}\)</span> Use it to display the values <code class="code-inline tex2jax_ignore">meansin(n)</code> for n equal to 10, 50, 250, 1870, and 5000. What pattern do you observe?<div class="autopermalink" data-description="Paragraph"><a href="#example-mean-sine-2-1" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="solutions"><details class="answer solution-like born-hidden-knowl"><summary class="knowl__link"><span class="type">Answer</span><span class="period heading-divison-mark heading-divison-mark__period">.</span></summary><div class="answer solution-like knowl__content">
+<pre class="code-block tex2jax_ignore clipboardable">meansin = @(n) mean(sin(1:n));
+
+for n = [10 50 250 1870 5000]
+    disp(meansin(n))
+end
+</pre>
+<div class="para logical">
+<div class="para">
+<em class="emphasis">Explanation</em>: this is a reminder that the vector in <code class="code-inline tex2jax_ignore">for</code> loop does not have to be of the form <code class="code-inline tex2jax_ignore">a:b</code> even though this form is most common. Here the use of a loop avoids having to write</div>
+<pre class="code-display tex2jax_ignore clipboardable">
+disp(meansin(10))
+disp(meansin(50)) 
+disp(meansin(250)) 
+</pre>
+<div class="para">and so on.</div>
+<div class="autopermalink" data-description="Paragraph"><a href="#example-mean-sine-3-2" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="para">It appears that the mean values approach 0 as <code class="code-inline tex2jax_ignore">n</code> grows. This can be proved mathematically: see the homework section.<div class="autopermalink" data-description="Paragraph"><a href="#example-mean-sine-3-3" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="autopermalink" data-description="Answer 5.3.1.1"><a href="#example-mean-sine-3" title="Copy heading and permalink for Answer 5.3.1.1" aria-label="Copy heading and permalink for Answer 5.3.1.1">🔗</a></div>
+</div></details></div>
+<div class="autopermalink" data-description="Example 5.3.1: Mean value of sine function"><a href="#example-mean-sine" title="Copy heading and permalink for Example 5.3.1: Mean value of sine function" aria-label="Copy heading and permalink for Example 5.3.1: Mean value of sine function">🔗</a></div></article><span class="incontext"><a class="internal" href="examples-user-defined-functions.html#example-mean-sine">in-context</a></span>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+<!--******************************************-->
+<!--*  Authored with PreTeXt                 *-->
+<!--*  pretextbook.org                       *-->
+<!--*  Theme: default-modern                 *-->
+<!--*  Palette:                              *-->
+<!--******************************************-->
+
+<!--********************************************-->
+<!--*       Generated from PreTeXt source      *-->
+<!--*                                          *-->
+<!--*         https://pretextbook.org          *-->
+<!--*                                          *-->
+<!--********************************************-->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="robots" content="noindex, nofollow">
+</head>
+<body class="ignore-math">
+<article class="example example-like"><h3 class="heading">
+<span class="type">Example</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="codenumber">27.3.1</span><span class="period heading-divison-mark heading-divison-mark__period">.</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="title">Computing the t-statistics of parameters.</span>
+</h3>
+<div class="para">Modify <a href="section-overfitting.html#example-best-fit-polynomial" class="xref" data-knowl="./knowl/xref/example-best-fit-polynomial.html" data-reveal-label="Reveal" data-close-label="Close" title="Example 27.2.1: Fitting a polynomial of any degree">Example 27.2.1</a> to include the computation of t-statistics for each coefficient of the polynomial.<div class="autopermalink" data-description="Paragraph"><a href="#example-t-statistics-parameters-2-1" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="solutions"><details class="solution solution-like born-hidden-knowl"><summary class="knowl__link"><span class="type">Solution</span><span class="period heading-divison-mark heading-divison-mark__period">.</span></summary><div class="solution solution-like knowl__content">
+<div class="para">Note that the vector of t-statistics, which is called <code class="code-inline tex2jax_ignore">ts</code> below, contains the statistics for the coefficients of <span class="process-math">\(x^0, \dots, x^d\)</span> in this order. This means that <span class="process-math">\(ts(end)\)</span> is really the value of most interest here.<div class="autopermalink" data-description="Paragraph"><a href="#example-t-statistics-parameters-3-1" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<pre class="code-block tex2jax_ignore clipboardable">x = (0:14)';  
+y = [9 8 5 5 3 1 2 5 4 7 8 8 7 7 8]'; 
+d = 2;            
+X = x.^(0:d);     
+beta = X\y;        
+f = @(x) (x.^(0:d))*beta; 
+
+[n, p] = size(X);
+s2 = norm(y-f(x))^2/(n-p);
+C = s2*inv(X'*X);         
+ts = beta./sqrt(diag(C));
+disp(ts)
+</pre>
+<div class="autopermalink" data-description="Solution 27.3.1.1"><a href="#example-t-statistics-parameters-3" title="Copy heading and permalink for Solution 27.3.1.1" aria-label="Copy heading and permalink for Solution 27.3.1.1">🔗</a></div>
+</div></details></div>
+<div class="autopermalink" data-description="Example 27.3.1: Computing the t-statistics of parameters"><a href="#example-t-statistics-parameters" title="Copy heading and permalink for Example 27.3.1: Computing the t-statistics of parameters" aria-label="Copy heading and permalink for Example 27.3.1: Computing the t-statistics of parameters">🔗</a></div></article><span class="incontext"><a class="internal" href="section-standard-error.html#example-t-statistics-parameters">in-context</a></span>
+</body>
+</html>

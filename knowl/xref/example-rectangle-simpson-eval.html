@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+<!--******************************************-->
+<!--*  Authored with PreTeXt                 *-->
+<!--*  pretextbook.org                       *-->
+<!--*  Theme: default-modern                 *-->
+<!--*  Palette:                              *-->
+<!--******************************************-->
+
+<!--********************************************-->
+<!--*       Generated from PreTeXt source      *-->
+<!--*                                          *-->
+<!--*         https://pretextbook.org          *-->
+<!--*                                          *-->
+<!--********************************************-->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="robots" content="noindex, nofollow">
+</head>
+<body class="ignore-math">
+<article class="example example-like"><h3 class="heading">
+<span class="type">Example</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="codenumber">18.1.2</span><span class="period heading-divison-mark heading-divison-mark__period">.</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="title">Implement Simpson’s rule over a rectangle.</span>
+</h3>
+<div class="para">Write a Matlab script to integrate the function <span class="process-math">\(f(x) = \sqrt{4+xy+y^3}\)</span> over the rectangle in <a href="section-integration-rectangle.html#example-rectangle-simpson" class="xref" data-knowl="./knowl/xref/example-rectangle-simpson.html" data-reveal-label="Reveal" data-close-label="Close" title="Example 18.1.1: Set up Simpson’s rule over a rectangle">Example 18.1.1</a>, using the integration points and weights from that example.<div class="autopermalink" data-description="Paragraph"><a href="#example-rectangle-simpson-eval-2-1" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="solutions"><details class="answer solution-like born-hidden-knowl"><summary class="knowl__link"><span class="type">Answer</span><span class="period heading-divison-mark heading-divison-mark__period">.</span></summary><div class="answer solution-like knowl__content">
+<pre class="code-block tex2jax_ignore clipboardable">x = [-2 0 2];
+y = [-1 0 1];
+w = (2/3)*[1 4 1];
+v = (1/3)*[1 4 1];
+
+f = @(x, y) sqrt(x.*y + y.^3 + 4);
+[X, Y] = meshgrid(x, y);
+disp(v*f(X, Y)*w')
+</pre>
+<div class="para">The first four lines do not involve the function; they are setting the stage. The function is evaluated on the rectangular grid and its values are conveniently aggregated using matrix-vector multiplication. The result is 15.8859.  <a class="external" href="https://www.wolframalpha.com/input/?i=integrate+sqrt%28x*y+%2B+y%5E3+%2B4%29+from+x%3D-2+to+x%3D2+from+y%3D-1+to+y%3D1" target="_blank">WolframAlpha</a> gives 15.9219.<div class="autopermalink" data-description="Paragraph"><a href="#example-rectangle-simpson-eval-3-2" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="autopermalink" data-description="Answer 18.1.2.1"><a href="#example-rectangle-simpson-eval-3" title="Copy heading and permalink for Answer 18.1.2.1" aria-label="Copy heading and permalink for Answer 18.1.2.1">🔗</a></div>
+</div></details></div>
+<div class="autopermalink" data-description="Example 18.1.2: Implement Simpson’s rule over a rectangle"><a href="#example-rectangle-simpson-eval" title="Copy heading and permalink for Example 18.1.2: Implement Simpson’s rule over a rectangle" aria-label="Copy heading and permalink for Example 18.1.2: Implement Simpson’s rule over a rectangle">🔗</a></div></article><span class="incontext"><a class="internal" href="section-integration-rectangle.html#example-rectangle-simpson-eval">in-context</a></span>
+</body>
+</html>

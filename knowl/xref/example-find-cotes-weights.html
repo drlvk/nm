@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+<!--******************************************-->
+<!--*  Authored with PreTeXt                 *-->
+<!--*  pretextbook.org                       *-->
+<!--*  Theme: default-modern                 *-->
+<!--*  Palette:                              *-->
+<!--******************************************-->
+
+<!--********************************************-->
+<!--*       Generated from PreTeXt source      *-->
+<!--*                                          *-->
+<!--*         https://pretextbook.org          *-->
+<!--*                                          *-->
+<!--********************************************-->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="robots" content="noindex, nofollow">
+</head>
+<body class="ignore-math">
+<article class="example example-like"><h3 class="heading">
+<span class="type">Example</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="codenumber">14.3.1</span><span class="period heading-divison-mark heading-divison-mark__period">.</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="title">Find the weights for a 5-point Newton-Cotes formula.</span>
+</h3>
+<div class="para">Let evaluation points on <span class="process-math">\([-1, 1]\)</span> be <span class="process-math">\(-1, -1/2, 0, 1/2, 1\text{.}\)</span> What will their weights be?<div class="autopermalink" data-description="Paragraph"><a href="#example-find-cotes-weights-2-1" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="solutions"><details class="solution solution-like born-hidden-knowl"><summary class="knowl__link"><span class="type">Solution</span><span class="period heading-divison-mark heading-divison-mark__period">.</span></summary><div class="solution solution-like knowl__content">
+<div class="para">We need 5 linear equations involving integrals of <span class="process-math">\(x^0, x^1, \dots, x^4\text{.}\)</span> If we number them by index <span class="process-math">\(i\)</span> running from 1 to 5, then the equation has <span class="process-math">\(\int_{-1}^1 x^{i-1}\,dx\)</span>  on the right hand side, which is <span class="process-math">\((1-(-1)^i)/i\text{.}\)</span> On the left we have the sum <span class="process-math">\(\sum_j w_j x_j^{i-1}\)</span> which means the coefficients of the unknown <span class="process-math">\(w_j\)</span> is <span class="process-math">\(x_j^{i-1}\text{.}\)</span> We can create a matrix using outer exponentiation of a row vector by a column vector.<div class="autopermalink" data-description="Paragraph"><a href="#example-find-cotes-weights-3-1" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<pre class="code-block tex2jax_ignore clipboardable">n = 5;
+x = linspace(-1, 1, n);
+i = (1:n)'; 
+A = x.^(i-1);
+b = (1-(-1).^i)./i;
+w = A\b;
+disp(rats(w'))
+</pre>
+<div class="para">Here <code class="code-inline tex2jax_ignore">rats</code> is used to display the solution as rational numbers (which they are) rather than the usual decimal approximation.<div class="autopermalink" data-description="Paragraph"><a href="#example-find-cotes-weights-3-3" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="para">Having computed the weights as above, we can integrate any function f on [-1, 1] simply by executing <code class="code-inline tex2jax_ignore">f(x)*w</code>, which is the dot product of a vector with function values with the vector of weights. Try this for the exponential function.<div class="autopermalink" data-description="Paragraph"><a href="#example-find-cotes-weights-3-4" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="autopermalink" data-description="Solution 14.3.1.1"><a href="#example-find-cotes-weights-3" title="Copy heading and permalink for Solution 14.3.1.1" aria-label="Copy heading and permalink for Solution 14.3.1.1">🔗</a></div>
+</div></details></div>
+<div class="autopermalink" data-description="Example 14.3.1: Find the weights for a 5-point Newton-Cotes formula"><a href="#example-find-cotes-weights" title="Copy heading and permalink for Example 14.3.1: Find the weights for a 5-point Newton-Cotes formula" aria-label="Copy heading and permalink for Example 14.3.1: Find the weights for a 5-point Newton-Cotes formula">🔗</a></div></article><span class="incontext"><a class="internal" href="section-newton-cotes.html#example-find-cotes-weights">in-context</a></span>
+</body>
+</html>

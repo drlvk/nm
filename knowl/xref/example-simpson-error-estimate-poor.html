@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+<!--******************************************-->
+<!--*  Authored with PreTeXt                 *-->
+<!--*  pretextbook.org                       *-->
+<!--*  Theme: default-modern                 *-->
+<!--*  Palette:                              *-->
+<!--******************************************-->
+
+<!--********************************************-->
+<!--*       Generated from PreTeXt source      *-->
+<!--*                                          *-->
+<!--*         https://pretextbook.org          *-->
+<!--*                                          *-->
+<!--********************************************-->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="robots" content="noindex, nofollow">
+</head>
+<body class="ignore-math">
+<article class="example example-like"><h3 class="heading">
+<span class="type">Example</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="codenumber">17.1.1</span><span class="period heading-divison-mark heading-divison-mark__period">.</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="title">Error of Simpson’s method.</span>
+</h3>
+<div class="para">Apply Simpson’s method with <span class="process-math">\(n=2\)</span> to the integral <span class="process-math">\(\int_1^{9} x^{3/2}\,dx\text{.}\)</span> Find the actual error of the method and compare it to the estimate <a href="section-motivation-adaptive-integration.html#eq-simpson-error" class="xref" data-knowl="./knowl/xref/eq-simpson-error.html" data-reveal-label="Reveal" data-close-label="Close" title="Equation 17.1.1">(17.1.1)</a>.<div class="autopermalink" data-description="Paragraph"><a href="#example-simpson-error-estimate-poor-2-1" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="solutions"><details class="answer solution-like born-hidden-knowl"><summary class="knowl__link"><span class="type">Answer</span><span class="period heading-divison-mark heading-divison-mark__period">.</span></summary><div class="answer solution-like knowl__content">
+<div class="para logical">
+<div class="para">Here <span class="process-math">\(f(x) = x^{3/2}\)</span> and <span class="process-math">\(h=(9-1)/2 = 4\text{,}\)</span> so according to the formula <a href="section-simpson-rule.html#eq-simps2" class="xref" data-knowl="./knowl/xref/eq-simps2.html" data-reveal-label="Reveal" data-close-label="Close" title="Equation 14.1.5">(14.1.5)</a>
+</div>
+<div class="displaymath process-math" data-contains-math-knowls="./knowl/xref/eq-simps2.html">
+\begin{equation*}
+\int_1^9 x^{3/2}\,dx \approx \frac{h}{3} (f(1) + 4f(5) + f(9)) \approx 96.9618
+\end{equation*}
+</div>
+<div class="para">The exact value of this integral is <span class="process-math">\(\frac{2}{5}(9^{5/2} - 1) = 484/5 = 96.8\text{.}\)</span> So, the error is <span class="process-math">\(0.1618\text{,}\)</span> relatively small.</div>
+<div class="autopermalink" data-description="Paragraph"><a href="#example-simpson-error-estimate-poor-3-1" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="para logical">
+<div class="para">To use the estimate <a href="section-motivation-adaptive-integration.html#eq-simpson-error" class="xref" data-knowl="./knowl/xref/eq-simpson-error.html" data-reveal-label="Reveal" data-close-label="Close" title="Equation 17.1.1">(17.1.1)</a> we need the fourth derivative of <span class="process-math">\(f\text{,}\)</span> which is <span class="process-math">\((9/16)x^{-5/2}\text{.}\)</span> The absolute value of this function is maximal at <span class="process-math">\(x=1\text{,}\)</span> so <span class="process-math">\(\max|f^{(4)}| = 9/16\text{.}\)</span> Also, <span class="process-math">\(h = (b-a)/2 = 4\text{.}\)</span> So <a href="section-motivation-adaptive-integration.html#eq-simpson-error" class="xref" data-knowl="./knowl/xref/eq-simpson-error.html" data-reveal-label="Reveal" data-close-label="Close" title="Equation 17.1.1">(17.1.1)</a> says</div>
+<div class="displaymath process-math" data-contains-math-knowls="./knowl/xref/eq-simpson-error.html ./knowl/xref/eq-simpson-error.html">
+\begin{equation*}
+|\text{error}|\le \frac{1}{180} \frac{9}{16} (9-1) 4^4  = 6.4 
+\end{equation*}
+</div>
+<div class="para">Indeed, <span class="process-math">\(0.1618 \le 6.4\)</span> but we see that the error estimate does not give the right idea of how large the error actually is.</div>
+<div class="autopermalink" data-description="Paragraph"><a href="#example-simpson-error-estimate-poor-3-2" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="autopermalink" data-description="Answer 17.1.1.1"><a href="#example-simpson-error-estimate-poor-3" title="Copy heading and permalink for Answer 17.1.1.1" aria-label="Copy heading and permalink for Answer 17.1.1.1">🔗</a></div>
+</div></details></div>
+<div class="autopermalink" data-description="Example 17.1.1: Error of Simpson’s method"><a href="#example-simpson-error-estimate-poor" title="Copy heading and permalink for Example 17.1.1: Error of Simpson’s method" aria-label="Copy heading and permalink for Example 17.1.1: Error of Simpson’s method">🔗</a></div></article><span class="incontext"><a class="internal" href="section-motivation-adaptive-integration.html#example-simpson-error-estimate-poor">in-context</a></span>
+</body>
+</html>

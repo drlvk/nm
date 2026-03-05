@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+<!--******************************************-->
+<!--*  Authored with PreTeXt                 *-->
+<!--*  pretextbook.org                       *-->
+<!--*  Theme: default-modern                 *-->
+<!--*  Palette:                              *-->
+<!--******************************************-->
+
+<!--********************************************-->
+<!--*       Generated from PreTeXt source      *-->
+<!--*                                          *-->
+<!--*         https://pretextbook.org          *-->
+<!--*                                          *-->
+<!--********************************************-->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="robots" content="noindex, nofollow">
+</head>
+<body class="ignore-math">
+<article class="example example-like"><h3 class="heading">
+<span class="type">Example</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="codenumber">27.2.1</span><span class="period heading-divison-mark heading-divison-mark__period">.</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="title">Fitting a polynomial of any degree.</span>
+</h3>
+<div class="para">Improve <a href="examples-linear-systems.html#example-parabola-best-fit" class="xref" data-knowl="./knowl/xref/example-parabola-best-fit.html" data-reveal-label="Reveal" data-close-label="Close" title="Example 6.5.1: Parabola of best fit">Example 6.5.1</a> to work with polynomials of any degree <span class="process-math">\(d\text{,}\)</span> and add a computation of <span class="process-math">\(R^2\)</span> to it.<div class="autopermalink" data-description="Paragraph"><a href="#example-best-fit-polynomial-2-1" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="solutions"><details class="solution solution-like born-hidden-knowl"><summary class="knowl__link"><span class="type">Solution</span><span class="period heading-divison-mark heading-divison-mark__period">.</span></summary><div class="solution solution-like knowl__content">
+<pre class="code-block tex2jax_ignore clipboardable">x = (0:14)';  
+y = [9 8 5 5 3 1 2 5 4 7 8 8 7 7 8]';  % data
+d = 2;                     % degree of polynomial
+X = x.^(0:d);              % matrix of linear system for parameters
+beta = X\y;                % optimal parameters
+f = @(x) (x.^(0:d))*beta;  % best-fitting function f
+
+t = linspace(min(x), max(x), 1000)';
+plot(t, f(t), 'b', x, y, 'r*')
+
+total = norm(y - mean(y))^2;
+residual = norm(y - f(x))^2;
+fprintf('R^2 for degree %d is %g\n', d, 1 - residual/total);
+</pre>
+<div class="autopermalink" data-description="Solution 27.2.1.1"><a href="#example-best-fit-polynomial-3" title="Copy heading and permalink for Solution 27.2.1.1" aria-label="Copy heading and permalink for Solution 27.2.1.1">🔗</a></div>
+</div></details></div>
+<div class="autopermalink" data-description="Example 27.2.1: Fitting a polynomial of any degree"><a href="#example-best-fit-polynomial" title="Copy heading and permalink for Example 27.2.1: Fitting a polynomial of any degree" aria-label="Copy heading and permalink for Example 27.2.1: Fitting a polynomial of any degree">🔗</a></div></article><span class="incontext"><a class="internal" href="section-overfitting.html#example-best-fit-polynomial">in-context</a></span>
+</body>
+</html>

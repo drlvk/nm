@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+<!--******************************************-->
+<!--*  Authored with PreTeXt                 *-->
+<!--*  pretextbook.org                       *-->
+<!--*  Theme: default-modern                 *-->
+<!--*  Palette:                              *-->
+<!--******************************************-->
+
+<!--********************************************-->
+<!--*       Generated from PreTeXt source      *-->
+<!--*                                          *-->
+<!--*         https://pretextbook.org          *-->
+<!--*                                          *-->
+<!--********************************************-->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="robots" content="noindex, nofollow">
+</head>
+<body class="ignore-math">
+<article class="example example-like"><h3 class="heading">
+<span class="type">Example</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="codenumber">26.3.1</span><span class="period heading-divison-mark heading-divison-mark__period">.</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="title">Interpolate with cosines.</span>
+</h3>
+<div class="para">Apply the cosine interpolation to the numerical solution of ODE <a href="section-cosine-interpolation.html#eq-diffeq-for-intepolation" class="xref" data-knowl="./knowl/xref/eq-diffeq-for-intepolation.html" data-reveal-label="Reveal" data-close-label="Close" title="Equation 26.3.1">(26.3.1)</a>.<div class="autopermalink" data-description="Paragraph"><a href="#example-cosine-interpolation-2-1" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="solutions"><details class="solution solution-like born-hidden-knowl"><summary class="knowl__link"><span class="type">Solution</span><span class="period heading-divison-mark heading-divison-mark__period">.</span></summary><div class="solution solution-like knowl__content">
+<div class="para">Since <code class="code-inline tex2jax_ignore">ode45</code> returns <code class="code-inline tex2jax_ignore">y</code> as a column, it is transposed in the code below. Then we extend this vector to <code class="code-inline tex2jax_ignore">ye</code>, take its Fourier Transform <code class="code-inline tex2jax_ignore">c</code>, and fold it into cosine coefficients <code class="code-inline tex2jax_ignore">cf</code>. Then plot the resulting sum of cosines.<div class="autopermalink" data-description="Paragraph"><a href="#example-cosine-interpolation-3-1" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<pre class="code-block tex2jax_ignore clipboardable">[t, y] = ode45(@(t, y) sin(y^2) + t, 0:0.1:3, 1);
+y = y';
+
+n = numel(y);
+ye = [y y(end-1:-1:2)];
+c = real(fft(ye))/numel(ye);
+cf = [c(1) 2*c(2:n-1) c(n)];
+
+L = 3;
+x = linspace(0, L, 1000);
+k = 0:n-1;
+g = cf*cos(k'*x*pi/L);
+plot(x, g, t, y, 'r*')
+</pre>
+<div class="autopermalink" data-description="Solution 26.3.1.1"><a href="#example-cosine-interpolation-3" title="Copy heading and permalink for Solution 26.3.1.1" aria-label="Copy heading and permalink for Solution 26.3.1.1">🔗</a></div>
+</div></details></div>
+<div class="autopermalink" data-description="Example 26.3.1: Interpolate with cosines"><a href="#example-cosine-interpolation" title="Copy heading and permalink for Example 26.3.1: Interpolate with cosines" aria-label="Copy heading and permalink for Example 26.3.1: Interpolate with cosines">🔗</a></div></article><span class="incontext"><a class="internal" href="section-cosine-interpolation.html#example-cosine-interpolation">in-context</a></span>
+</body>
+</html>

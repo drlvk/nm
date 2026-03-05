@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+<!--******************************************-->
+<!--*  Authored with PreTeXt                 *-->
+<!--*  pretextbook.org                       *-->
+<!--*  Theme: default-modern                 *-->
+<!--*  Palette:                              *-->
+<!--******************************************-->
+
+<!--********************************************-->
+<!--*       Generated from PreTeXt source      *-->
+<!--*                                          *-->
+<!--*         https://pretextbook.org          *-->
+<!--*                                          *-->
+<!--********************************************-->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="robots" content="noindex, nofollow">
+</head>
+<body class="ignore-math">
+<article class="example example-like"><h3 class="heading">
+<span class="type">Example</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="codenumber">18.2.1</span><span class="period heading-divison-mark heading-divison-mark__period">.</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="title">Implement Simpson’s rule over a non-rectangular region.</span>
+</h3>
+<div class="para">Rewrite <a href="section-integration-rectangle.html#example-rectangle-simpson-eval" class="xref" data-knowl="./knowl/xref/example-rectangle-simpson-eval.html" data-reveal-label="Reveal" data-close-label="Close" title="Example 18.1.2: Implement Simpson’s rule over a rectangle">Example 18.1.2</a> to integrate the same function over the interior of the ellipse inscribed in the rectangle <span class="process-math">\(R = [-2,2]\times [-1,1]\text{.}\)</span> (The ellipse with the equation <span class="process-math">\(x^2/4 + y^2 = 1\text{.}\)</span>) Use composite Simpson’s rule with <span class="process-math">\(n=4\)</span> subintervals in both variables.<div class="autopermalink" data-description="Paragraph"><a href="#example-rectangle-simpson-ellipse-2-1" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="solutions"><details class="answer solution-like born-hidden-knowl"><summary class="knowl__link"><span class="type">Answer</span><span class="period heading-divison-mark heading-divison-mark__period">.</span></summary><div class="answer solution-like knowl__content">
+<div class="para logical">
+<div class="para">We need functions for top and bottom boundaries, according to the integral structure</div>
+<div class="displaymath process-math">
+\begin{equation*}
+\int_a^b \int_{\text{bottom}}^{\text{top}} f(x, y)\,dy\,dx
+\end{equation*}
+</div>
+<div class="para">In the x-variable, the points and weights are set once. But in the y-direction they are calculated within a loop, because different x-values produce different limits of integration for y. The vector <code class="code-inline tex2jax_ignore">innerint</code> is used below to store the values of the inner integral.</div>
+<div class="autopermalink" data-description="Paragraph"><a href="#example-rectangle-simpson-ellipse-3-1" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<pre class="code-block tex2jax_ignore clipboardable">f = @(x, y) sqrt(x.*y + y.^3 + 4);
+top = @(x) sqrt(1-x.^2/4);
+bottom = @(x) -sqrt(1-x.^2/4);
+a = -2;
+b = 2;
+
+n = 4;
+x = linspace(a, b, n+1);
+w = [1 4 2 4 1]*(b-a)/(3*n);
+innerint = zeros(size(x));
+
+for k = 1:numel(x)
+    c = bottom(x(k));
+    d = top(x(k));
+    y = linspace(c, d, n+1)';
+    v = [1 4 2 4 1]*(d-c)/(3*n);
+    innerint(k) = v*f(x(k), y);
+end
+    
+disp(innerint*w');
+</pre>
+<div class="para logical">
+<div class="para">The result is 11.8764, compared to the WolframAlpha output 12.5419. This is less accurate than what we got for rectangle. Note that all points with <span class="process-math">\(x=\pm 2\)</span> are wasted because there is no interval to integrate over with respect to <span class="process-math">\(y\text{.}\)</span> For this reason, open-ended rules such as Gaussian integration is preferable. Replacing the choice of <code class="code-inline tex2jax_ignore">x, w</code> above with the 3-point Gaussian rule</div>
+<pre class="code-display tex2jax_ignore clipboardable">
+x = [-sqrt(3/5) 0 sqrt(3/5)]*(b-a)/2 + (a+b)/2;
+w = [5/9 8/9 5/9]*(b-a)/2;
+</pre>
+<div class="para">we get 12.7081, which is much more accurate.</div>
+<div class="autopermalink" data-description="Paragraph"><a href="#example-rectangle-simpson-ellipse-3-3" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="autopermalink" data-description="Answer 18.2.1.1"><a href="#example-rectangle-simpson-ellipse-3" title="Copy heading and permalink for Answer 18.2.1.1" aria-label="Copy heading and permalink for Answer 18.2.1.1">🔗</a></div>
+</div></details></div>
+<div class="autopermalink" data-description="Example 18.2.1: Implement Simpson’s rule over a non-rectangular region"><a href="#example-rectangle-simpson-ellipse" title="Copy heading and permalink for Example 18.2.1: Implement Simpson’s rule over a non-rectangular region" aria-label="Copy heading and permalink for Example 18.2.1: Implement Simpson’s rule over a non-rectangular region">🔗</a></div></article><span class="incontext"><a class="internal" href="section-integration-general-2d.html#example-rectangle-simpson-ellipse">in-context</a></span>
+</body>
+</html>

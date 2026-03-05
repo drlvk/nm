@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+<!--******************************************-->
+<!--*  Authored with PreTeXt                 *-->
+<!--*  pretextbook.org                       *-->
+<!--*  Theme: default-modern                 *-->
+<!--*  Palette:                              *-->
+<!--******************************************-->
+
+<!--********************************************-->
+<!--*       Generated from PreTeXt source      *-->
+<!--*                                          *-->
+<!--*         https://pretextbook.org          *-->
+<!--*                                          *-->
+<!--********************************************-->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="robots" content="noindex, nofollow">
+</head>
+<body class="ignore-math">
+<article class="example example-like"><h3 class="heading">
+<span class="type">Example</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="codenumber">21.2.2</span><span class="period heading-divison-mark heading-divison-mark__period">.</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="title">Plot the Lagrange polynomial through 10 points.</span>
+</h3>
+<div class="para logical">
+<div class="para">Plot the Lagrange polynomial each of the following data sets:</div>
+<ol class="lower-alpha ol-marker-1" id="example-lagrange-polynomial-2-1-1">
+<li>
+<div class="para">the points <span class="process-math">\((k, \sin k)\text{,}\)</span> <span class="process-math">\(k=1, \dots, 10\text{;}\)</span>
+</div>
+<div class="autopermalink" data-description="Item a"><a href="#example-lagrange-polynomial-2-1-1-1" title="Copy heading and permalink for Item a" aria-label="Copy heading and permalink for Item a">🔗</a></div>
+</li>
+<li>
+<div class="para">the points with <span class="process-math">\(x_k\)</span> as above, and <span class="process-math">\(y_k\)</span> chosen randomly from the standard normal distribution.</div>
+<div class="autopermalink" data-description="Item b"><a href="#example-lagrange-polynomial-2-1-1-2" title="Copy heading and permalink for Item b" aria-label="Copy heading and permalink for Item b">🔗</a></div>
+</li>
+</ol>
+<div class="autopermalink" data-description="Paragraph"><a href="#example-lagrange-polynomial-2-1" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="solutions"><details class="answer solution-like born-hidden-knowl"><summary class="knowl__link"><span class="type">Answer</span><span class="period heading-divison-mark heading-divison-mark__period">.</span></summary><div class="answer solution-like knowl__content">
+<pre class="code-block tex2jax_ignore clipboardable">n = 10;
+x = 1:n;
+y = sin(x);  % or y = randn(1, n);
+w = ones(1, n);
+for k = 1:n
+    for j = 1:n
+        if j ~= k
+            w(k) = w(k)/(x(k)-x(j));
+        end
+    end
+end
+
+p = @(t) (y.*w*(t - x').^(-1)) ./ (w*(t - x').^(-1));
+t = linspace(min(x)-0.01, max(x)+0.01, 1000);
+plot(t, p(t), x, y, 'r*')
+</pre>
+<div class="para">The double loop computes the weights <code class="code-inline tex2jax_ignore">w</code> which do not involve the argument of the interpolating polynomial <code class="code-inline tex2jax_ignore">p</code>. This argument is called <code class="code-inline tex2jax_ignore">t</code> because <code class="code-inline tex2jax_ignore">x</code> is already used for the data points. The interval for plotting is chosen to contain the given x-values with a small margin on both sides: this helps both visualization and evaluation, because we avoid plugging in <span class="process-math">\(t = x_1, x_n\text{.}\)</span> The barycentric evaluation of the polynomial is vectorized. When <code class="code-inline tex2jax_ignore">t</code> is a scalar, <code class="code-inline tex2jax_ignore">t - x'</code> is a column vector. Taking reciprocals element-wise gives another column vector. Dot-product with <code class="code-inline tex2jax_ignore">w</code> or <code class="code-inline tex2jax_ignore">y.*w</code> implements the sums such as <span class="process-math">\(\sum_{k=1}^n w_k/(t-x_k)\text{.}\)</span><div class="autopermalink" data-description="Paragraph"><a href="#example-lagrange-polynomial-3-2" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="para">How does <code class="code-inline tex2jax_ignore">p</code> accept a row vector as <code class="code-inline tex2jax_ignore">t</code>? The expression <code class="code-inline tex2jax_ignore">t - x'</code> is the difference of a row vector and a column vector; in Matlab this creates a matrix where <span class="process-math">\((i, j)\)</span> entry is <span class="process-math">\(t_j - x_i\text{.}\)</span> Subsequent operations proceed as above, and the result is a row vector of values <span class="process-math">\(p(t)\text{.}\)</span><div class="autopermalink" data-description="Paragraph"><a href="#example-lagrange-polynomial-3-3" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="autopermalink" data-description="Answer 21.2.2.1"><a href="#example-lagrange-polynomial-3" title="Copy heading and permalink for Answer 21.2.2.1" aria-label="Copy heading and permalink for Answer 21.2.2.1">🔗</a></div>
+</div></details></div>
+<div class="autopermalink" data-description="Example 21.2.2: Plot the Lagrange polynomial through 10 points"><a href="#example-lagrange-polynomial" title="Copy heading and permalink for Example 21.2.2: Plot the Lagrange polynomial through 10 points" aria-label="Copy heading and permalink for Example 21.2.2: Plot the Lagrange polynomial through 10 points">🔗</a></div></article><span class="incontext"><a class="internal" href="section-lagrange-polynomial.html#example-lagrange-polynomial">in-context</a></span>
+</body>
+</html>

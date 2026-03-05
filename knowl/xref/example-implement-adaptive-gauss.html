@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+<!--******************************************-->
+<!--*  Authored with PreTeXt                 *-->
+<!--*  pretextbook.org                       *-->
+<!--*  Theme: default-modern                 *-->
+<!--*  Palette:                              *-->
+<!--******************************************-->
+
+<!--********************************************-->
+<!--*       Generated from PreTeXt source      *-->
+<!--*                                          *-->
+<!--*         https://pretextbook.org          *-->
+<!--*                                          *-->
+<!--********************************************-->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="robots" content="noindex, nofollow">
+</head>
+<body class="ignore-math">
+<article class="example example-like"><h3 class="heading">
+<span class="type">Example</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="codenumber">17.5.1</span><span class="period heading-divison-mark heading-divison-mark__period">.</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="title">Adaptive Gauss integration.</span>
+</h3>
+<div class="para">Implement adaptive integration as in <a href="section-adaptive-integration-bisection.html" class="internal" title="Section 17.3: Recursive subdivision algorithm">Section 17.3</a> using the midpoint rule for <span class="process-math">\(I_1\)</span> and Gauss rule with <span class="process-math">\(n=2\)</span> for <span class="process-math">\(I_2\text{.}\)</span> Test it on the integral <span class="process-math">\(\int_0^9 x^{-1/2}\,dx = 6\text{.}\)</span><div class="autopermalink" data-description="Paragraph"><a href="#example-implement-adaptive-gauss-2-1" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="solutions"><details class="answer solution-like born-hidden-knowl"><summary class="knowl__link"><span class="type">Answer</span><span class="period heading-divison-mark heading-divison-mark__period">.</span></summary><div class="answer solution-like knowl__content">
+<div class="para">When implementing Gauss rules on a general interval <span class="process-math">\([a, b]\text{,}\)</span> it helps to introduce the midpoint <span class="process-math">\(c = (a+b)/2\)</span> and half-length <span class="process-math">\(k = (b-a)/2\text{.}\)</span> This is because the rule was originally designed for <span class="process-math">\([-1, 1]\)</span> and the linear function from <span class="process-math">\([-1, 1]\)</span> to <span class="process-math">\([a, b]\)</span> is <span class="process-math">\(kx+c\text{.}\)</span> The coefficient <span class="process-math">\(k\)</span> will appear in the formulas due to the change of variable formula.<div class="autopermalink" data-description="Paragraph"><a href="#example-implement-adaptive-gauss-3-1" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<pre class="code-block tex2jax_ignore clipboardable">f = @ (x) x.^(-1/2);
+fprintf('The integral is %.6f\n', adaptive(f, 0, 9));
+
+function I = adaptive(f, a, b)
+    c = (a+b)/2;
+    k = (b-a)/2;
+    I1 = k*2*f(c);    % midpoint, same as Gauss n=1
+    I2 = k*(f(c - k/sqrt(3)) + f(c + k/sqrt(3)));  % Gauss n=2
+    if abs(I1 - I2) &lt; 1e-6 * (b-a) + 1e-9 
+        I = I2;
+    else
+        I = adaptive(f, a, c) + adaptive(f, c, b);
+    end
+end
+</pre>
+<div class="para">Note that the function is not defined at 0 which is an endpoints of the interval of integration. This would be a problem if we used, for example, trapezoidal or Simpson’s rules. Not a problem for midpoint or Gauss rules. By the way, the midpoint rule can be viewed as the Gauss rule with 1 point, because the degree 1 Legendre polynomial is <span class="process-math">\(P_1(x)=x\text{,}\)</span> with the zero at the middle of interval <span class="process-math">\([-1,1]\)</span><div class="autopermalink" data-description="Paragraph"><a href="#example-implement-adaptive-gauss-3-3" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="autopermalink" data-description="Answer 17.5.1.1"><a href="#example-implement-adaptive-gauss-3" title="Copy heading and permalink for Answer 17.5.1.1" aria-label="Copy heading and permalink for Answer 17.5.1.1">🔗</a></div>
+</div></details></div>
+<div class="autopermalink" data-description="Example 17.5.1: Adaptive Gauss integration"><a href="#example-implement-adaptive-gauss" title="Copy heading and permalink for Example 17.5.1: Adaptive Gauss integration" aria-label="Copy heading and permalink for Example 17.5.1: Adaptive Gauss integration">🔗</a></div></article><span class="incontext"><a class="internal" href="examples-adaptive-integration.html#example-implement-adaptive-gauss">in-context</a></span>
+</body>
+</html>

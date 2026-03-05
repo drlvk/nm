@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+<!--******************************************-->
+<!--*  Authored with PreTeXt                 *-->
+<!--*  pretextbook.org                       *-->
+<!--*  Theme: default-modern                 *-->
+<!--*  Palette:                              *-->
+<!--******************************************-->
+
+<!--********************************************-->
+<!--*       Generated from PreTeXt source      *-->
+<!--*                                          *-->
+<!--*         https://pretextbook.org          *-->
+<!--*                                          *-->
+<!--********************************************-->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="robots" content="noindex, nofollow">
+</head>
+<body class="ignore-math">
+<article class="example example-like"><h3 class="heading">
+<span class="type">Example</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="codenumber">10.4.2</span><span class="period heading-divison-mark heading-divison-mark__period">.</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="title">Find all roots of a polynomial simultaneously.</span>
+</h3>
+<div class="para">Use the multivariate Newton method to solve the system from <a href="examples-multivariate-newton.html#example-durand-kerner-setup" class="xref" data-knowl="./knowl/xref/example-durand-kerner-setup.html" data-reveal-label="Reveal" data-close-label="Close" title="Example 10.4.1: Rewriting a polynomial equation in multivariate form">Example 10.4.1</a>.<div class="autopermalink" data-description="Paragraph"><a href="#example-durand-kerner-solve-2-1" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="solutions"><details class="solution solution-like born-hidden-knowl"><summary class="knowl__link"><span class="type">Solution</span><span class="period heading-divison-mark heading-divison-mark__period">.</span></summary><div class="solution solution-like knowl__content">
+<div class="para logical">
+<div class="para">We have the vector function</div>
+<div class="displaymath process-math" data-contains-math-knowls="./knowl/xref/example-multivariate-newton-solve.html">
+\begin{equation*}
+\mathbf F(\mathbf x) = \begin{pmatrix} x_1+x_2+x_3 +2  \\ 
+x_1x_2 + x_1x_3 + x_2x_3 + 7 \\
+x_1x_2x_3 + 1
+\end{pmatrix} 
+\end{equation*}
+</div>
+<div class="para">and its Jacobian matrix is</div>
+<div class="displaymath process-math" data-contains-math-knowls="./knowl/xref/example-multivariate-newton-solve.html">
+\begin{equation*}
+J(\mathbf x) = \begin{pmatrix} 1 \amp 1 \amp 1 \\
+x_2 + x_3 \amp x_1 + x_3 \amp x_1+x_2  \\
+x_2 x_3 \amp x_1 x_3 \amp x_1 x_2 
+\end{pmatrix}
+\end{equation*}
+</div>
+<div class="para">Use the code from <a href="section-multivariate-newton.html#example-multivariate-newton-solve" class="xref" data-knowl="./knowl/xref/example-multivariate-newton-solve.html" data-reveal-label="Reveal" data-close-label="Close" title="Example 10.2.3: Solve a system using Newton’s method">Example 10.2.3</a> with these functions:</div>
+<div class="autopermalink" data-description="Paragraph"><a href="#example-durand-kerner-solve-3-1" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<pre class="code-block tex2jax_ignore clipboardable">F = @(x) [x(1) + x(2) + x(3) + 2; 
+          x(1)*x(2) + x(1)*x(3) + x(2)*x(3) + 7;
+          x(1)*x(2)*x(3) + 1];
+J = @(x) [1, 1, 1;
+          x(2) + x(3), x(1) + x(3), x(1) + x(2);
+          x(2)*x(3), x(1)*x(3), x(1)*x(2)];
+</pre>
+<div class="para">The initial point should be a point with distinct coordinates, because at points with equal coordinates like <code class="code-inline tex2jax_ignore">[0; 0; 0]</code> or <code class="code-inline tex2jax_ignore">[1; 1; 1]</code> the Jacobian matrix is singular (it has equal columns). For example, <code class="code-inline tex2jax_ignore">[1; 2; 3]</code> works just fine.<div class="autopermalink" data-description="Paragraph"><a href="#example-durand-kerner-solve-3-3" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<pre class="code-block tex2jax_ignore clipboardable">Found a solution after 9 steps:
+    1.7240    0.1497   -3.8737
+</pre>
+<div class="para">Although an algebraic formula for the roots of a cubic (degree 3) equation exists, the symbolic form of the roots is often too complicated to be of any use. See what <a class="external" href="https://www.wolframalpha.com/input/?i=solve+x%5E3%2B2x%5E2-7x%2B1%3D0" target="_blank">Wolfram Alpha</a> shows as a solution of this equation.<div class="autopermalink" data-description="Paragraph"><a href="#example-durand-kerner-solve-3-5" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="para">The above process, in a polished and simplified form, is known as the <a class="external" href="https://en.wikipedia.org/wiki/Durand%E2%80%93Kerner_method" target="_blank">Durand-Kerner method</a> for finding all polynomial roots at once.<div class="autopermalink" data-description="Paragraph"><a href="#example-durand-kerner-solve-3-6" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="autopermalink" data-description="Solution 10.4.2.1"><a href="#example-durand-kerner-solve-3" title="Copy heading and permalink for Solution 10.4.2.1" aria-label="Copy heading and permalink for Solution 10.4.2.1">🔗</a></div>
+</div></details></div>
+<div class="autopermalink" data-description="Example 10.4.2: Find all roots of a polynomial simultaneously"><a href="#example-durand-kerner-solve" title="Copy heading and permalink for Example 10.4.2: Find all roots of a polynomial simultaneously" aria-label="Copy heading and permalink for Example 10.4.2: Find all roots of a polynomial simultaneously">🔗</a></div></article><span class="incontext"><a class="internal" href="examples-multivariate-newton.html#example-durand-kerner-solve">in-context</a></span>
+</body>
+</html>

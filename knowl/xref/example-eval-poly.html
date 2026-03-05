@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+<!--******************************************-->
+<!--*  Authored with PreTeXt                 *-->
+<!--*  pretextbook.org                       *-->
+<!--*  Theme: default-modern                 *-->
+<!--*  Palette:                              *-->
+<!--******************************************-->
+
+<!--********************************************-->
+<!--*       Generated from PreTeXt source      *-->
+<!--*                                          *-->
+<!--*         https://pretextbook.org          *-->
+<!--*                                          *-->
+<!--********************************************-->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="robots" content="noindex, nofollow">
+</head>
+<body class="ignore-math">
+<article class="example example-like"><h3 class="heading">
+<span class="type">Example</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="codenumber">5.3.2</span><span class="period heading-divison-mark heading-divison-mark__period">.</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="title">Evaluating a polynomial.</span>
+</h3>
+<div class="para logical">
+<div class="para">Define a named function <code class="code-inline tex2jax_ignore">function y = p(x, a, n)</code> which computes the polynomial</div>
+<div class="displaymath process-math">
+\begin{equation*}
+p(x, a, n) = 1 + \frac{x}{a} + \frac{x^2}{a + 1} + \frac{x^3}{a+2} + \cdots + \frac{x^n}{a+n-1}
+\end{equation*}
+</div>
+<div class="para">Assume that <code class="code-inline tex2jax_ignore">x</code> may be a vector, <code class="code-inline tex2jax_ignore">a</code> is a real number, and <code class="code-inline tex2jax_ignore">n</code> is a positive integer (the degree of our polynomial).</div>
+<div class="autopermalink" data-description="Paragraph"><a href="#example-eval-poly-2-1" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="solutions"><details class="answer solution-like born-hidden-knowl"><summary class="knowl__link"><span class="type">Answer</span><span class="period heading-divison-mark heading-divison-mark__period">.</span></summary><div class="answer solution-like knowl__content">
+<pre class="code-block tex2jax_ignore clipboardable">function y = p(x, a, n)
+    y = ones(size(x));
+    for k = 1:n
+        y = y + x.^k/(a+k-1);
+    end
+end
+</pre>
+<div class="para">The command <code class="code-inline tex2jax_ignore">size(x)</code> returns the size of <span class="process-math">\(x\)</span> as the number of rows and columns. Consequently, <code class="code-inline tex2jax_ignore">ones(size(x))</code> means creating a vector or matrix of the same size as <code class="code-inline tex2jax_ignore">x</code>, but with all entries 1. If we started with <code class="code-inline tex2jax_ignore">y = 1</code> instead, the computation would still work because adding 1 to a vector like <code class="code-inline tex2jax_ignore">x.^k</code> means adding 1 to each component of the vector (ex. However, when <code class="code-inline tex2jax_ignore">n = 0</code> the loop does not run at all and the output would be a scalar <code class="code-inline tex2jax_ignore">1</code> instead of a vector, which is a bug.<div class="autopermalink" data-description="Paragraph"><a href="#example-eval-poly-3-2" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="autopermalink" data-description="Answer 5.3.2.1"><a href="#example-eval-poly-3" title="Copy heading and permalink for Answer 5.3.2.1" aria-label="Copy heading and permalink for Answer 5.3.2.1">🔗</a></div>
+</div></details></div>
+<div class="autopermalink" data-description="Example 5.3.2: Evaluating a polynomial"><a href="#example-eval-poly" title="Copy heading and permalink for Example 5.3.2: Evaluating a polynomial" aria-label="Copy heading and permalink for Example 5.3.2: Evaluating a polynomial">🔗</a></div></article><span class="incontext"><a class="internal" href="examples-user-defined-functions.html#example-eval-poly">in-context</a></span>
+</body>
+</html>

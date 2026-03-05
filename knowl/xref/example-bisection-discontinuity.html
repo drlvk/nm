@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+<!--******************************************-->
+<!--*  Authored with PreTeXt                 *-->
+<!--*  pretextbook.org                       *-->
+<!--*  Theme: default-modern                 *-->
+<!--*  Palette:                              *-->
+<!--******************************************-->
+
+<!--********************************************-->
+<!--*       Generated from PreTeXt source      *-->
+<!--*                                          *-->
+<!--*         https://pretextbook.org          *-->
+<!--*                                          *-->
+<!--********************************************-->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="robots" content="noindex, nofollow">
+</head>
+<body class="ignore-math">
+<article class="example example-like"><h3 class="heading">
+<span class="type">Example</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="codenumber">7.5.2</span><span class="period heading-divison-mark heading-divison-mark__period">.</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="title">Incorrect answer obtained by bisection.</span>
+</h3>
+<div class="para logical">
+<div class="para">Run the code in <a href="section-bisection-method.html#example-bisection" class="xref" data-knowl="./knowl/xref/example-bisection.html" data-reveal-label="Reveal" data-close-label="Close" title="Example 7.3.3: Finding a root by bisection">Example 7.3.3</a> with the following modification:</div>
+<pre class="code-display tex2jax_ignore clipboardable">
+f = @(x) tan(x);
+a = 1;
+b = 2;
+</pre>
+<div class="para">Note that <span class="process-math">\(\tan(1) \approx 1.5574 &gt; 0\)</span> and <span class="process-math">\(\tan(2) \approx -2.1850 \lt 0\text{,}\)</span> so the bisection algorithm can run. What is its output, and what is wrong with it? How could this error be avoided?</div>
+<div class="autopermalink" data-description="Paragraph"><a href="#example-bisection-discontinuity-2-1" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="solutions"><details class="solution solution-like born-hidden-knowl"><summary class="knowl__link"><span class="type">Solution</span><span class="period heading-divison-mark heading-divison-mark__period">.</span></summary><div class="solution solution-like knowl__content">
+<div class="para">The program output is “Found a root x = 1.57079632679”. But this value is not a solution of equation <span class="process-math">\(\tan x = 0\text{.}\)</span> It is a point of discontinuity, where the tangent has vertical asymptote <span class="process-math">\(x = \pi/2\text{.}\)</span> Because of discontinuity, the tangent function changes sign without passing through 0.<div class="autopermalink" data-description="Paragraph"><a href="#example-bisection-discontinuity-3-1" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="para">One way to avoid this error is to check whether the function has a “small” value at the root that we found, for example as follows.<div class="autopermalink" data-description="Paragraph"><a href="#example-bisection-discontinuity-3-2" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<pre class="code-block tex2jax_ignore clipboardable">x = (a+b)/2;
+if abs(f(x)) &lt; 1e-9
+    fprintf('Found a root x = %.12g\n', x);
+else 
+    fprintf('Suspected discontinuity at x = %.12g\n', x);
+end
+</pre>
+<div class="para">Then the output is “Suspected discontinuity at x = 1.57079632679”<div class="autopermalink" data-description="Paragraph"><a href="#example-bisection-discontinuity-3-4" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="autopermalink" data-description="Solution 7.5.2.1"><a href="#example-bisection-discontinuity-3" title="Copy heading and permalink for Solution 7.5.2.1" aria-label="Copy heading and permalink for Solution 7.5.2.1">🔗</a></div>
+</div></details></div>
+<div class="autopermalink" data-description="Example 7.5.2: Incorrect answer obtained by bisection"><a href="#example-bisection-discontinuity" title="Copy heading and permalink for Example 7.5.2: Incorrect answer obtained by bisection" aria-label="Copy heading and permalink for Example 7.5.2: Incorrect answer obtained by bisection">🔗</a></div></article><span class="incontext"><a class="internal" href="examples-roots-bisection.html#example-bisection-discontinuity">in-context</a></span>
+</body>
+</html>

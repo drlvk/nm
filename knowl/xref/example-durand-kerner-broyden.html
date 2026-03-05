@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+<!--******************************************-->
+<!--*  Authored with PreTeXt                 *-->
+<!--*  pretextbook.org                       *-->
+<!--*  Theme: default-modern                 *-->
+<!--*  Palette:                              *-->
+<!--******************************************-->
+
+<!--********************************************-->
+<!--*       Generated from PreTeXt source      *-->
+<!--*                                          *-->
+<!--*         https://pretextbook.org          *-->
+<!--*                                          *-->
+<!--********************************************-->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="robots" content="noindex, nofollow">
+</head>
+<body class="ignore-math">
+<article class="example example-like"><h3 class="heading">
+<span class="type">Example</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="codenumber">11.4.1</span><span class="period heading-divison-mark heading-divison-mark__period">.</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="title">Use Broyden’s method to find all roots of a cubic polynomial.</span>
+</h3>
+<div class="para">Redo <a href="examples-multivariate-newton.html#example-durand-kerner-solve" class="xref" data-knowl="./knowl/xref/example-durand-kerner-solve.html" data-reveal-label="Reveal" data-close-label="Close" title="Example 10.4.2: Find all roots of a polynomial simultaneously">Example 10.4.2</a> using Broyden’s method instead of Newton’s method.<div class="autopermalink" data-description="Paragraph"><a href="#example-durand-kerner-broyden-2-1" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="solutions"><details class="solution solution-like born-hidden-knowl"><summary class="knowl__link"><span class="type">Solution</span><span class="period heading-divison-mark heading-divison-mark__period">.</span></summary><div class="solution solution-like knowl__content">
+<div class="para logical">
+<div class="para">We have the same vector function to be equated to zero</div>
+<div class="displaymath process-math">
+\begin{equation*}
+\mathbf F(\mathbf x) = \begin{pmatrix} x_1+x_2+x_3 +2  \\ 
+x_1x_2 + x_1x_3 + x_2x_3 + 7 \\
+x_1x_2x_3 + 1
+\end{pmatrix} 
+\end{equation*}
+</div>
+<div class="para">but no longer use its Jacobian matrix. The code is modified by computing the steps as <code class="code-inline tex2jax_ignore">h = -B*F(x)</code> and updating the matrix <code class="code-inline tex2jax_ignore">B</code> according to Broyden’s method.</div>
+<div class="autopermalink" data-description="Paragraph"><a href="#example-durand-kerner-broyden-3-1" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<pre class="code-block tex2jax_ignore clipboardable">F = @(x) [x(1) + x(2) + x(3) + 2; 
+          x(1)*x(2) + x(1)*x(3) + x(2)*x(3) + 7;
+          x(1)*x(2)*x(3) + 1];
+
+x = [1; 2; 3];
+B = eye(3);
+max_tries = 10000;
+
+for k = 1:max_tries
+    h = -B*F(x);
+    w = F(x+h) - F(x);
+    B = B + (h - B*w)*h'*B / (h'*B*w);
+    x = x + h;
+    if norm(h) &lt; 100*eps(norm(x))
+        break
+    end
+end
+
+if k &lt; max_tries
+    fprintf('Found a solution after %d steps:\n', k);
+    disp(x)
+    fprintf('The norm of F(x) is %g\n', norm(F(x)))
+else
+    disp('Failed to converge')
+end
+</pre>
+<div class="para">Starting from the same point <code class="code-inline tex2jax_ignore">[1; 2; 3]</code> as we used for Newton’s method, we get:<div class="autopermalink" data-description="Paragraph"><a href="#example-durand-kerner-broyden-3-3" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<pre class="code-block tex2jax_ignore clipboardable">Found a solution after 1359 steps:
+    1.7240
+   -3.8737
+    0.1497
+</pre>
+<div class="para">By contrast, Newton’s method converged in 9 steps. There is a price to pay for the lack of Jacobian matrix.<div class="autopermalink" data-description="Paragraph"><a href="#example-durand-kerner-broyden-3-5" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="autopermalink" data-description="Solution 11.4.1.1"><a href="#example-durand-kerner-broyden-3" title="Copy heading and permalink for Solution 11.4.1.1" aria-label="Copy heading and permalink for Solution 11.4.1.1">🔗</a></div>
+</div></details></div>
+<div class="autopermalink" data-description="Example 11.4.1: Use Broyden’s method to find all roots of a cubic polynomial"><a href="#example-durand-kerner-broyden" title="Copy heading and permalink for Example 11.4.1: Use Broyden’s method to find all roots of a cubic polynomial" aria-label="Copy heading and permalink for Example 11.4.1: Use Broyden’s method to find all roots of a cubic polynomial">🔗</a></div></article><span class="incontext"><a class="internal" href="examples-broyden.html#example-durand-kerner-broyden">in-context</a></span>
+</body>
+</html>

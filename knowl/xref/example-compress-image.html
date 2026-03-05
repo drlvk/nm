@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+<!--******************************************-->
+<!--*  Authored with PreTeXt                 *-->
+<!--*  pretextbook.org                       *-->
+<!--*  Theme: default-modern                 *-->
+<!--*  Palette:                              *-->
+<!--******************************************-->
+
+<!--********************************************-->
+<!--*       Generated from PreTeXt source      *-->
+<!--*                                          *-->
+<!--*         https://pretextbook.org          *-->
+<!--*                                          *-->
+<!--********************************************-->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="robots" content="noindex, nofollow">
+</head>
+<body class="ignore-math">
+<article class="example example-like"><h3 class="heading">
+<span class="type">Example</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="codenumber">26.2.2</span><span class="period heading-divison-mark heading-divison-mark__period">.</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="title">Compress an image using Discrete Fourier Transform.</span>
+</h3>
+<div class="para">Given a percentage <code class="code-inline tex2jax_ignore">p</code>, such as 75, compress the “winter” image by setting <code class="code-inline tex2jax_ignore">p</code> percent of its Fourier coefficients to zero.<div class="autopermalink" data-description="Paragraph"><a href="#example-compress-image-2-1" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="solutions"><details class="solution solution-like born-hidden-knowl"><summary class="knowl__link"><span class="type">Solution</span><span class="period heading-divison-mark heading-divison-mark__period">.</span></summary><div class="solution solution-like knowl__content">
+<pre class="code-block tex2jax_ignore clipboardable">p = 75;
+im = imread('winter.png');
+fc = fft2(im);
+thr = prctile(abs(fc(:)), p);
+fc(abs(fc) &lt; thr) = 0;
+im2 = uint8(real(ifft2(fc)));
+imshow(im2)
+</pre>
+<div class="para">The inverse Fourier transform may have imaginary part due to the truncation of Fourier coefficients and rounding errors in computations. This imaginary part is removed with <code class="code-inline tex2jax_ignore">real</code>. The result is converted to unsigned 8-bit integers with <code class="code-inline tex2jax_ignore">uint8</code>.<div class="autopermalink" data-description="Paragraph"><a href="#example-compress-image-3-2" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="autopermalink" data-description="Solution 26.2.2.1"><a href="#example-compress-image-3" title="Copy heading and permalink for Solution 26.2.2.1" aria-label="Copy heading and permalink for Solution 26.2.2.1">🔗</a></div>
+</div></details></div>
+<div class="autopermalink" data-description="Example 26.2.2: Compress an image using Discrete Fourier Transform"><a href="#example-compress-image" title="Copy heading and permalink for Example 26.2.2: Compress an image using Discrete Fourier Transform" aria-label="Copy heading and permalink for Example 26.2.2: Compress an image using Discrete Fourier Transform">🔗</a></div></article><span class="incontext"><a class="internal" href="section-2d-dft.html#example-compress-image">in-context</a></span>
+</body>
+</html>

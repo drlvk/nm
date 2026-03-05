@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+<!--******************************************-->
+<!--*  Authored with PreTeXt                 *-->
+<!--*  pretextbook.org                       *-->
+<!--*  Theme: default-modern                 *-->
+<!--*  Palette:                              *-->
+<!--******************************************-->
+
+<!--********************************************-->
+<!--*       Generated from PreTeXt source      *-->
+<!--*                                          *-->
+<!--*         https://pretextbook.org          *-->
+<!--*                                          *-->
+<!--********************************************-->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="robots" content="noindex, nofollow">
+</head>
+<body class="ignore-math">
+<article class="example example-like"><h3 class="heading">
+<span class="type">Example</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="codenumber">19.5.1</span><span class="period heading-divison-mark heading-divison-mark__period">.</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="title">Implement trapezoidal method for ODE system.</span>
+</h3>
+<div class="para logical">
+<div class="para">Solve the system</div>
+<div class="displaymath process-math">
+\begin{align*}
+y_1' \amp = t - 3y_2\\
+y_2' \amp = 2y_1
+\end{align*}
+</div>
+<div class="para">with initial condition <span class="process-math">\(y(0) = \begin{pmatrix}1 \\ 0\end{pmatrix}\text{,}\)</span> on the interval <span class="process-math">\([0, 10]\)</span> using the trapezoidal method with the step <span class="process-math">\(h=0.01\text{.}\)</span> Plot the solution.</div>
+<div class="autopermalink" data-description="Paragraph"><a href="#example-implement-trapezoidal-ode-system-2-1" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="solutions"><details class="answer solution-like born-hidden-knowl"><summary class="knowl__link"><span class="type">Answer</span><span class="period heading-divison-mark heading-divison-mark__period">.</span></summary><div class="answer solution-like knowl__content">
+<pre class="code-block tex2jax_ignore clipboardable">f = @(t, y) [t-3*y(2); 2*y(1)]; 
+h = 0.01; 
+t = 0:h:10;
+y0 = [1; 0];
+y = y0*ones(size(t));
+ 
+for k = 1:numel(t)-1
+    pred = y(:, k) + h*f(t(k), y(:, k));
+    y(:, k+1) = y(:, k) + h/2*(f(t(k), y(:, k)) + f(t(k+1), pred));
+end
+
+plot(t, y)
+</pre>
+<div class="para">The most visible difference is the notation <code class="code-inline tex2jax_ignore">y(:, k)</code> which takes the entire <span class="process-math">\(k\)</span>th column of the matrix <code class="code-inline tex2jax_ignore">y</code>. Its mathematical meaning is the approximation to <span class="process-math">\(\mathbf y(t_k)\text{.}\)</span> The initial condition <code class="code-inline tex2jax_ignore">y0</code> is a column vector, which makes the computation <code class="code-inline tex2jax_ignore">y = y0*ones(size(t));</code> an outer product: it creates a matrix in which every column is equal to <code class="code-inline tex2jax_ignore">y0</code>. This is convenient because we need the first column to be equal, and the other columns will be rewritten anyway.<div class="autopermalink" data-description="Paragraph"><a href="#example-implement-trapezoidal-ode-system-3-2" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="autopermalink" data-description="Answer 19.5.1.1"><a href="#example-implement-trapezoidal-ode-system-3" title="Copy heading and permalink for Answer 19.5.1.1" aria-label="Copy heading and permalink for Answer 19.5.1.1">🔗</a></div>
+</div></details></div>
+<div class="autopermalink" data-description="Example 19.5.1: Implement trapezoidal method for ODE system"><a href="#example-implement-trapezoidal-ode-system" title="Copy heading and permalink for Example 19.5.1: Implement trapezoidal method for ODE system" aria-label="Copy heading and permalink for Example 19.5.1: Implement trapezoidal method for ODE system">🔗</a></div></article><span class="incontext"><a class="internal" href="section-ode-systems.html#example-implement-trapezoidal-ode-system">in-context</a></span>
+</body>
+</html>

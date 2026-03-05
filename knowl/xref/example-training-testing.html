@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+<!--******************************************-->
+<!--*  Authored with PreTeXt                 *-->
+<!--*  pretextbook.org                       *-->
+<!--*  Theme: default-modern                 *-->
+<!--*  Palette:                              *-->
+<!--******************************************-->
+
+<!--********************************************-->
+<!--*       Generated from PreTeXt source      *-->
+<!--*                                          *-->
+<!--*         https://pretextbook.org          *-->
+<!--*                                          *-->
+<!--********************************************-->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="robots" content="noindex, nofollow">
+</head>
+<body class="ignore-math">
+<article class="example example-like"><h3 class="heading">
+<span class="type">Example</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="codenumber">27.2.2</span><span class="period heading-divison-mark heading-divison-mark__period">.</span><span class="space heading-divison-mark heading-divison-mark__space"> </span><span class="title">Training-testing split.</span>
+</h3>
+<div class="para">Use the training-testing split in <a href="section-overfitting.html#example-best-fit-polynomial" class="xref" data-knowl="./knowl/xref/example-best-fit-polynomial.html" data-reveal-label="Reveal" data-close-label="Close" title="Example 27.2.1: Fitting a polynomial of any degree">Example 27.2.1</a>.<div class="autopermalink" data-description="Paragraph"><a href="#example-training-testing-2-1" title="Copy heading and permalink for Paragraph" aria-label="Copy heading and permalink for Paragraph">🔗</a></div>
+</div>
+<div class="solutions"><details class="solution solution-like born-hidden-knowl"><summary class="knowl__link"><span class="type">Solution</span><span class="period heading-divison-mark heading-divison-mark__period">.</span></summary><div class="solution solution-like knowl__content">
+<pre class="code-block tex2jax_ignore clipboardable">x = (0:14)';  
+y = [9 8 5 5 3 1 2 5 4 7 8 8 7 7 8]';
+x_train = x(1:2:end);
+y_train = y(1:2:end);
+x_test = x(2:2:end);
+y_test = y(2:2:end);
+
+d = 2;
+
+X = x_train.^(0:d);
+beta = X\y_train; 
+f = @(x) (x.^(0:d))*beta; 
+
+t = linspace(min(x), max(x), 1000)';
+plot(t, f(t), 'b', x, y, 'r*')
+
+total = norm(y_test - mean(y_test))^2;
+residual = norm(y_test - f(x_test))^2;
+fprintf('R^2 for degree %d is %g\n', d, 1 - residual/total);
+</pre>
+<div class="autopermalink" data-description="Solution 27.2.2.1"><a href="#example-training-testing-3" title="Copy heading and permalink for Solution 27.2.2.1" aria-label="Copy heading and permalink for Solution 27.2.2.1">🔗</a></div>
+</div></details></div>
+<div class="autopermalink" data-description="Example 27.2.2: Training-testing split"><a href="#example-training-testing" title="Copy heading and permalink for Example 27.2.2: Training-testing split" aria-label="Copy heading and permalink for Example 27.2.2: Training-testing split">🔗</a></div></article><span class="incontext"><a class="internal" href="section-overfitting.html#example-training-testing">in-context</a></span>
+</body>
+</html>
