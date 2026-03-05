@@ -1,0 +1,359 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<chapter xml:id="chapter-systems-vectorization-plots" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+<title>Linear systems, array operations, plots</title>
+
+
+    <introduction>
+        <p>The goal of this class is to learn basic ways in which vectors and matrices are used:
+        	solving the systems of linear equations; performing computations with many numbers at once; and graphing functions.</p>
+	<p>The following parts of <url href="https://matlabacademy.mathworks.com/en/details/gettingstarted">MATLAB Onramp</url> minicourse are directly related to this chapter: 
+     <ul>
+     	<li>Array Calculations</li> 
+        <li>Plotting Data</li>
+    </ul>
+        </p>
+    </introduction>
+
+<section xml:id="section-linear-systems">
+<title>Systems of linear equations</title>
+
+<p>A system of linear equations, such as 
+<md>
+	<mrow>3x_1 - 2x_2 \amp = 6 </mrow>
+	<mrow>2x_1 + 5x_2 \amp = -3 </mrow>
+</md>
+can be written in matrix form as <m>Ax=b</m> where <m>A</m> is the matrix of coefficients,
+<me>A = \begin{pmatrix} 3 \amp -2 \\ 2 \amp 5 \end{pmatrix}</me>
+and <m>b</m> is the <em>column</em> vector on the right-hand side: 
+<me>b = \begin{pmatrix} 6  \\ -3 \end{pmatrix}</me>
+The Matlab command for solving <m>Ax=b</m> is very short: <cd>x = A\b</cd> The result is the column vector <c>[1.2632; -1.1053]</c>, meaning that <m>x_1\approx 1.2632</m> and <m>x_2 \approx -1.1053</m>.
+</p>
+
+<p> Mathematically, <m>x</m> could be found as <m>x = A^{-1}b</m> where <m>A^{-1}</m> is the inverse matrix. However, this is not a computationally efficient way to solve a linear system. Matlab does not actually compute the inverse matrix when solving a linear system. It chooses one of several algorithms based on the nature of the matrix; usually it is a form of <q>LU factorization</q> which is discussed in MAT 532. But even though the formula <m>x = A^{-1}b</m> 
+is not actually used, it suggests the notation used by Matlab. For two numbers <m>a, b</m> we can write <m>ba^{-1}</m> as <c>b/a</c>, meaning <m>b</m> divided by <m>a</m>. If the order of multiplication was important (as it is for matrices), then perhaps <m>a^{-1}b</m> could be written as <c>a\b</c>, meaning <m>b</m> divided by <m>a</m> <em>from the left</em>. We do not actually <q>divide a vector by a matrix</q> but the notation <c>A\b</c> can remind us of <m>A^{-1}b</m>.</p> 
+
+<example>
+	<title>Solve and verify</title>
+<statement>
+	<p>Write a Matlab script which solves the linear system 
+<md>
+	<mrow>5x_1 + 3x_2 \amp = 2 </mrow>
+	<mrow>-2x_1 + x_2  - 6x_3 \amp = 0 </mrow>
+	<mrow>3x_2  +  x_3 \amp = 3 </mrow>
+</md>
+and then plug the solution into the left hand side to check that the solution is correct.</p> 
+</statement>
+<answer>
+<pre>
+A = [5 3 0; -2 1 -6; 0 3 1];
+b = [2; 0; 3];
+x = A\b;
+disp(x)
+disp(A*x)
+</pre>
+</answer>
+</example> 
+</section>
+
+<section xml:id="section-large-matrices">
+<title>More tools for constructing matrices</title>
+
+<p>The number of coefficients in a linear system grows rapidly with its size: a system with 20 equations and 20 variables has a matrix with 400 coefficients. Entering these by hand would be tedious. We already have two ways to construct large matrices: <c>zeros(m, n)</c> and <c>ones(m, n)</c> but these are not invertible matrices. This section presents two other useful constructions. </p>
+
+<p>The <term>identity matrix</term> is usually denoted <m>I</m> in mathematics, or <m>I_n</m> if it is necessary to emphasize its size. For example, 
+<me>I_3 = \begin{pmatrix} 1 \amp 0\amp 0 \\ 0\amp 1\amp 0 \\ 0\amp 0\amp 1 \end{pmatrix}</me>
+In Matlab this matrix would be created as <c>eye(3)</c>. The name of the command was chosen because <q>eye</q> is pronounced the same as <q>I</q>. We also get scalars multiples of the identity matrix, for example <c>5*eye(3)</c> is  
+<me> \begin{pmatrix} 5 \amp 0\amp 0 \\ 0\amp 5\amp 0 \\ 0\amp 0\amp 5 \end{pmatrix}</me>
+</p>
+
+
+<p>A <term>diagonal matrix</term> has zeros everywhere except on the main diagonal. The identity matrix <m>I</m> is a special case of a diagonal matrix. In Matlab, the command <c>diag(v)</c> creates a diagonal matrix which has the elements of vector <c>v</c> on its main diagonal. For example, <c>diag([6 -4 7])</c> creates the matrix
+<me>\begin{pmatrix} 6 \amp 0\amp 0 \\ 0\amp -4\amp 0 \\ 0\amp 0\amp 7 \end{pmatrix}</me>
+</p>
+
+<p>Some problems in engineering and in differential equations lead to matrices where nonzero coefficients are <em>close</em> to the main diagonal but not exactly at it: for example, 
+<me>\begin{pmatrix}
+	2 \amp -1 \amp 0\amp 0 \amp 0 \\ 
+	-1 \amp 2 \amp -1\amp 0 \amp 0 \\ 
+	0 \amp -1 \amp 2\amp -1 \amp 0 \\ 
+	0 \amp 0 \amp -1\amp 2 \amp -1 \\ 
+	0 \amp 0 \amp 0\amp -1 \amp 2 \\ 
+\end{pmatrix}</me>
+To construct such matrices we can use <c>diag(v, k)</c> which places the elements of vector <c>v</c> on the diagonal parallel to the main one but <m>k</m> positions above it. So, <c>diag(v, 1)</c> is just above the main diagonal and <c>diag(v, -1)</c> is just below. The matrix shown above could be formed as 
+<cd> diag([2 2 2 2 2]) - diag([1 1 1 1], 1) - diag([1 1 1 1], -1)</cd>
+This is an example of a <term>tridiagonal matrix</term>: there are only three diagonals with nonzero entries. More generally, a matrix is called <term>sparse</term> if most of its elements are 0. Large sparse matrices frequently arise in computations. </p>
+
+
+
+<example>
+	<title>Product of sparse matrices</title>
+<statement>
+	<p>Let <m>A</m> be the 9<times/>9 matrix with -1 on the main diagonal and 1 above it. Find and display the products of <m>A</m> with its transpose: <m>A^TA</m> and <m>AA^T</m>. </p> 
+</statement>
+<answer>
+<pre>
+A = diag(ones(1, 8), 1) - eye(9);
+disp(A'*A)
+disp(A*A')
+</pre>
+<p>The two products are very similar but are not quite the same.</p>
+</answer>
+</example> 
+</section> 
+
+<section xml:id="section-vectorization">
+<title>Array operations</title>
+
+<p>Matlab supports <term>array operations</term> in which the input data is placed into an array (usually a vector or a matrix) and some mathematical operation is carried out on all of the data at once. For example, to get the square roots of the first 25 positive integers we can execute
+<cd>sqrt(1:25)</cd>
+with the result 
+<cd>[1.0000 1.4142 1.7321 2.0000 2.2361 ... 4.8990 5.0000]</cd>
+More generally, if <c>v</c> is a vector of nonnegative numbers, then <c>sqrt(v)</c> has the roots of those numbers. Other functions like <c>sin</c> and <c>exp</c> work the same way. The benefts of array operations are more compact code and faster execution.</p> 
+
+<p>
+Suppose <c>v = [5 2 -3]</c> and we want to get the squares of the elements of <c>v</c>. By analogy with the above, we try <c>v^2</c> but get an <alert>error</alert>. The problem is that squaring <c>v</c> is understood as <c>v*v</c> which in Matlab means multiplication according to the rules of <xref ref="section-operations-vectors-matrices" />. The row vector <c>v</c> is treated as a matrix of size 1<times/>3. And one cannot multiply a 1<times/>3 matrix by another 1<times/>3 matrix: the inner dimensions do not match. But we just want <em>elementwise</em> squaring, not any kind of matrix multiplication. To tell Matlab this, put a period <c>.</c> before the operation character: <c>v.^2</c> gives <c>[25 4 9]</c>. Similarly, <c>.*</c> and <c>./</c> are used for elementwise multiplication and division: <c>[3 4].*[2 -5]</c> is <c>[6 -20]</c> and <c>[3 4]./[2 -5]</c> is <c>[1.5 -0.8]</c>. We never need a period in front of <c>+</c> or <c>-</c> because these operations are always performed elementwise.</p>
+
+<p><em>Summary</em>: without a preceding period, <c>*</c>, <c>/</c> and <c>^</c> refer to what we do with matrices and vectors in linear algebra. Adding a period tells Matlab to forget about linear algebra and handle each term individually. Compare two ways to multiply the matrices 
+<me> A  = \begin{pmatrix} 3 \amp -2 \\ 2 \amp 5\end{pmatrix}, \quad
+B  = \begin{pmatrix} -5 \amp 4 \\ 1 \amp 3\end{pmatrix}</me>
+The command 
+<cd>[3 -2; 2 5] * [-5 4; 1 3]</cd>
+produces 
+<me>\begin{pmatrix} -17 \amp 6 \\ -5 \amp 23 \end{pmatrix}</me>
+which is the matrix product according to linear algebra. The command 
+<cd>[3 -2; 2 5] .* [-5 4; 1 3]</cd>
+produces 
+<me>\begin{pmatrix} -15 \amp -8 \\ 2\amp 15 \end{pmatrix}</me>
+which is the elementwise product: it would be considered a wrong way to multiply matrices in a linear algebra course. </p>
+
+<example>
+	<title>Roots of integers</title>
+<statement>
+	<p>Use array operations to display the numbers <m>n^{1/n}</m> for <m>n=1, \dots, 10</m>. What value of <m>n</m> has the largest such root?</p> 
+</statement>
+<answer>
+<pre>
+v = 1:10;
+disp(v.^(1./v))
+</pre>
+<p>The root is largest for <m>n = 3</m>. </p>
+<p>Note that both periods are necessary. Without the second one, Matlab would try to interpet <c>1/v</c> as a linear system with coefficients <c>v</c> and right hand side <c>1</c>, which is not what we want. With <c>1./v</c> we get the vector <c>[1/1 1/2 1/3 ...]</c>. Similarly, without the first period Matlab would try to interpret <c>v^(...)</c> as a matrix power, which would not make sense either.</p> 
+</answer>
+</example>  
+</section>
+
+
+<section xml:id="section-array-expansion">
+<title>Implicit expansion of arrays</title>
+
+<p>Sometimes we can apply an elementwise array operation to two arrays of different sizes. The rule is that the array sizes must match, but number 1 matches any number. For example, the following commands work, and produce a 3<times/>5 matrix of 2s:
+<ul>
+	<li> <c>ones(3, 1) + ones(3, 5)</c> </li>
+	<li> <c>ones(1, 5) + ones(3, 5)</c> </li>
+	<li> <c>ones(1, 5) + ones(3, 1)</c>  </li>
+</ul>
+</p>
+
+<p>The reason is that a matrix with 1 column can be turned into a matrix with 5 columns just by repeating the same column 5 times. This kind of expansion by repetition creates 3<times/>5 matrices in each of the above examples. For a more interesting example, try <c>(1:6) + (1:6)' - 1</c> which combines a row vector (size 1<times/>6) with a column vector (size 6<times/>1) and a scalar (size 1<times/>1). The array expansion results in a neat 6<times/>6 matrix:</p>
+<pre>
+1     2     3     4     5     6
+2     3     4     5     6     7
+3     4     5     6     7     8
+4     5     6     7     8     9
+5     6     7     8     9    10
+6     7     8     9    10    11
+</pre>	
+
+<p>In contrast, <c>ones(3, 2) + ones(3, 5)</c> does not work: the numbers 2 and 5 are not equal, and neither of them is 1. </p> 
+
+
+<example>
+	<title>Multiplication table</title>
+<statement>
+	<p>Display the multiplication table of size 9<times/>9, that is a matrix of products of integers from 1 to 9.</p> 
+</statement>
+<answer>
+<pre>
+A = (1:9).*(1:9)';
+disp(A)
+</pre>
+<p>The output is shown below.</p>
+<pre>
+1     2     3     4     5     6     7     8     9
+2     4     6     8    10    12    14    16    18
+3     6     9    12    15    18    21    24    27
+4     8    12    16    20    24    28    32    36
+5    10    15    20    25    30    35    40    45
+6    12    18    24    30    36    42    48    54
+7    14    21    28    35    42    49    56    63
+8    16    24    32    40    48    56    64    72
+9    18    27    36    45    54    63    72    81
+</pre>     
+<p>Note that without the period we would get the single number 285 instead. (Why this number?)</p>
+</answer></example>
+</section>  
+
+
+<section xml:id="section-plotting">
+<title>Plotting</title>
+
+<p>The command <c>plot(x, y)</c> receives two vectors: the first has x-coordinates of the points to be shown, the second has y-coordinates. It also connects these points by lines. So, for example, <cd>plot([1 2 5 6], [5 0.4 2 1])</cd> produces the following plot: </p>
+<figure><image source="images/plotting1.png" /> <caption>A plot based on four points</caption></figure>
+<p>Sometimes we do not want to connect the points by a line: treating them as individual data points rather than representative of some function <m>y = f(x)</m>. If so, 
+<cd>plot([1 2 5 6], [5 0.4 2 1], '*')</cd>
+simply puts an asterisk <c>*</c> for each point, without connecting them.</p>
+<figure><image source="images/plotting2.png" /> <caption>Four points (two are hard to see because of the axes)</caption></figure>
+<p> Let us plot the function <m>y = x^3 e^{-2x}</m> on the interval <m>[0, 3]</m>: </p>
+<pre>
+x = 0:0.1:3;
+y = x.^3 .* exp(-2*x);
+plot(x, y)
+</pre>
+<p>In the first line, I chose 0.1 as the step size for the x-interval. It would be a mistake to use <c>x = 0:3</c> because the step size of 1 unit would make a very rough (low-resolution) plot with only four points used. The step size could be 0.01 instead: we may get smoother graph at the expense of more computations. The second line compute the y-values. Consider the following: 
+<ul><li> The period in <c>x.^3</c> is required to have elementwise power operation</li>
+<li>We do not need a period in <c>-2*x</c> because multiplying a vector by a scalar already works elementwise. There is no difference between <c>-2*x</c> and <c>-2.*x</c></li>
+<li>We need <c>.*</c> to multiply two vectors elementwise.</li>
+<li>Whitespace around <c>.*</c> is not necessary but some people find <c>x.^3.*exp(-2*x)</c> harder to read because <c>3.</c> looks like a decimal dot after 3. </li>
+</ul>
+</p>
+<figure><image source="images/plotting3.png" /> <caption>Plot of the function <m>y = x^3 e^{-2x}</m> on the interval <m>[0, 3]</m> </caption></figure>
+
+<p>Specifying the x-values by choosing step size like in <c>x = 0:0.1:3</c> can be tedious, because the same step size would not work as well for the intervals <m>[2, 2.04]</m> or for <m>[0, 50000]</m>. The command <c>linspace</c> can be more convenient: <c>linspace(a, b, n)</c> creates a vector with <c>n</c> uniformly spaced numbers from <c>a</c> to <c>b</c>. Usually, 500 points are enough for a smooth plot, so one can reasonably use <c>x = linspace(a, b, 500)</c> for plots no matter how small or large the interval <m>[a, b]</m> is.</p>
+
+
+<example>
+	<title>Parametric plot</title>
+<statement>
+	<p>Draw the curve with parametric equations 
+		<md>
+			<mrow>x \amp = t\cos t</mrow>  <mrow> y \amp = t\sin t</mrow></md>  where <m>0 \le t \le 20</m>.</p> 
+</statement>
+<answer>
+<pre>
+t = linspace(0, 20, 500);
+plot(t.*cos(t), t.*sin(t))
+</pre>
+<p>This curve is called the <term>Archimedean spiral</term>.</p> 
+</answer>
+</example>  
+</section>
+
+
+<section xml:id="examples-systems-vectorization-plots">
+
+<title>Examples and questions</title>  
+
+<p> These are additional examples for reviewing the topic we have covered. When reading each example, try to find your own solution before clicking <q>Answer</q>. There are also questions for reviewing the concepts of this section. </p>
+
+
+<example><title>Tridiagonal matrix of arbitrary size</title>
+<statement> Given a positive integer <m>n</m>, construct a tridiagonal matrix which has entries -1, 2, -1 (as in <xref ref="section-large-matrices" />) and size <m>n\times n</m>. </statement>
+<answer>
+<pre>diag(2*ones(1, n)) - diag(ones(1, n-1), 1) - diag(ones(1, n-1), -1)</pre>
+<p>or</p>
+<pre>2*diag(ones(1, n)) - diag(ones(1, n-1), 1) - diag(ones(1, n-1), -1)</pre>
+<p>or</p>
+<pre>2*eye(n) - diag(ones(1, n-1), 1) - diag(ones(1, n-1), -1)</pre>
+<p>It is important to recognize why <c>n-1</c> appears above. The main diagonal has length <c>n</c> but the diagonals next to it are shorter by 1 element, so their length is <c>n-1</c>. </p>
+</answer>
+</example>
+
+<example> <title>Solving a tridiagonal system</title>
+<statement>Solve the system of linear equations 
+<md>
+<mrow> 3x_1 - x_2 \amp = 1 </mrow>
+<mrow> - x_1 + 3x_2 - x_3 \amp = 0 </mrow>
+<mrow> - x_2 + 3x_3 - x_4 \amp = 0 </mrow>
+<mrow>  \cdots </mrow>
+<mrow> - x_{n-2} + 3x_{n-1} - x_{n} \amp = 0 </mrow>
+<mrow> - x_{n-1} + 3x_{n} \amp = 2 </mrow>
+</md>
+Use the first two digits of your SUID as the value of <m>n</m>.
+</statement>
+
+<answer> 
+<pre>
+n = 28;
+A = 3*eye(n) - diag(ones(1, n-1), 1) - diag(ones(1, n-1), -1);
+b = zeros(n, 1);
+b(1) = 1;
+b(end) = 2;
+x = A\b;
+disp(x)
+</pre>
+<p><em>Explanation</em>. The coefficient matrix has 3 on the main diagonal, and -1 above and below it. This matrix is created with the help of <c>diag</c> as explained in 
+<xref ref="section-large-matrices" />. The right-hand size column vector begins with all-zeros: note that <c>zeros(n, 1)</c> is a column of zeros, while <c>zeros(1, n)</c> is a row of zeros. The first and last entries of <c>b</c> are changed as described in the system. </p>
+</answer>
+</example>
+
+<example> <title>Table of squares and cubes of small integers</title>
+<statement>Create a 3<times/>9 matrix which has the integers 1 through 9 in the first row, their squares in the second row, and their cubes in the third row.
+</statement>
+
+<answer><p>The single line <c>A = (1:9).^((1:3)')</c> does the job. The elementwise operation <c>.^</c> can combine the arrays of sizes 1<times/>9 and 3<times/>1, as explained in <xref ref="section-array-expansion" />. The result is a 3<times/>9 matrix with the expected property: the base (1 through 9) is the column number, the exponent (1 through 3) is the row number.</p>
+ </answer>
+</example>
+
+
+<example> <title>Plot of a function</title>
+<statement>Plot the function <m> y = (x - 1)/(x^2 + 1)</m> on the interval <m>[-1, 5]</m>
+</statement>
+<answer>
+<pre>
+x = linspace(-1, 5, 500);	
+y = (x - 1)./(x.^2 + 1);
+plot(x, y)
+</pre>
+<figure><image source="images/plotting4.png" /> <caption>Plot of <m> y = (x - 1)/(x^2 + 1)</m> on <m>[-1, 5]</m> </caption></figure>
+<p>Note the use of semicolons to prevent Matlab from displaying hundreds of numbers that we do not need to see.</p>
+</answer>
+</example>
+
+<question><title>x as a function of y</title>
+<p>How would you plot a function where <m>x</m> is given as a function of <m>y</m>, for example <m>x = y + \cos y</m> with <m>-5\le y\le 5</m>? </p></question> 
+
+<question><title>A <q>wrong</q> way to multiply matrices</title>
+<p>Can you imagine a situation where you would want to compute <c>A.*B</c> where both <c>A</c> and <c>B</c> are square matrices of the same size?</p>
+<p> An idea: a matrix can be used to store a greyscale image, so that each entry is the brightness of the corresponding pixel. What would elementwise  multiplication <c>A.*B</c> mean in this context?</p></question> 
+
+</section>
+
+
+
+<exercises xml:id="exercises-systems-vectorization-plots">
+    <title>Homework</title>
+
+    <exercise number="1">
+        <statement>
+<p>The Fibonacci numbers <m>F_n</m> are defined by the following relations: <m>F_1=1</m>, <m>F_2=1</m>, then <m>F_3 = F_1+F_2</m>, <m>F_4 = F_2 + F_3</m>, and so on: every number is the sum of two previous ones, <m>F_n = F_{n-2}+F_{n-1}</m>. We can consider these relations as a system of linear equations with unknowns <m>F_1, \dots, F_n</m> (to see this, move all the unknowns to the left, leaving constant terms on the right).</p>
+
+<p> <ol label="(a)">
+<li>Find the first 30 Fibonacci numbers using Matlab's linear solver <c>A\b</c>. To achieve this, you will first need to create a <m>30\times 30</m> matrix of the linear system and then create a column vector <c>b</c> where the first two coordinates are <m>1</m> and the rest are <m>0</m>. The commands <c>eye</c>, <c>diag</c>, <c>ones</c>, and <c>zeros</c> will help. </li>
+<li>Using the same method, find the first 30 <q>generalized Fibonacci numbers</q> that begin with numbers <m>p, q</m> instead of <m>1, 1</m>. Use the first two digits of your SUID number as the starting values <m>p, q</m>. (For example, if your SUID begins with 2067<ellipsis/> then <m>p=2</m>, <m>q=0</m>.)</li> 
+</ol>
+</p>
+        </statement>
+    </exercise>
+
+    <exercise number="2">
+        <statement>
+            <p>Write a script to do the following: </p>
+<p> <ol label="(a)">
+<li> Create a 10<times/>10 matrix A with 2 on the main diagonal, and -1 next to it (both above and below). </li>
+<li> Solve the linear system <m>Ay=b</m> where <m>b</m> is the vector 
+<me>
+\begin{pmatrix}
+\sqrt{1} \\ \sqrt{2} \\ \vdots \\ \sqrt{10}
+\end{pmatrix}
+</me>
+Use a regularly-spaced vector, transpose, and <c>sqrt</c> to create <m>b</m>.</li>
+<li>Plot the solution <m>y</m> against the vector <m>x</m> of 10 equally spaced numbers, beginning with 0 and ending with 1. The <c>linspace</c> command will be useful.
+</li></ol></p>
+</statement>
+    </exercise> 
+ 
+</exercises>
+
+</chapter>

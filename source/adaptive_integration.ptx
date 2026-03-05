@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<chapter xml:id="chapter-adaptive-integration" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+<title>Adaptive integration</title>
+
+
+    <introduction>
+        <p>It is important for a numerical integration algorithm to be able to adapt to the behavior of the function being integrated, by increasing the number of evaluation points as needed to achieve desired precision. This adaptive approach can be combined with any of the numerical integration methods studied so far: one can have adaptive forms of Simpson's rule, Gauss-Legendre rule, etc. 
+      </p>
+    </introduction>
+
+<section xml:id="section-motivation-adaptive-integration">
+<title>Why we need adaptive methods</title>
+
+<p>We have developed several methods of numerical integration: a family of Newton-Cotes methods, including Simpson's rule, and Gaussian integration methods. But the theory built so far has some weak points.</p>
+
+<p>One weak point is the error estimation. When an integration rule has order <m>d</m> of accuracy, its error can be estimated by some multiple of the derivative of order <m>d</m>. For example, Simpson's rule is of order <m>4</m> and has error estimate involving the fourth derivative of <m>f</m>:
+<men xml:id="eq-simpson-error">
+  |\text{error}|\le \frac{1}{180} \max|f^{(4)}| (b-a) h^4  
+</men>
+where, as with all such estimates, the maximum of the absolute value of the derivative is taken over the interval of integration. But a high-order derivative may be difficult to find, and if found, difficult to estimate. And even if it is easy to find and estimate, the output of <xref ref="eq-simpson-error" /> may be too conservative or completely useless. </p> 
+
+<example xml:id="example-simpson-error-estimate-poor">
+  <title>Error of Simpson's method</title>
+<statement><p>Apply Simpson's method with <m>n=2</m> to the integral <m>\int_1^{9} x^{3/2}\,dx</m>. Find the actual error of the method and compare it to the estimate <xref ref="eq-simpson-error" />.</p></statement>
+<answer><p>Here <m>f(x) = x^{3/2}</m> and <m>h=(9-1)/2 = 4</m>, so according to the formula <xref ref="eq-simps2" /> 
+<me> \int_1^9 x^{3/2}\,dx \approx \frac{h}{3} (f(1) + 4f(5) + f(9)) \approx 96.9618</me>
+The exact value of this integral is <m>\frac{2}{5}(9^{5/2} - 1) = 484/5 = 96.8</m>. So, the error is 
+<m>0.1618</m>, relatively small.</p>
+<p>To use the estimate <xref ref="eq-simpson-error" /> we need the fourth derivative of <m>f</m>, which is 
+<m>(9/16)x^{-5/2}</m>. The absolute value of this function is maximal at <m>x=1</m>, so 
+<m>\max|f^{(4)}| = 9/16</m>. Also, <m>h = (b-a)/2 = 4</m>. So <xref ref="eq-simpson-error" /> says
+<me>
+  |\text{error}|\le \frac{1}{180} \frac{9}{16} (9-1) 4^4  = 6.4 
+</me>
+Indeed, <m>0.1618 \le 6.4</m> but we see that the error estimate does not give the right idea of how large the error actually is. </p>
+</answer></example>
+
+<p>It gets worse for the integral <m>\int_0^{9} x^{3/2}\,dx</m>. The exact value is <m>97.2</m> and Simpson's rule gives <m>97.7756</m> so the error is <m>0.5756</m>. But since the fourth derivative is <m>(9/16)x^{-5/2}</m>, it is unbounded on the interval <m>[0, 9]</m>. So the right hand side of <xref ref="eq-simpson-error" />  is infinite. It is a true statement that <m>0.5756 \le \infty</m> but it is not a useful statement.</p> 
+
+<p>The above situation is not uncommon. When one derives an error bound for some numerical method, one has to consider <q>the worst-case scenario</q>, with all possible errors accumulating in the worse possible way. In practice this rarely happens. </p>
+
+<p>Moreover, formulas like <xref ref="eq-simpson-error" /> are difficult to implement in an algorithm. We know how to differentiate numerically (<xref ref="chapter-numerical-differentiation" />) but finding the absolute maximum of some function on an interval is not easy at all, as we will see later in the course.</p>
+
+<p> The second weak point is that the function being integrated may have discontinuities or other special points, such as corners like <m>f(x)=|x|</m>. Numerical integration performs worse where the function is not smooth, and this requires using smaller step size around such features (but not elsewhere).</p>    
+
+<p>So we need an algorithm that estimates the error of numerical integration and adapts to any unusual features of the function.</p>
+
+</section>
+
+<section xml:id="section-adaptive-integration-error-estimate">
+<title>Estimating error by using two step sizes</title>
+
+<p>A practical way to estimate the error of some method of integration is to use it twice with two different step sizes, and compare the results. Typically, one compares the computations with steps <m>h</m> and <m>h/2</m>. Say, the first computation resulted in <m>A_1</m> and the second, more accurate, in <m>A_2</m>. If the exact value is <m>E</m>, then we expect <m>|A_1-E|\approx 2^d|A_2-E|</m> where <m>d</m> is the order of accuracy of the method.
+By the triangle inequality, 
+<me>
+ |A_1-A_2| \ge |A_1-E| - |A_2-E| \approx (2^d-1) |A_2-E| 
+</me>
+which gives us an idea of the error involved in <m>A_2</m> (the more accurate approximation):
+<men xml:id="eq-error-estimate-comparison">
+|A_2-E| \lessapprox \frac{|A_1-A_2|}{2^d-1}  
+</men>
+where the symbol <m>\lessapprox</m> means the error is bounded by something like the right hand side. We do not assert this is an exact inequality, because the relation involving <m>2^d</m> is only approximate.
+</p>
+
+<p>Let us return to <xref ref="example-simpson-error-estimate-poor" /> where Simpson's method with <m>h=4</m> was used to get an approximation <m>A_1 = 96.9618</m>. Reducing the step size to <m>h=2</m> we get a second approximation: 
+<me>
+  A_2 = \frac{2}{3}(f(1) + 4f(3) + 2f(5) + 4f(7) + f(9)) \approx 96.8176
+</me>
+Since Simpson's rule has order <m>d=4</m>, the error of second approximation can be estimated by <xref ref="eq-error-estimate-comparison" /> as follows: 
+<me>
+ |A_2-E| \lessapprox  \frac{|A_1-A_2|}{15}  = 0.0096
+</me>
+Recalling that the exact value is <m>E = 96.8</m>, we see that <m>|A_2-E| = 0.0176</m>. So our error estimate, while not rigorous, is much closer to reality than the theoretical estimate <xref ref="eq-simpson-error" />.</p> 
+</section>
+
+<section xml:id="section-adaptive-integration-bisection">
+<title>Recursive subdivision algorithm</title>
+
+<p>The previous section showed how the accuracy of integration can be automatically estimated. Next question is, what can be done when it is insufficient? Using more evaluation points is logical. But if the algorithm keeps the interval of integration <m>[a, b]</m> the same and just increases the number of points on that interval (e.g., in Simpson's rule), this is not the best way to adapt. Typically, the accuracy is poor because of insufficient smoothness or large derivative at some parts of the interval, while other parts are fine.</p> 
+
+<p>A better way to adapt is <term>recursive subdivision</term>. 
+<ol>
+  <li>Given an interval <m>[a, b]</m>, compute the integral over it and estimate the error. </li>
+  <li>If the error is small enough, return the result of computation.</li>
+  <li>If the error is too large, divide the interval into two halves <m>[a, c]</m> and <m>[c, b]</m> where 
+  <m>c = (a+b)/2</m>, and restart the process from step 1, for each half separately.</li>
+</ol>
+This process involves <term>recursion</term>, because at step 3 the function evaluating the integral has to call itself. Schematically it looks like this.</p>
+<pre>
+function I = adaptive(f, a, b)
+    I1 = % first computation
+    I2 = % second computation, more accurate
+    if abs(I1 - I2) % "small enough"
+        I = I2;
+    else 
+        c = (a+b)/2; 
+        I = adaptive(f, a, c) + adaptive(f, c, b);
+    end
+end
+</pre>
+
+<p>One has to carefully consider when the difference <c>abs(I1 - I2)</c> is <q>small enough</q>. One approach is to ask for small relative error, like <c>abs(I1 - I2) &lt; 1e-6 * abs(I2)</c>. However this risks infinite recursion for functions like <m>f(x) = \sqrt{x}</m> near <m>0</m>, which is both small and poorly behaved. No matter how small an interval <m>[0, \epsilon]</m> we use, dividing it further will result in a change that is not very small in relative terms. The process terminates with Matlab reporting: <q>Out of memory. The likely cause is an infinite recursion within the program.</q></p>
+
+<p>If one uses an absolute error bound like <c>abs(I1 - I2) &lt; 1e-6</c>, there is another issue. We do not know how many subintervals will be used in the process, so even if each of them contributes an error of less than <m>10^{-6}</m>, the total may be significantly higher. </p>
+
+<p>A third approach is to enforce enforce error bound <em>relative to the size of interval</em>, for example <c>abs(I1 - I2) &lt; 1e-6 * (b-a)</c>. This avoids the issue with functions that are problematic and small, such as 
+<m>f(x) = \sqrt{x}</m> near <m>0</m>. But it runs into the same issue with functions that are problematic and large, such as  <m>f(x) = 1/\sqrt{x}</m> near <m>0</m>. </p> 
+
+<p>A combination approach, such as <c>abs(I1 - I2) &lt; 1e-6 * (b-a) + 1e-9</c>, allows the process to stop if the difference became small relative to interval size or just very small in absolute terms. This allows the subdivision to end even for functions like <m>f(x) = 1/\sqrt{x}</m>.</p>    
+
+</section> 
+
+<section xml:id="section-adaptive-integration-rules">
+<title>Combining two rules</title>
+
+<p>What combination of two rules should we use for approximations <m>I_1</m> and <m>I_2</m>? These rules should be of different accuracy; for example, it would be a bad idea to use the left endpoint and right endpoint rules. Both of these are about equally imprecise, so they may give the same answer which is still wrong by some large amount.</p> 
+
+<p>One can use, for example, the trapezoidal rule (order 2) and Simpson's rule (order 4). This has an advantage in that of of three evaluation points in Simpson's rule, two are also in trapezoidal rule. So one can compute function values once, for example 
+<cd>y = f([a, (a+b)/2, b]);</cd>
+and obtain both trapezoidal and Simpson's rules from the vector <c>y</c>. This property of two rules being <em>nested</em> (evaluation points of one rule are contained in the other) is valuable for speeding up the computation.</p>
+
+<p>Since the Gauss integration rule is the most accurate of those we discussed, one may decide to use it for both <m>I_1</m> and <m>I_2</m>, just with different number of evaluation points, perhaps <m>n</m> and <m>2n</m>. A downside is that Gauss evaluation points are not nested. In practice, the Gauss rule is used for <m>I_1</m> and the Kronrod rule (also based on orthogonal polynomials, but beyond our scope) is used for <m>I_2</m>. The Kronrod rule is designed to include all of the points used by the Gauss rule, and some additional ones. A popular choice, e.g., in TI graphing calculators, is (G7, K15), meaning 7-point Gauss rule combined with 15-point Kronrod rule. Python library SciPy uses (G10, K21) combination.</p>
+</section>
+
+
+<section xml:id="examples-adaptive-integration">
+
+<title>Examples and questions</title>  
+
+<p> These are additional examples for reviewing the topic we have covered. When reading each example, try to find your own solution before clicking <q>Answer</q>. There are also questions for reviewing the concepts of this section. </p>
+
+<example xml:id="example-implement-adaptive-gauss">
+  <title>Adaptive Gauss integration </title>
+<statement><p>Implement adaptive integration as in <xref ref="section-adaptive-integration-bisection" /> using the midpoint rule for <m>I_1</m> and Gauss rule with <m>n=2</m> for <m>I_2</m>. Test it on the integral
+<m>\int_0^9 x^{-1/2}\,dx = 6</m>.</p>
+</statement>
+
+<answer><p>When implementing Gauss rules on a general interval <m>[a, b]</m>, it helps to introduce the 
+midpoint <m>c = (a+b)/2</m> and half-length <m>k = (b-a)/2</m>. This is because the rule was originally designed for <m>[-1, 1]</m> and the linear function from <m>[-1, 1]</m> to <m>[a, b]</m> is <m>kx+c</m>. The coefficient <m>k</m> will appear in the formulas due to the change of variable formula.</p>
+<pre>
+f = @ (x) x.^(-1/2);
+fprintf('The integral is %.6f\n', adaptive(f, 0, 9));
+
+function I = adaptive(f, a, b)
+    c = (a+b)/2;
+    k = (b-a)/2;
+    I1 = k*2*f(c);    % midpoint, same as Gauss n=1
+    I2 = k*(f(c - k/sqrt(3)) + f(c + k/sqrt(3)));  % Gauss n=2
+    if abs(I1 - I2) &lt; 1e-6 * (b-a) + 1e-9 
+        I = I2;
+    else
+        I = adaptive(f, a, c) + adaptive(f, c, b);
+    end
+end
+</pre>
+<p>Note that the function is not defined at 0 which is an endpoints of the interval of integration. This would be a problem if we used, for example, trapezoidal or Simpson's rules. Not a problem for midpoint or Gauss rules. 
+By the way, the midpoint rule can be viewed as the Gauss rule with 1 point, because the degree 1 Legendre 
+polynomial is <m>P_1(x)=x</m>, with the zero at the middle of interval <m>[-1,1]</m></p></answer></example>  
+  
+<question><title>Gauss-Kronrod error estimate</title>
+<p>The current version of Wikipedia article <url href="https://en.wikipedia.org/wiki/Gauss%E2%80%93Kronrod_quadrature_formula">Gauss–Kronrod quadrature formula</url> says: <q>The integral is then estimated by the Kronrod rule K15 and the error can be estimated as |G7-K15|</q>. This estimate, while reasonable, is quite conservative: the actual error will be much less. Can you explain why?</p></question>
+
+</section>
+
+
+<exercises xml:id="exercises-adaptive-integration">
+    <title>Homework</title>
+
+    <exercise number="1" xml:id="ex-simpson-1">
+        <statement>
+<p> Estimate the error of computing <m>\int_{0.1}^{1.1} \sqrt{x}\,dx</m> using Simpson's rule with <m>h=1/2</m>, according to the error bound <xref ref="eq-simpson-error" />.</p>
+</statement></exercise>
+
+    <exercise number="2">
+        <statement>
+<p> Calculate the actual error in <xref ref="ex-simpson-1" />, that is, the difference between what Simpson's rule gives and the exact value of the integral. Is the actual error similar in size to the error estimate found in <xref ref="ex-simpson-1" />?</p>
+</statement></exercise>
+
+    <exercise number="3">
+        <statement>
+<p> Rewrite the adaptive integration script in <xref ref="example-implement-adaptive-gauss" /> so that it uses trapezoidal rule for <m>I_1</m> and Simpson's rule for <m>I_2</m>. Test it on the integral <m>\int_0^4 x^{3/2}\,dx</m> to make sure the script returns a correct result.</p> 
+
+<p>(For Octave users: recursive functions in Octave have some restrictions: the file must be named as the function itself, and the call to the function must come from the command line or from another file. For example, the Fibonacci recursion in Octave would be saved in file <q>fib.m</q> with the contents
+<cd>
+function f = fib(n)
+    if n &lt; 1
+        f = 1;
+    else
+        f = fib(n-1) + fib(n-2);
+    endif
+endfunction
+</cd>
+and then one would use it by entering, for example, <c>fib(8)</c> in the command line.)</p>  
+</statement></exercise>
+
+ 
+</exercises>
+
+</chapter>

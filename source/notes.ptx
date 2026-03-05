@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--********************************************************************
+Copyright 2015 Robert A. Beezer
+
+This file is part of MathBook XML.
+
+MathBook XML is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 2 or version 3 of the
+License (at your option).
+
+MathBook XML is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with MathBook XML.  If not, see <http://www.gnu.org/licenses/>.
+*********************************************************************-->
+<!-- This file was originally part of the book     -->
+<!-- (as copied on 2015/07/12)                     -->
+<!--                                               -->
+<!--   Abstract Algebra:  Theory and Applications   -->
+<!--                                                -->
+<!-- Copyright (C) 1997-2014  Thomas W. Judson      -->
+
+<!-- USE XINCLUDE SWITCH ON XSLTPROC -->
+
+<!-- Master file for AATA                           -->
+<!-- Use XSL stylesheets to create subsets          -->
+<!--    Important: Always process all of the source -->
+<!--    to preserve numbering and cross-references! -->
+<!--    So it is never advisable to edit this file  -->
+
+<!-- Changing xml:lang causes many strings to change language -->
+<!-- See the  xsl/localizations  directory for details        -->
+<!-- Note the use of the "xinclude" namespace in order to use multiple files -->
+<!-- Each included file must contain exactly one top-level element, -->
+<!-- such as a chapter or section -->
+<pretext xmlns:xi="http://www.w3.org/2001/XInclude" xml:lang="en-US">
+<!-- <pretext xmlns:xi="http://www.w3.org/2001/XInclude" xml:lang="fr-FR"> -->
+
+   
+    <book xml:id="numerical-methods">
+        <title>Numerical Methods with Programming</title> 
+
+        <xi:include href="./frontmatter.xml" />                 <!-- Title Page, Preface, etc. -->
+
+        <!-- Parts are optional, included here for testing            -->
+        <!-- In "bookinfo.xml" set to "structural" for maximum effect -->
+
+        <part xml:id="part-matlab">
+            <title>Using Matlab</title>
+            <xi:include href="./matrices_vectors.xml" /> 
+            <xi:include href="./systems_vectorization_plots.xml" />
+            <xi:include href="./functions_input_output.xml" />
+            <xi:include href="./control_flow.xml" />
+            <xi:include href="./user_defined_functions.xml" />
+        </part>
+
+        <part xml:id="part-equations">
+            <title>Solving Equations</title>
+            <xi:include href="./linear_systems.xml" />
+            <xi:include href="./root_finding_bisection.xml" />
+            <xi:include href="./fixed_point_iteration.xml" />
+            <xi:include href="./newton_secant.xml" />
+            <xi:include href="./multivariable_newton.xml" />
+            <xi:include href="./broyden.xml" />
+        </part>
+
+        <part xml:id="part-calculus">
+            <title>Numerical Calculus</title>
+            <xi:include href="./numerical_differentiation.xml" />
+            <xi:include href="./trapezoid_midpoint.xml" />
+            <xi:include href="./simpson_newton_cotes.xml" />
+            <xi:include href="./legendre_laguerre.xml" /> 
+            <xi:include href="./gaussian_integration.xml" /> 
+            <xi:include href="./adaptive_integration.xml" />
+            <xi:include href="./multivariable_integration.xml" />
+            <xi:include href="./ode_euler.xml" />
+            <xi:include href="./ode_modeling.xml" />
+        </part>
+
+        <part xml:id="part-data">
+            <title>Modeling Data</title>
+            <xi:include href="./polynomial_interpolation.xml" />
+            <xi:include href="./chebyshev.xml" />
+            <xi:include href="./spline_interpolation.xml" />
+            <xi:include href="./spline_approximation.xml" />
+            <xi:include href="./discrete_fourier_transform.xml" />
+            <xi:include href="./dft_applications.xml" />
+            <xi:include href="./linear_least_squares.xml" />
+            <xi:include href="./transforming_data.xml" />
+            <xi:include href="./nonlinear_least_squares.xml" />
+        </part>
+
+        <part xml:id="part-optimization">
+            <title>Optimization</title> 
+            <xi:include href="./single_variable_minimization.xml" />
+            <xi:include href="./parabolic_interpolation_descent.xml" />
+            <xi:include href="./gradient_newton_conjugate.xml" />
+            <xi:include href="./nelder_mead.xml" />
+            <xi:include href="./constrained_optimization.xml" />
+            <xi:include href="./linear_programming.xml" />
+            <xi:include href="./classification.xml" />
+        </part>
+
+    </book>
+
+</pretext>

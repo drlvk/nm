@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<chapter xml:id="chapter-fixed-point-iteration" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+<title>Root finding: fixed point iteration</title>
+
+
+    <introduction>
+        <p>We look for solutions of the equation <m>f(x)=x</m>, which are called the fixed points of function <m>f</m>. The simplest approach to finding them is to iterate the function: that is, plug the value of <m>f</m> back into <m>f</m>, repeatedly.  </p>
+    </introduction>
+
+<section xml:id="section-classification-fixed-points">
+<title>Classification of fixed points</title>
+
+<p>A <term>fixed point</term> of a function <m>g</m> is a number <m>x^*</m> such that <m>g(x^*)=x^*</m>. This is the same as a root of <m>g(x)-x=0</m> but we will see that writing an equation with <m>x</m> on the right provides a new approach to solving it. </p>
+
+<example>
+    <title>Find all fixed points of a function</title>
+<statement><p>Find all fixed points of the function <m>g(x) = \sqrt{1+x}</m></p> </statement>
+<solution> <p>Squaring both sides of <m>\sqrt{1+x} = x</m> yields <m>x^2 - x - 1</m> which is a quadratic equation with roots <m>(1\pm \sqrt{5})/2 </m>. However, the negative root does not satisfy the original equation  <m>\sqrt{1+x} = x</m>. </p>
+<p>Answer: one fixed point   <m>x^* = (1+\sqrt{5})/2</m>.</p></solution>
+</example>
+
+<p>The process of <term>iterating</term> some function <m>g</m> consists of the following: start from some initial value <m>x_0</m>, let <m>x_1=g(x_0)</m>, <m>x_2 = g(x_1)</m>, and generally <m>x_{n+1} = g(x_n)</m>. If the sequence <m>x_n</m> has a limit  <m>x^* </m>, and <m>g</m> is a continuous function, it follows that <m>g(x^*)=x^*</m>. </p> 
+
+<p>However, can we expect the iteration to converge to a fixed point <m>x^* </m>? The answer depends on the value of <m>g'(x^*)</m>. Indeed, when <m>x\approx x^*</m>, the difference <m>g(x)-x^*</m> is approximately <m>g'(x^*)(x-x^*)</m> because the graph of a differential function is close to its tangent line. When <m>|g'(x^*)|\lt 1</m>, the distance to fixed point is decreasing but if  <m>|g'(x^*)| > 1</m> it is increasing. This leads us to introduce the following concept.</p>
+
+<p><em>Classification of fixed points</em>. A fixed point <m>x^*</m> is called
+<ul>
+    <li><term>repelling</term> if <m>|g'(x^*)| > 1</m> </li>
+    <li><term>attracting</term> if <m>|g'(x^*)| \lt 1</m> </li>
+    <li><term>super-attracting</term> if <m>g'(x^*) = 0 </m> (a special case of attracting fixed points)</li>
+    <li><term>neutral</term> if <m>|g'(x^*)| = 1 </m> </li>
+</ul>
+According to the above, iteration of <m>g</m> may converge to an attracting point but will not converge to a repelling one. The neutral points are a borderline case: some of them are limits of iterative process, some are not. </p>
+
+<example><title>Find and classify the fixed points</title>
+<statement><p>Find and classify all fixed points of the function <m>g(x) = x^3 + x^2 - x</m>.</p></statement>
+<solution><p> The equation <m>x^3 + x^2 - x = x</m> simplifies to <m>x(x^2 + x - 2) =0</m> which has roots <m>0, 1, -2</m>. These are the three fixed points. Plug each into the derivative <m>g'(x) = 3x^2 + 2x - 1</m> to find that 
+<ul>
+    <li> <m>|g'(0)| = |-1| = 1</m>, a neutral fixed point </li>
+    <li> <m>|g'(1)| = |4| = 4</m>, a repelling fixed point </li>
+    <li> <m>|g'(-2)| = |7| = 7</m>, a repelling fixed point </li>
+</ul>
+</p></solution></example>
+
+</section>
+
+<section xml:id="section-rewriting-fixed-point">
+   <title>Rewriting equations in the fixed-point form</title> 
+
+<p>We now have a new method of solving the equations <m>f(x)=0</m>: rewrite it as <m>g(x)=x</m>, and build a sequence <m>x_{n+1} = g(x_n)</m>. If this sequence has a limit, which we recognize by <m>|x_{n+1} - x_n|</m> being small, then we have a fixed point of <m>g</m>, hence a root of <m>f</m>. There are multiple ways to rewrite <m>f(x)=0</m> in the fixed-point form:
+<ul>
+    <li> <m>f(x) + x = x</m> </li>
+    <li> <m>x - f(x) = x</m> </li>
+    <li> <m>x - 3 f(x)^3 = x</m> </li>
+</ul>
+and so on. Although the fixed points are the same each case (they are the roots of <m>f</m>), their classification may be different. For example, consider <m>f(x) = x^3 + 4x -5</m>. We know it has a root at <m>x=1</m>. If we try to rewrite the equation <m>f(x) = 0</m> as <m>x^3 + 5x - 5 = x</m> the fixed point at 1 is repelling because <m>(x^3+5x -5)' = 3x^2 + 5</m> has modulus <m>8>1</m>. Another rewrite is <m>(5-x^3)/4 = x</m>. This one works because the derivative of <m>(5-x^3)/4</m> is <m>-3x^2/4</m> with absolute value of <m>3/4</m> at <m>x=1</m>. The denominator <m>4</m>  reduced the derivative here. 
+</p>
+
+<example xml:id="example-solve-fixed-point-iteration"><title>Rewrite and solve by fixed-point iteration</title>
+<statement><p>Solve the equation <m>x^3 + 5x  = 2</m> by the fixed-point iteration method.</p> </statement>
+<solution><p>The function <m>x^3 + 5x</m> is increasing from 0 to 6 on the interval <m>[0, 1]</m>. Therefore, the equation has a solution in this interval. Following the idea of the previous paragraph, rewrite it as <m>(2-x^3)/5 = x</m>. This means <m>g(x) = (2-x^3)/5</m> and <m>g'(x) = -3x^2/5</m>. Note this <m>|g'| \lt 1</m> on <m>[0, 1]</m> which guarantees that the fixed point is attracting. Here is the code to find it.</p>
+<pre>
+g = @(x) (2-x^3)/5;
+x0 = 0;
+max_tries = 1000;
+for k = 1:max_tries
+    x1 = g(x0);
+    if abs(x1-x0) &lt; 100*eps(x0)
+        break
+    end
+    x0 = x1;
+end
+if k &lt; max_tries
+    fprintf('Found x = %.12g after %d steps\n', x1, k);
+else
+    disp('Failed to converge')
+end
+</pre>
+<p>The reason for using a <c>for</c> loop is to set a limit for the number of attempts (1000). The loop ends sooner if the values of x essentially stop changing. We do not need separate variables for every element of the sequence: x0 and x1 keep being reused for <q>old</q> and <q>new</q> x-values. The output is <q>Found x = 0.388291441005</q>.  
+</p></solution></example>
+
+</section>
+
+<section xml:id="section-rate-convergence">
+<title>The speed of convergence of fixed-point iteration</title>
+
+<p>
+Near an attracting fixed point with <m>0 \lt |g'(x^*)| \lt  1</m>, the convergence is linear in the sense that the error at the next step is about <m>|g'(x^*)|</m> times the error of the previous step. But if <m>g'(x^*)=0</m> 
+(meaning <m>x_0</m> is a superattractive fixed point), then the rate of convergence is extremely fast. Indeed, Taylor's formula says that <m>|g(x)-g(x^*)|</m> is bounded by a constant multiple of <m>|x-x^*|^2</m>, where the constant depends on the value of the second derivative <m>f''(x^*)</m>. This rate of convergence is called <term>quadratic</term> because at each step, the error size gets squared (and multiplied by a constant).</p>
+
+<p>Compare two functions: <m>g_1(x) = \sqrt{x}</m> and <m>g_2(x) = (x+1/x)/2</m>. Both have a fixed point <m>x^*=1</m>. Since <m>|g_1'(1)| = 1/2</m> and <m>|g_2'(1)| = 0</m>, the point 1 is attracting for <m>g_1</m> and super-attracting for <m>g_1</m>. Let's see how quickly the iteration converges to the fixed point, starting from 5 for example.</p>
+<pre>
+g = @(x) sqrt(x);
+x = 5;
+for k = 1:10
+    x = g(x);
+    fprintf('After %d steps got %.15g\n', k, x)
+end
+</pre>
+<p>The numbers approach 1 but not very quickly.</p> 
+<pre>
+After 1 steps got 2.23606797749979
+After 2 steps got 1.49534878122122
+After 3 steps got 1.22284454499385
+After 4 steps got 1.10582301703024
+After 5 steps got 1.05158119849598
+After 6 steps got 1.02546633220988
+After 7 steps got 1.01265311543977
+</pre>    
+<p>And so on: each error is about half of the previous, indicating linear speed of convergence. After 10 steps we are still more than 0.001 away from the fixed point. In contrast, running the above code with <c>g = @(x) (x+1/x)/2;</c> results in much faster convergence.</p>
+<pre>
+After 1 steps got 2.6
+After 2 steps got 1.49230769230769
+After 3 steps got 1.0812053925456
+After 4 steps got 1.00304952038898
+After 5 steps got 1.00000463565079
+After 6 steps got 1.00000000001074
+After 7 steps got 1
+</pre>    
+<p>After just 7 steps of iteration, the value is so close to 1 that it becomes equal to 1, due to round-off involved. 
+ </p>
+
+ 
+ </section>
+  
+
+<section xml:id="examples-fixed-point-iteration">
+
+
+<title>Examples and questions</title>  
+
+<p> These are additional examples for reviewing the topic we have covered. When reading each example, try to find your own solution before clicking <q>Answer</q>. There are also questions for reviewing the concepts of this section. </p>
+
+
+<example xml:id="example-rewrite-for-root1">
+   <title> Rewriting an equation to make a specific solution an attracting fixed point</title>
+<statement><p>The equation <m>x^5 -  2x  = 1</m> has a solution in the interval <m>(1, 2)</m>, as one can see from the Intermediate Value Theorem. Rewrite the equation as a fixed-point problem so that this root is an attracting fixed point. </p>
+
+<solution><p>The form <m>(x^5 -1)/ 2 = x</m> does not work here because the function
+ <m>g(x) = (x^5 -1)/ 2 </m> has <m>|g'(x)| = 5x^4/2</m> which is greater than 1 on the interval <m>(1, 2)</m>. But <m>(2x+1)^{1/5} = x</m> works because the function <m>g(x) = (2x+1)^{1/5} </m> has <m>|g'(x)| = 2|2x+1|^{-4/5}/5</m> which is less than <m>2/5</m>. </p></solution>
+</statement>
+</example>
+
+<example xml:id="example-tangent-function">
+   <title> Classify an infinite set of fixed points</title>
+<statement><p>The function <m>g(x) = \tan x</m> has infinitely many fixed points, because the graph of tangent intersects the line <m>y=x</m> infinitely many times. Show that one of the fixed points is neutral and the rest are repelling. </p>
+
+<solution><p>The neutral point is at 0, because <m>\tan 0 = 0</m> and <m>g'(0)=1</m>. How to find <m>g'</m> at other fixed points, if we do not know them? Recall that <m>g'(x) = \sec^2 x = \tan^2 x + 1 = g(x)^2 + 1</m>. Therefore, if <m>x^*</m> is a fixed point, then <m>g'(x^*) = (x^*)^2 + 1</m>. This expression is strictly greater than one when <m>x^* \ne 0</m>. So, all other fixed points are repelling. 
+</p></solution>
+</statement></example>
+
+<question><title> Convergence to a neutral fixed point</title>
+<p>Both functions <m>\sin x</m> and <m>\tan x</m> have 0 as a neutral fixed point. For one of these functions, the iteration method converges to 0, although <em>very</em> slowly. For another it does not. Why? (Hint: consider the plots of these functions.)</p></question>
+
+<question><title>Logarithmic plot of error size</title>
+<p>Recall that a sequence <m>x_n</m> converges to its limit <m>x^*</m> at a linear rate, the graph of <m>\log|x-x_n|</m> as a function of <m>n</m> looks like a line. What will it look like when the rate of convergence is quadratic?</p></question>
+
+</section> 
+
+  
+
+
+
+<exercises xml:id="exercises-fixed-point-iteration">
+    <title>Homework</title>
+
+    <exercise number="1">
+        <statement>
+<p> For each of the following functions, find all of its fixed points.  Classify each fixed point as attracting, repelling, or neutral. 
+<ol label="(a)">
+    <li><m>f(x) = x^5</m></li>
+<li><m>g(x) = 16/x^3</m></li>
+<li><m>h(x) = x^3 - x/2</m></li>
+</ol>
+No programming is involved in this problem. Ignore the solutions in complex numbers like <m>x=i</m>; we only need real numbers here.</p>
+</statement>
+</exercise>
+
+    <exercise number="2">
+        <statement>
+<p>Write a script that solves the equation <m>e^x + \log x = n</m> using the fixed point iteration. Here <m>n</m> is the number formed by the first two digits of your SUID.</p>
+ 
+<p>In order to use the fixed point method, you need to rewrite the given equation as <m>g(x) = x</m>.  There are several ways to do this, try at least two different ones, or as many as are needed until a root is found. Starting from some value of <m>x</m>, such as <m>x=10</m>, below, run fixed point iteration until either it converges to a root, or the number of iterations becomes extremely large. The script should display either <q>Root found at x = ... after ... steps</q> or 
+<q>Failed to converge</q>. Add a comment with the different functions <m>g</m> you tried, and what the outcome was.</p>
+
+<p>Here, as in in Matlab and in most mathematical texts, <m>\log</m> means the natural logarithm, base <m>e</m>.</p>
+</statement>
+</exercise>
+ 
+</exercises>
+
+</chapter>
